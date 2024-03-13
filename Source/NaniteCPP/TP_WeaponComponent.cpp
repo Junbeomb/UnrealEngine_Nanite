@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
+
 // Sets default values for this component's properties
 UTP_WeaponComponent::UTP_WeaponComponent()
 {
@@ -35,13 +38,33 @@ void UTP_WeaponComponent::Fire()
 			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-	
-			//Set Spawn Collision Handling Override
+
+
+			//라인 트레이스 재료
+			FHitResult HitResult;
+			FVector StartTrace = PlayerController->PlayerCameraManager->GetCameraLocation();
+			FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector()*1000 + StartTrace;
+
+			//디버그
+			//DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false, 1, 0, 1);
+
+			//라인 트레이스
+			FVector TargetVector;
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, FinishTrace, ECollisionChannel::ECC_Visibility)) {
+				TargetVector = HitResult.Location;
+			}
+			else {
+				TargetVector = HitResult.TraceEnd;
+			}
+
+			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetSocketLocation(TEXT("Muzzle")), TargetVector);
+			
+			//스폰 셋
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 	
-			// Spawn the projectile at the muzzle
-			World->SpawnActor<ANaniteCPPProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+			//스폰 액터
+			World->SpawnActor<ANaniteCPPProjectile>(ProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
 		}
 	}
 	
