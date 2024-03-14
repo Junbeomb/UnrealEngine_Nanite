@@ -4,6 +4,7 @@
 #include "TP_WeaponComponent.h"
 #include "NaniteCPPCharacter.h"
 #include "NaniteCPPProjectile.h"
+#include "BasicProjectile.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -46,7 +47,7 @@ void UTP_WeaponComponent::Fire()
 			FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector()*1000 + StartTrace;
 
 			//디버그
-			//DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false, 1, 0, 1);
+			DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false, 1, 0, 1);
 
 			//라인 트레이스
 			FVector TargetVector;
@@ -63,8 +64,9 @@ void UTP_WeaponComponent::Fire()
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 	
+		   //UE_LOG(LogTemp, Warning, TEXT("%s"),ProjectileClass.Get());
 			//스폰 액터
-			World->SpawnActor<ANaniteCPPProjectile>(ProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
+			World->SpawnActor<ABasicProjectile>(ProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
 		}
 	}
 	
@@ -95,7 +97,6 @@ void UTP_WeaponComponent::AttachWeapon(ANaniteCPPCharacter* TargetCharacter)
 	{
 		return;
 	}
-
 	// Attach the weapon to the First Person Character
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 	AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("RifleSocket")));

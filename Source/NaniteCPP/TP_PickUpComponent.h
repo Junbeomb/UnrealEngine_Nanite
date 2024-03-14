@@ -16,6 +16,7 @@ class NANITECPP_API UTP_PickUpComponent : public USphereComponent
 {
 	GENERATED_BODY()
 
+
 public:
 	
 	/** Delegate to whom anyone can subscribe to receive this event */
