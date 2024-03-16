@@ -6,7 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NaniteCPPCharacter.h"
 
-#include "Blackhole.h"
+#include "Blackhole/Blackhole.h"
 
 // Sets default values
 ABasicProjectile::ABasicProjectile()
@@ -44,7 +44,7 @@ void ABasicProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		GetWorld()->SpawnActor<ABlackhole>(ABlackhole::StaticClass(), GetActorTransform(), ActorSpawnParams);
+		GetWorld()->SpawnActor<ABlackhole>(ABlackhole::StaticClass(), GetActorLocation(), { 0,0,0 }, ActorSpawnParams);
 		Destroy();
 	}
 }
