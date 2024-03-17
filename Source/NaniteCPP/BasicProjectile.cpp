@@ -4,7 +4,7 @@
 #include "BasicProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "NaniteCPPCharacter.h"
+#include "BeginnerCharacter/NaniteCPPCharacter.h"
 
 #include "Blackhole/Blackhole.h"
 

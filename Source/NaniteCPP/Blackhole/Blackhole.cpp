@@ -125,6 +125,7 @@ void ABlackhole::DieBlackhole()
 	TimerDelegate.BindLambda([&]
 	{
 			DieToggle = true;
+			MeshTimeline->SetPlayRate(10.f);
 			MeshTimeline->Reverse();
 	});
 

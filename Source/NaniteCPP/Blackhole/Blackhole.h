@@ -55,7 +55,7 @@ private:
 			void SetScaleTimelineUpdate(float Value);
 
 
-	//Range 타임라인
+		//Range 타임라인
 		//Range 종료시
 		FOnTimelineEvent RangeTimelineFinishedCallback;
 		UFUNCTION()
@@ -66,7 +66,7 @@ private:
 		class UCurveFloat* PullRangeCurve;
 		//callback함수
 		FOnTimelineFloat PullRangeTimelineCallback;
-			//Bind함수
+		//Bind함수
 			UFUNCTION()
 			void PullRangeTimelineUpdate(float Value);
 
