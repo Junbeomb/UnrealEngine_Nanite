@@ -16,7 +16,7 @@ public:
 	AFoliageInfluencer();
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Foliage")
-	TArray<TSubclassOf<AActor>> FoliageBlueprints;
+	TArray<TSubclassOf<AActor>> FoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
 
 	//LineTrace Radius;
 	UPROPERTY(EditAnywhere, Category = "Foliage")

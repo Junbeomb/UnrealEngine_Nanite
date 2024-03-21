@@ -15,12 +15,12 @@ public:
 	// Sets default values for this actor's properties
 	ABlackhole();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BlackholeBaseMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ShpereCollision")
+	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* TurnOffDFRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ShpereCollision")
+	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* PullRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
@@ -43,8 +43,8 @@ private:
 	//Blackhole Mesh Size 타임 라인
 		//MeshTimeline 종료시
 		FOnTimelineEvent floatTimelineFinishedCallback;
-		UFUNCTION()
-		void SetScaleTimelineFinish();
+			UFUNCTION()
+			void SetScaleTimelineFinish();
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
 		class UCurveFloat* MeshCurve;

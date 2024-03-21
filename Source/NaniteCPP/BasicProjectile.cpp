@@ -27,6 +27,13 @@ ABasicProjectile::ABasicProjectile()
 	// Set as root component
 	RootComponent = CollisionComp;
 
+	BasicProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BasicProjectileMesh"));
+	BasicProjectileMesh->SetupAttachment(RootComponent);
+
+	//메쉬 설정
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Blackhole/SM_BlackholeMesh"));
+	BasicProjectileMesh->SetStaticMesh(MeshAsset.Object);
+
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;

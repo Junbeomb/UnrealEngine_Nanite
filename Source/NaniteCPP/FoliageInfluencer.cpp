@@ -70,7 +70,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 							GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
 							InstancedMeshComp->RemoveInstance(Hit.Item);
 						}
-						UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
+						//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
 					}
 				}
 			}
