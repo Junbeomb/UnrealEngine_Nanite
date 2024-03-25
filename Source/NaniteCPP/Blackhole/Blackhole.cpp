@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Components/SphereComponent.h"
+#include "BlackholeCompBase.h"
 
 ABlackhole::ABlackhole()
 {
@@ -26,7 +27,7 @@ ABlackhole::ABlackhole()
 	PullRange = CreateDefaultSubobject<USphereComponent>(TEXT("PullRange"));
 	PullRange->SetupAttachment(RootComponent);
 	PullRange->SetSphereRadius(0.f);
-	PullRange->SetHiddenInGame(false);
+	PullRange->SetHiddenInGame(true);
 
 	//블랙홀 매쉬 설정
 	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Blackhole/SM_BlackholeMesh"));
@@ -35,26 +36,28 @@ ABlackhole::ABlackhole()
 	//블랙홀 생성 Timeline
 		MeshTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("MeshTimeline"));
 		//어떤 curve로 쓸거
-		ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/Blackhole/Curve/FC_BlackholeSizeIncreaseCurve"));
+		ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/1_Blackhole/Curve/FC_BlackholeSizeIncreaseCurve"));
 		MeshCurve = Curve.Object;
 		//callback함수bind
 		floatTimelineCallback.BindUFunction(this,FName("SetScaleTimelineUpdate"));
 		floatTimelineFinishedCallback.BindUFunction(this, FName("SetScaleTimelineFinish"));
 
-	//Range Timeline
+	//Range Timeline (한 개의 Timeline안에 여러개의 curve 존재)
 		RangeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("RangeTimeline"));
 		//callback함수bind
 		RangeTimelineFinishedCallback.BindUFunction(this, FName("RangeTimelineFinish"));
 		//어떤 curve로 쓸거
-		ConstructorHelpers::FObjectFinder<UCurveFloat> PullCurve(TEXT("/Game/Blackhole/Curve/FC_PullRange"));
+		ConstructorHelpers::FObjectFinder<UCurveFloat> PullCurve(TEXT("/Game/1_Blackhole/Curve/FC_PullRange"));
 		PullRangeCurve = PullCurve.Object;
-		ConstructorHelpers::FObjectFinder<UCurveFloat> DFCurve(TEXT("/Game/Blackhole/Curve/FC_DFRange"));
+		ConstructorHelpers::FObjectFinder<UCurveFloat> DFCurve(TEXT("/Game/1_Blackhole/Curve/FC_DFRange"));
 		DFRangeCurve = DFCurve.Object;
 		//callback함수bind
 		PullRangeTimelineCallback.BindUFunction(this, FName("PullRangeTimelineUpdate"));
 		DFRangeTimelineCallback.BindUFunction(this, FName("DFRangeTimelineUpdate"));
 
 
+		//pullRange랑 겹치면
+		PullRange->OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapPullRange);
 }
 
 void ABlackhole::BeginPlay()
@@ -112,6 +115,17 @@ void ABlackhole::DFRangeTimelineUpdate(float Value)
 void ABlackhole::RangeTimelineFinish()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Range Timeline Finish"));
+}
+
+//PullRange에 actor 가 겹치면
+void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UBlackholeCompBase* BHComp = Cast<UBlackholeCompBase>(OtherActor->GetComponentByClass(UBlackholeCompBase::StaticClass()));
+	if (BHComp) {
+		if (!BHComp->GetIsPull()) { //해당 물체를 당기고 있지 않을때만
+			BHComp->SetPullOn(this, GetActorLocation());
+		}
+	}
 }
 
 
