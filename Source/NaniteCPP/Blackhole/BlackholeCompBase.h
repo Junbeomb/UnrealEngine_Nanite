@@ -26,15 +26,23 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SetDeltaTime(float a) { TickDeltaTime = a; };
-	float GetDeltaTime() { return TickDeltaTime; };
+	const float GetDeltaTime() { return TickDeltaTime; };
 
 	void SetIsPull(bool a) { IsPull = a; };
-	bool GetIsPull() { return IsPull; };
+	const bool GetIsPull() { return IsPull; };
 
 	void SetIsShrink(bool a) { IsShrink = a; };
-	bool GetIsShrink() { return IsShrink; };
+	const bool GetIsShrink() { return IsShrink; };
 
-	FVector DirectBH() { return PullTargetLocation - (GetOwner()->GetActorLocation()); };
+	void SetBlackhole(ABlackhole* a) { Blackhole = a; };
+	void SetPullTargetLocation(FVector a) { PullTargetLocation = a; };
+
+	FVector DirectBH() { 
+		//블랙홀과의 거리
+		UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		return PullTargetLocation - (SMC->GetComponentLocation());
+	};
+
 	void SetPullStartDistance() { PullStartDistanceToBlackhole = DirectBH().Length(); };
 
 	void SetInitialMaxScale() { 
@@ -48,6 +56,7 @@ public:
 private:
 	UPROPERTY()
 	float TickDeltaTime;
+	ABlackhole* Blackhole;
 
 	//빨려들어가는지
 	UPROPERTY()
@@ -55,6 +64,7 @@ private:
 	//블랙홀의 위치
 	FVector PullTargetLocation;
 	//현재 액터와 블랙홀의 방향(회전하는 방향 결정)
+	UPROPERTY(VisibleAnywhere)
 	FVector PullDirection;
 	//현재 엑터와 블랙홀의 처음 시작 거리
 	float PullStartDistanceToBlackhole;
@@ -70,6 +80,10 @@ private:
 	float SmallScale;
 
 	FVector InitialMaxScale;
+	FRotator InitialRotationDegree;
+
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> DMIList;
 
 
 	//줄어들고 있는지

@@ -18,6 +18,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BlackholeBaseMesh;
 
+	UPROPERTY(EditAnywhere)
+	UChildActorComponent* FoliageToBPActor;
+
 	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* TurnOffDFRange;
 	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
@@ -27,6 +30,8 @@ public:
 	class UTimelineComponent* MeshTimeline;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
 	class UTimelineComponent* RangeTimeline;
+
+
 
 
 protected:

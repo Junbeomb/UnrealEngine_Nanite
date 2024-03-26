@@ -19,6 +19,10 @@ ABlackhole::ABlackhole()
 	BlackholeBaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlackholeBaseMesh"));
 	BlackholeBaseMesh->SetupAttachment(RootComponent);
 
+	FoliageToBPActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("FoliageToBPActor"));
+	FoliageToBPActor->SetupAttachment(RootComponent);
+	
+
 	TurnOffDFRange = CreateDefaultSubobject<USphereComponent>(TEXT("TurnOffDFRange"));
 	TurnOffDFRange->SetupAttachment(RootComponent);
 	TurnOffDFRange->SetSphereRadius(0.f);
