@@ -11,16 +11,12 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 {
 	GENERATED_BODY()
 
-
-public:	
 	AFoliageInfluencer();
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="Foliage")
+	UPROPERTY(EditAnywhere, Category="Foliage")
 	TArray<TSubclassOf<AActor>> FoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
-
-	//LineTrace Radius;
 	UPROPERTY(EditAnywhere, Category = "Foliage")
-	float PhysicsRadius;
+	TArray<TSubclassOf<AActor>> BlackholeFoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* FoliageTransMesh;
@@ -36,4 +32,9 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	//LineTrace Radius;
+	UPROPERTY(EditAnywhere, Category = "Foliage")
+	float PhysicsRadius;
+	UPROPERTY(EditAnywhere,Category="Foliage")
+	bool IsBlackholeInfluencer;
 };

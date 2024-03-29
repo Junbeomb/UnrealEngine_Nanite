@@ -28,6 +28,7 @@ void UTP_WeaponComponent::Fire()
 		return;
 	}
 
+			UE_LOG(LogTemp, Warning, TEXT("%s"),*ProjectileClass);
 	// Try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{

@@ -18,7 +18,8 @@ AFoliageInfluencer::AFoliageInfluencer()
 	FoliageTransMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FoliageTransMesh"));
 	FoliageTransMesh->SetupAttachment(RootComponent);
 
-	PhysicsRadius = 500.f;
+	PhysicsRadius = 0.f;
+	IsBlackholeInfluencer = false;
 }
 
 void AFoliageInfluencer::BeginPlay()
@@ -49,31 +50,60 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 	for (const FHitResult& Hit : OutResults) {
 		if (Hit.bBlockingHit) {
-			UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+				if (IsBlackholeInfluencer) { //블랙홀 리스트에서 찾기
+					UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
 
-			if (InstancedMeshComp) {
-				FTransform InstanceTransform;
-				InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
+					if (InstancedMeshComp) {
+						FTransform InstanceTransform;
+						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
 
-				FString value = *InstancedMeshComp->GetStaticMesh()->GetName();
-				//리스트에서 이름 검색
-				if (FoliageBlueprints.Num() > 0) {
-					for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
-						bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+						FString value = *InstancedMeshComp->GetStaticMesh()->GetName();
+						//리스트에서 이름 검색
 
-						//배열에 해당 SM->BP 가 있으면
-						if (isContain) {
+						if (BlackholeFoliageBlueprints.Num() > 0) {
+							for (const TSubclassOf<AActor> FoliageBP : BlackholeFoliageBlueprints) {
+								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
-							FActorSpawnParameters ActorSpawnParams;
-							ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+								//배열에 해당 SM->BP 가 있으면
+								if (isContain) {
+									FActorSpawnParameters ActorSpawnParams;
+									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-							GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
-							InstancedMeshComp->RemoveInstance(Hit.Item);
+									GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+									InstancedMeshComp->RemoveInstance(Hit.Item);
+								}
+								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
+							}
 						}
-						//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
 					}
 				}
-			}
+				else { //일반 BP 리스트에서 찾기
+					UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+
+					if (InstancedMeshComp) {
+						FTransform InstanceTransform;
+						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
+
+						FString value = *InstancedMeshComp->GetStaticMesh()->GetName();
+						//리스트에서 이름 검색
+
+						if (FoliageBlueprints.Num() > 0) {
+							for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
+								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+
+								//배열에 해당 SM->BP 가 있으면
+								if (isContain) {
+									FActorSpawnParameters ActorSpawnParams;
+									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+									GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+									InstancedMeshComp->RemoveInstance(Hit.Item);
+								}
+								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
+							}
+						}
+					}
+				}
 		}
 	}
 }

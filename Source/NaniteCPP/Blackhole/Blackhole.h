@@ -18,8 +18,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BlackholeBaseMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "ChildActor")
 	UChildActorComponent* FoliageToBPActor;
+	UPROPERTY(EditAnywhere,Category="ChildActor")
+	TSubclassOf<AActor> WhatChildActor;
 
 	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* TurnOffDFRange;
@@ -83,6 +85,15 @@ private:
 			//Bind함수
 			UFUNCTION()
 			void DFRangeTimelineUpdate(float Value);
+
+		//Foliage
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+		class UCurveFloat* FoliageRangeCurve;
+		//callback함수
+		FOnTimelineFloat FoliageRangeTimelineCallback;
+			//Bind함수
+			UFUNCTION()
+			void FoliageRangeTimelineUpdate(float Value);
 
 private:
 	UFUNCTION()

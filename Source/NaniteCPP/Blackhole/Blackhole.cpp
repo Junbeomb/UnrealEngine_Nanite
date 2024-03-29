@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "BlackholeCompBase.h"
+#include "../FoliageInteract/FoliageInfluencer.h"
 
 ABlackhole::ABlackhole()
 {
@@ -21,12 +22,13 @@ ABlackhole::ABlackhole()
 
 	FoliageToBPActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("FoliageToBPActor"));
 	FoliageToBPActor->SetupAttachment(RootComponent);
+
 	
 
 	TurnOffDFRange = CreateDefaultSubobject<USphereComponent>(TEXT("TurnOffDFRange"));
 	TurnOffDFRange->SetupAttachment(RootComponent);
 	TurnOffDFRange->SetSphereRadius(0.f);
-	TurnOffDFRange->SetHiddenInGame(false);
+	TurnOffDFRange->SetHiddenInGame(true);
 
 	PullRange = CreateDefaultSubobject<USphereComponent>(TEXT("PullRange"));
 	PullRange->SetupAttachment(RootComponent);
@@ -34,7 +36,7 @@ ABlackhole::ABlackhole()
 	PullRange->SetHiddenInGame(true);
 
 	//블랙홀 매쉬 설정
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Blackhole/SM_BlackholeMesh"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
 	BlackholeBaseMesh->SetStaticMesh(MeshAsset.Object);
 
 	//블랙홀 생성 Timeline
@@ -55,10 +57,12 @@ ABlackhole::ABlackhole()
 		PullRangeCurve = PullCurve.Object;
 		ConstructorHelpers::FObjectFinder<UCurveFloat> DFCurve(TEXT("/Game/1_Blackhole/Curve/FC_DFRange"));
 		DFRangeCurve = DFCurve.Object;
+		ConstructorHelpers::FObjectFinder<UCurveFloat> FoliageCurve(TEXT("/Game/1_Blackhole/Curve/FC_FoliageRange"));
+		FoliageRangeCurve = FoliageCurve.Object;
 		//callback함수bind
 		PullRangeTimelineCallback.BindUFunction(this, FName("PullRangeTimelineUpdate"));
 		DFRangeTimelineCallback.BindUFunction(this, FName("DFRangeTimelineUpdate"));
-
+		FoliageRangeTimelineCallback.BindUFunction(this, FName("FoliageRangeTimelineUpdate"));
 
 		//pullRange랑 겹치면
 		PullRange->OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapPullRange);
@@ -67,7 +71,6 @@ ABlackhole::ABlackhole()
 void ABlackhole::BeginPlay()
 {
 	Super::BeginPlay();
-
 	//ScaleTimeline
 	if (MeshCurve != nullptr) {
 		MeshTimeline->AddInterpFloat(MeshCurve, floatTimelineCallback,FName("MeshScale"));
@@ -79,10 +82,20 @@ void ABlackhole::BeginPlay()
 	//Die
 	DieBlackhole();
 
+
+	FoliageToBPActor->SetChildActorClass(WhatChildActor);
+	//BP_BH 로 바뀌는 거라고 알려주기
+	if (FoliageToBPActor->GetChildActor()) {
+		AFoliageInfluencer* FoliageInfluencer = Cast<AFoliageInfluencer>(FoliageToBPActor->GetChildActor());
+		if(FoliageInfluencer)
+			FoliageInfluencer->IsBlackholeInfluencer = true;
+	}
+
 	//RangeTimeline 커브가 모두 null이 아닐때
-	if (PullRangeCurve && DFRangeCurve) {
+	if (PullRangeCurve && DFRangeCurve && FoliageRangeCurve) {
 		RangeTimeline->AddInterpFloat(PullRangeCurve, PullRangeTimelineCallback, FName("PullRange"));
 		RangeTimeline->AddInterpFloat(DFRangeCurve, DFRangeTimelineCallback, FName("DFRange"));
+		RangeTimeline->AddInterpFloat(FoliageRangeCurve, FoliageRangeTimelineCallback, FName("FoliageRange"));
 
 		RangeTimeline->SetTimelineFinishedFunc(RangeTimelineFinishedCallback);
 
@@ -116,20 +129,30 @@ void ABlackhole::DFRangeTimelineUpdate(float Value)
 	TurnOffDFRange->SetSphereRadius(Value);
 }
 
+void ABlackhole::FoliageRangeTimelineUpdate(float Value)
+{
+	AFoliageInfluencer* FoliageInfluencer = Cast<AFoliageInfluencer>(FoliageToBPActor->GetChildActor());
+	if(FoliageInfluencer)
+		FoliageInfluencer->PhysicsRadius = Value;
+}
+
 void ABlackhole::RangeTimelineFinish()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Range Timeline Finish"));
 }
 
+
 //PullRange에 actor 가 겹치면
 void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 	UBlackholeCompBase* BHComp = Cast<UBlackholeCompBase>(OtherActor->GetComponentByClass(UBlackholeCompBase::StaticClass()));
 	if (BHComp) {
 		if (!BHComp->GetIsPull()) { //해당 물체를 당기고 있지 않을때만
 			BHComp->SetPullOn(this, GetActorLocation());
 		}
 	}
+
 }
 
 

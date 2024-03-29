@@ -31,7 +31,7 @@ ABasicProjectile::ABasicProjectile()
 	BasicProjectileMesh->SetupAttachment(RootComponent);
 
 	//메쉬 설정
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Blackhole/SM_BlackholeMesh"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
 	BasicProjectileMesh->SetStaticMesh(MeshAsset.Object);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
@@ -51,7 +51,9 @@ void ABasicProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		GetWorld()->SpawnActor<ABlackhole>(ABlackhole::StaticClass(), GetActorLocation(), { 0,0,0 }, ActorSpawnParams);
+		//그냥 Blackhole.h 를 불러주게 되면 FoliageInfluencer 가 null인 블랙홀이 소환된다.(ChildActorClass가 설정된 BP_Blackhole을 불러주어야 한다.)
+		if(BPBlackhole)
+			GetWorld()->SpawnActor<ABlackhole>(BPBlackhole, GetActorLocation(), {0,0,0}, ActorSpawnParams);
 		Destroy();
 	}
 }
