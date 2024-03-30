@@ -130,7 +130,8 @@ bool AFoliageInfluencer::FindTrace()
 
 			FCollisionShape FoliageSphere = FCollisionShape::MakeSphere(PhysicsRadius);
 
-			DrawDebugSphere(GetWorld(), StartLocation, FoliageSphere.GetSphereRadius(), 10, FColor::Purple, false, 0.1f);
+			//µð¹ö±×
+			//DrawDebugSphere(GetWorld(), StartLocation, FoliageSphere.GetSphereRadius(), 10, FColor::Purple, false, 0.1f);
 
 			return GetWorld()->SweepMultiByChannel(OutResults, StartLocation, StartLocation, FQuat::Identity, ECollisionChannel::ECC_Visibility, FoliageSphere);
 		}

@@ -38,7 +38,10 @@ AFoliagePlantBase::AFoliagePlantBase()
 	SoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEffect"));
 	//SoundEffect->SetSound();
 
-	overlapIsSphere = true;
+	//pullRange랑 겹치면
+	OverlappingCapsule->OnComponentBeginOverlap.AddDynamic(this, &AFoliagePlantBase::OverlapSphereOrCapsule);
+
+	overlapIsSphere = false;
 	soundOn = false;
 	sizeBlockPlayer = 200.f;
 	sizeNoPhysics = 350.f;
@@ -54,23 +57,21 @@ AFoliagePlantBase::AFoliagePlantBase()
 
 	//Fast Timeline 생성
 	FastTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("FastTimeline"));
-	//어떤 curve로 쓸거
-	//ConstructorHelpers::FObjectFinder<UCurveFloat> FCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Fast"));
-	//FastCurve = FCurve.Object;
+	//Slow Timeline 생성
+	SlowTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("SlowTimeline"));
 	//callback함수bind
 	floatTimelineCallback.BindUFunction(this, FName("BlendWeightTimelineUpdate"));
 	floatTimelineFinishedCallback.BindUFunction(this, FName("BlendWeightTimelineFinish"));
 
-	//Slow Timeline 생성
-	SlowTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("SlowTimeline"));
-	//어떤 curve로 쓸거
-	//ConstructorHelpers::FObjectFinder<UCurveFloat> SCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Slow"));
-	//SlowCurve = SCurve.Object;
 	
 }
 
-void AFoliagePlantBase::UserConstructionScript()
+// Called when the game starts or when spawned
+void AFoliagePlantBase::BeginPlay()
 {
+	Super::BeginPlay();
+
+	//sphere를 쓸 건지 capsule을 쓸건지
 	if (overlapIsSphere) {
 		OverlappingCapsule->DestroyComponent();
 	}
@@ -81,13 +82,6 @@ void AFoliagePlantBase::UserConstructionScript()
 	if (!soundOn) {
 		SoundEffect->DestroyComponent();
 	}
-
-}
-
-// Called when the game starts or when spawned
-void AFoliagePlantBase::BeginPlay()
-{
-	Super::BeginPlay();
 
 	float physicsRadius = MeshComponent->Bounds.SphereRadius;
 	if (physicsRadius < sizeBlockPlayer) {
@@ -151,7 +145,8 @@ void AFoliagePlantBase::checkToFoliageInfluencer() {
 	if (IsInfluencersInRange) { //주위에 Influencers가 하나라도 있으면.
 		FastTimeline->Stop();
 		SlowTimeline->Stop();
-		MeshComponent->SetAllBodiesBelowPhysicsBlendWeight(TEXT("b_Base"), 1.0f, false, true);
+
+		MeshComponent->SetAllBodiesBelowPhysicsBlendWeight(FName(TEXT("b_Base")), 1.0f, false, true);
 		DoOnce = false;
 	}
 
@@ -184,8 +179,16 @@ void AFoliagePlantBase::NoInfluencersInRangeFunc()
 void AFoliagePlantBase::BlendWeightTimelineUpdate(float Value)
 {
 	PhysicsAlpha = Value;
+	MeshComponent->SetAllBodiesBelowPhysicsBlendWeight(FName(TEXT("b_Base")), PhysicsAlpha, false, true);
+}
 
-	MeshComponent->SetAllBodiesBelowPhysicsBlendWeight(TEXT("b_Base"), PhysicsAlpha, false, true);
+//overlap 되면
+void AFoliagePlantBase::OverlapSphereOrCapsule(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Physics")) {
+		UE_LOG(LogTemp, Warning, TEXT("Physics"));
+		MeshComponent->SetAllBodiesBelowSimulatePhysics(FName(TEXT("b_Base")), true, false);
+	}
 }
 
 //Timeline이 끝나면

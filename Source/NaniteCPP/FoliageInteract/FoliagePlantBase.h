@@ -48,8 +48,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void UserConstructionScript();
-
 private:
 
 	//월드에 있는 FoliageInfluencers 정보들
@@ -83,9 +81,9 @@ private:
 	UPROPERTY()
 	float PhysicsAlpha;
 
-	UPROPERTY(EditAnywhere, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+	UPROPERTY(EditAnywhere, Category = "Timeline");
 	class UCurveFloat* FastCurve;
-	UPROPERTY(EditAnywhere, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+	UPROPERTY(EditAnywhere, Category = "Timeline");
 	class UCurveFloat* SlowCurve;
 
 	//callback함수
@@ -101,5 +99,10 @@ private:
 	//Bind함수
 		UFUNCTION()
 		void BlendWeightTimelineUpdate(float Value);
+
+
+	//overlap 됐을시 시작함수
+	UFUNCTION()
+	void OverlapSphereOrCapsule(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

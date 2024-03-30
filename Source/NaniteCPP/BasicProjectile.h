@@ -46,5 +46,4 @@ public:
 private:
 	class ANaniteCPPCharacter* Character;
 
-
 };
