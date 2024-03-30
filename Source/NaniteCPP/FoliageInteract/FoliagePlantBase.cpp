@@ -55,8 +55,8 @@ AFoliagePlantBase::AFoliagePlantBase()
 	//Fast Timeline 생성
 	FastTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("FastTimeline"));
 	//어떤 curve로 쓸거
-	ConstructorHelpers::FObjectFinder<UCurveFloat> FCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Fast"));
-	FastCurve = FCurve.Object;
+	//ConstructorHelpers::FObjectFinder<UCurveFloat> FCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Fast"));
+	//FastCurve = FCurve.Object;
 	//callback함수bind
 	floatTimelineCallback.BindUFunction(this, FName("BlendWeightTimelineUpdate"));
 	floatTimelineFinishedCallback.BindUFunction(this, FName("BlendWeightTimelineFinish"));
@@ -64,8 +64,8 @@ AFoliagePlantBase::AFoliagePlantBase()
 	//Slow Timeline 생성
 	SlowTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("SlowTimeline"));
 	//어떤 curve로 쓸거
-	ConstructorHelpers::FObjectFinder<UCurveFloat> SCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Slow"));
-	SlowCurve = SCurve.Object;
+	//ConstructorHelpers::FObjectFinder<UCurveFloat> SCurve(TEXT("/Game/2_FoliagePhysics/Curve/FC_Slow"));
+	//SlowCurve = SCurve.Object;
 	
 }
 

@@ -17,19 +17,23 @@ public:
 	// Sets default values for this component's properties
 	UBlackholeCompBase();
 
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//처음 빨려들어갈시 변수들 초기화하는 함수
+	void SetPullOn(ABlackhole* BH, FVector BHLocation);
+	const bool GetIsPull() { return IsPull; };
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:
 
 	void SetDeltaTime(float a) { TickDeltaTime = a; };
 	const float GetDeltaTime() { return TickDeltaTime; };
 
 	void SetIsPull(bool a) { IsPull = a; };
-	const bool GetIsPull() { return IsPull; };
 
 	void SetIsShrink(bool a) { IsShrink = a; };
 	const bool GetIsShrink() { return IsShrink; };
@@ -50,10 +54,6 @@ public:
 		InitialMaxScale = Temp->GetRelativeScale3D();
 	}
 
-	//처음 빨려들어갈시 변수들 초기화하는 함수
-	void SetPullOn(ABlackhole* BH, FVector BHLocation);
-
-private:
 	UPROPERTY()
 	float TickDeltaTime;
 	ABlackhole* Blackhole;

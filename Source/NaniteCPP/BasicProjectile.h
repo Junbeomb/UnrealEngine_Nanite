@@ -15,10 +15,10 @@ class NANITECPP_API ABasicProjectile : public AActor
 	GENERATED_BODY()
 
 	/** Sphere collision component */
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+	UPROPERTY(VisibleDefaultsOnly)
 	USphereComponent* CollisionComp;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BasicProjectileMesh;
 
 	/** Projectile movement component */

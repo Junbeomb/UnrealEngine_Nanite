@@ -15,32 +15,27 @@ public:
 	// Sets default values for this actor's properties
 	ABlackhole();
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+private:
+
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BlackholeBaseMesh;
 
 	UPROPERTY(EditAnywhere, Category = "ChildActor")
 	UChildActorComponent* FoliageToBPActor;
-	UPROPERTY(EditAnywhere,Category="ChildActor")
-	TSubclassOf<AActor> WhatChildActor;
 
 	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* TurnOffDFRange;
 	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* PullRange;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
+	UPROPERTY(EditAnywhere,  Category = "Timeline")
 	class UTimelineComponent* MeshTimeline;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline")
+	UPROPERTY(EditAnywhere,  Category = "Timeline")
 	class UTimelineComponent* RangeTimeline;
-
-
-
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-private:
 
 	//Die 함수
 	bool DieToggle;
@@ -53,7 +48,7 @@ private:
 			UFUNCTION()
 			void SetScaleTimelineFinish();
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+		UPROPERTY(EditAnywhere, Category = "Timeline");
 		class UCurveFloat* MeshCurve;
 		//callback함수
 		FOnTimelineFloat floatTimelineCallback;
@@ -69,7 +64,7 @@ private:
 		void RangeTimelineFinish();
 
 		//Pull
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+		UPROPERTY(EditAnywhere,  Category = "Timeline");
 		class UCurveFloat* PullRangeCurve;
 		//callback함수
 		FOnTimelineFloat PullRangeTimelineCallback;
@@ -78,7 +73,7 @@ private:
 			void PullRangeTimelineUpdate(float Value);
 
 		//DF
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+		UPROPERTY(EditAnywhere,  Category = "Timeline");
 		class UCurveFloat* DFRangeCurve;
 		//callback함수
 		FOnTimelineFloat DFRangeTimelineCallback;
@@ -87,7 +82,7 @@ private:
 			void DFRangeTimelineUpdate(float Value);
 
 		//Foliage
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timeline", Meta = (AllowPrivateAccess = "true"));
+		UPROPERTY(EditAnywhere,  Category = "Timeline");
 		class UCurveFloat* FoliageRangeCurve;
 		//callback함수
 		FOnTimelineFloat FoliageRangeTimelineCallback;

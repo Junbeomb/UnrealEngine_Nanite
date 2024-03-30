@@ -31,8 +31,8 @@ ABasicProjectile::ABasicProjectile()
 	BasicProjectileMesh->SetupAttachment(RootComponent);
 
 	//메쉬 설정
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
-	BasicProjectileMesh->SetStaticMesh(MeshAsset.Object);
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
+	//BasicProjectileMesh->SetStaticMesh(MeshAsset.Object);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));

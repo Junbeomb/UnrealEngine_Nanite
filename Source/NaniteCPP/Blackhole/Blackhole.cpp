@@ -13,7 +13,6 @@ ABlackhole::ABlackhole()
 
 	DieToggle = false;
 
-
 	//루트 컴포넌트 설정 및 매쉬컴포넌트 부착
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
@@ -22,9 +21,7 @@ ABlackhole::ABlackhole()
 
 	FoliageToBPActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("FoliageToBPActor"));
 	FoliageToBPActor->SetupAttachment(RootComponent);
-
 	
-
 	TurnOffDFRange = CreateDefaultSubobject<USphereComponent>(TEXT("TurnOffDFRange"));
 	TurnOffDFRange->SetupAttachment(RootComponent);
 	TurnOffDFRange->SetSphereRadius(0.f);
@@ -36,29 +33,19 @@ ABlackhole::ABlackhole()
 	PullRange->SetHiddenInGame(true);
 
 	//블랙홀 매쉬 설정
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
-	BlackholeBaseMesh->SetStaticMesh(MeshAsset.Object);
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
+	//BlackholeBaseMesh->SetStaticMesh(BlackholeStatic);
 
 	//블랙홀 생성 Timeline
 		MeshTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("MeshTimeline"));
-		//어떤 curve로 쓸거
-		ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("/Game/1_Blackhole/Curve/FC_BlackholeSizeIncreaseCurve"));
-		MeshCurve = Curve.Object;
 		//callback함수bind
 		floatTimelineCallback.BindUFunction(this,FName("SetScaleTimelineUpdate"));
 		floatTimelineFinishedCallback.BindUFunction(this, FName("SetScaleTimelineFinish"));
 
 	//Range Timeline (한 개의 Timeline안에 여러개의 curve 존재)
 		RangeTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("RangeTimeline"));
-		//callback함수bind
 		RangeTimelineFinishedCallback.BindUFunction(this, FName("RangeTimelineFinish"));
-		//어떤 curve로 쓸거
-		ConstructorHelpers::FObjectFinder<UCurveFloat> PullCurve(TEXT("/Game/1_Blackhole/Curve/FC_PullRange"));
-		PullRangeCurve = PullCurve.Object;
-		ConstructorHelpers::FObjectFinder<UCurveFloat> DFCurve(TEXT("/Game/1_Blackhole/Curve/FC_DFRange"));
-		DFRangeCurve = DFCurve.Object;
-		ConstructorHelpers::FObjectFinder<UCurveFloat> FoliageCurve(TEXT("/Game/1_Blackhole/Curve/FC_FoliageRange"));
-		FoliageRangeCurve = FoliageCurve.Object;
+
 		//callback함수bind
 		PullRangeTimelineCallback.BindUFunction(this, FName("PullRangeTimelineUpdate"));
 		DFRangeTimelineCallback.BindUFunction(this, FName("DFRangeTimelineUpdate"));
@@ -71,19 +58,17 @@ ABlackhole::ABlackhole()
 void ABlackhole::BeginPlay()
 {
 	Super::BeginPlay();
+
 	//ScaleTimeline
 	if (MeshCurve != nullptr) {
 		MeshTimeline->AddInterpFloat(MeshCurve, floatTimelineCallback,FName("MeshScale"));
 		MeshTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
-		
 		MeshTimeline->PlayFromStart();
 	}
 
 	//Die
 	DieBlackhole();
 
-
-	FoliageToBPActor->SetChildActorClass(WhatChildActor);
 	//BP_BH 로 바뀌는 거라고 알려주기
 	if (FoliageToBPActor->GetChildActor()) {
 		AFoliageInfluencer* FoliageInfluencer = Cast<AFoliageInfluencer>(FoliageToBPActor->GetChildActor());
@@ -154,7 +139,6 @@ void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, cla
 	}
 
 }
-
 
 
 void ABlackhole::DieBlackhole() 
