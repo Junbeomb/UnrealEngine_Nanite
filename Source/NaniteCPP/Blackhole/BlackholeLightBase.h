@@ -22,6 +22,9 @@ class NANITECPP_API ABlackholeLightBase : public AActor
 
 	UPROPERTY()
 	UBlackholeCompBase* BlackholeComp;
+
+	UPROPERTY(EditAnywhere)
+	float RotationStrength;
 	
 public:	
 	// Sets default values for this actor's properties

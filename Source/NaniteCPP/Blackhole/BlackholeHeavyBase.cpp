@@ -19,6 +19,8 @@ ABlackholeHeavyBase::ABlackholeHeavyBase()
 
 	BlackholeComp = CreateDefaultSubobject<UBlackholeCompBase>(TEXT("BlackholeComp"));
 
+	RotationStrength = 10.f;
+
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +34,10 @@ void ABlackholeHeavyBase::BeginPlay()
 void ABlackholeHeavyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (BlackholeComp->GetIsPull()) {
+		BaseStaticMesh->AddLocalRotation( BlackholeComp->GetInitialRotationDegree()* RotationStrength* DeltaTime);
+	}
 
 }
 

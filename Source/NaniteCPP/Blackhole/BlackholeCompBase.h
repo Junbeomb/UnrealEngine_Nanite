@@ -23,6 +23,8 @@ public:
 	//처음 빨려들어갈시 변수들 초기화하는 함수
 	void SetPullOn(ABlackhole* BH, FVector BHLocation);
 	const bool GetIsPull() { return IsPull; };
+	
+	const FRotator GetInitialRotationDegree() { return InitialRotationDegree; };
 
 protected:
 	// Called when the game starts
