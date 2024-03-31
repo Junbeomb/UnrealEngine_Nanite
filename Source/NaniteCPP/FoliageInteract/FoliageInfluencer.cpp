@@ -42,13 +42,14 @@ void AFoliageInfluencer::BeginPlay()
 	
 }
 
+
 void AFoliageInfluencer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
 	bool isHit = FindTrace();
 
-	for (const FHitResult& Hit : OutResults) {
+	for (FHitResult& Hit : OutResults) {
 		if (Hit.bBlockingHit) {
 				if (IsBlackholeInfluencer) { //블랙홀 리스트에서 찾기
 					UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
@@ -117,7 +118,7 @@ bool AFoliageInfluencer::FindTrace()
 
 		FCollisionShape FoliageSphere = FCollisionShape::MakeSphere(PhysicsRadius);
 
-		DrawDebugSphere(GetWorld(), StartLocation, FoliageSphere.GetSphereRadius(), 10, FColor::Purple, false, 0.1f);
+		//DrawDebugSphere(GetWorld(), StartLocation, FoliageSphere.GetSphereRadius(), 10, FColor::Purple, false, 0.1f);
 
 		return GetWorld()->SweepMultiByChannel(OutResults, StartLocation, StartLocation, FQuat::Identity, ECollisionChannel::ECC_Visibility, FoliageSphere);
 
@@ -144,3 +145,4 @@ bool AFoliageInfluencer::FindTrace()
 
 	return false;
 }
+

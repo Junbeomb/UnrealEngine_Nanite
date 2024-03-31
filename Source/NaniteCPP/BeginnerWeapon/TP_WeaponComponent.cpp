@@ -28,7 +28,7 @@ void UTP_WeaponComponent::Fire()
 		return;
 	}
 
-			UE_LOG(LogTemp, Warning, TEXT("%s"),*ProjectileClass);
+	//UE_LOG(LogTemp, Warning, TEXT("%s"),*ProjectileClass);
 	// Try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{
@@ -45,7 +45,8 @@ void UTP_WeaponComponent::Fire()
 			FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector()*1000 + StartTrace;
 
 			//디버그
-			DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false, 1, 0, 1);
+			DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, true, 1, 0, 1);
+
 
 			//라인 트레이스
 			FVector TargetVector;
