@@ -64,6 +64,6 @@ void UComp_InteractBase::TurnOffHover()
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
-	//Cast<>(GetOwner())
+	UE_LOG(LogTemp, Warning, TEXT("TurnOnToggleFunction"));
 }
 

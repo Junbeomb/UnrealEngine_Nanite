@@ -73,6 +73,12 @@ void ANaniteCPPCharacter::Tick(float DeltaTime)
 					LastCompBase->TurnOffHover();
 				}
 			}
+			else {
+				if (IsValid(LastCompBase)) {
+					LastCompBase->TurnOffHover();
+					IsInteractBaseHover = false;
+				}
+			}
 
 			LastInteractBase = HitResult.GetActor();
 			LastCompBase = Cast<UComp_InteractBase>(HitResult.GetActor()->GetComponentByClass(UComp_InteractBase::StaticClass()));
@@ -105,6 +111,10 @@ void ANaniteCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::Look);
+
+		// Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::Interact);
+
 	}
 	else
 	{
@@ -136,6 +146,15 @@ void ANaniteCPPCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ANaniteCPPCharacter::Interact()
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("Interact"));
+	if (IsInteractBaseHover) {
+		LastCompBase->TurnOnToggleFunction();
 	}
 }
 

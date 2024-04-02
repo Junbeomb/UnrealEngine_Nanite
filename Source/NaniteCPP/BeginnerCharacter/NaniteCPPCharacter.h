@@ -41,18 +41,26 @@ class ANaniteCPPCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	UPROPERTY(EditAnywhere, Category = Interact)
 	AActor* LastInteractBase;
 	UPROPERTY(EditAnywhere, Category = Interact)
 	class UComp_InteractBase* LastCompBase;
 	UPROPERTY(EditAnywhere, Category = Interact)
 	bool IsInteractBaseHover;
+
 	
 public:
 	ANaniteCPPCharacter();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	/** Called for Interact input */
+	void Interact();
+
 
 protected:
 	virtual void BeginPlay();
@@ -81,6 +89,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+
 
 protected:
 	// APawn interface

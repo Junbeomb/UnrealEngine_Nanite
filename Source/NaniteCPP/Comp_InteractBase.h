@@ -26,8 +26,7 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 
 
 
-	UFUNCTION(Category = "Interact")
-	void TurnOnToggleFunction();
+
 
 public:	
 	// Sets default values for this component's properties
@@ -39,6 +38,8 @@ public:
 	void TurnOnHover();
 	UFUNCTION(Category = "Interact")
 	void TurnOffHover();
+	UFUNCTION(Category = "Interact")
+	void TurnOnToggleFunction();
 
 protected:
 	// Called when the game starts
