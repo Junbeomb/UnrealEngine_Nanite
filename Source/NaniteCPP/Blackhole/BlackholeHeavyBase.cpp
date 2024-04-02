@@ -20,7 +20,6 @@ ABlackholeHeavyBase::ABlackholeHeavyBase()
 	BlackholeComp = CreateDefaultSubobject<UBlackholeCompBase>(TEXT("BlackholeComp"));
 
 	RotationStrength = 10.f;
-
 }
 
 // Called when the game starts or when spawned

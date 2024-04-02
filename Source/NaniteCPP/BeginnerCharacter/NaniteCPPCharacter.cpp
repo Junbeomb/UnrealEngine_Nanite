@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "../Comp_InteractBase.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -39,6 +40,8 @@ ANaniteCPPCharacter::ANaniteCPPCharacter()
 
 }
 
+
+
 void ANaniteCPPCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -50,6 +53,37 @@ void ANaniteCPPCharacter::BeginPlay()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
+
+}
+
+void ANaniteCPPCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
+	FVector FinishTrace = FirstPersonCameraComponent->GetForwardVector() * 300.f + StartTrace;
+	FHitResult HitResult;
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, FinishTrace, ECollisionChannel::ECC_Visibility)) { //linetrace 성공 시
+		if (IsValid(HitResult.GetActor()->GetComponentByClass(UComp_InteractBase::StaticClass()))) { //해당 액터가 UComp_InteractBase를 가지고 있으면
+			if (IsValid(LastInteractBase)) { //LastInteractBase안에 값이 있으면
+				if (LastInteractBase->GetName() != HitResult.GetActor()->GetName()) { //이름이 같지 않으면
+					LastCompBase->TurnOffHover();
+				}
+			}
+
+			LastInteractBase = HitResult.GetActor();
+			LastCompBase = Cast<UComp_InteractBase>(HitResult.GetActor()->GetComponentByClass(UComp_InteractBase::StaticClass()));
+			LastCompBase->TurnOnHover();
+			IsInteractBaseHover = true;
+		}
+	}
+	else { //lineTrace 안될 시에
+		if (IsValid(LastCompBase)) {
+			LastCompBase->TurnOffHover();
+			IsInteractBaseHover = false;
 		}
 	}
 
