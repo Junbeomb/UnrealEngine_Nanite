@@ -15,6 +15,9 @@ public:
 	// Sets default values for this actor's properties
 	ABlackhole();
 
+	UPROPERTY()
+	float DFStartRadius;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,6 +39,8 @@ private:
 	class UTimelineComponent* MeshTimeline;
 	UPROPERTY(EditAnywhere,  Category = "Timeline")
 	class UTimelineComponent* RangeTimeline;
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	class UTimelineComponent* DFStartRadiusTimeline;
 
 	//Die 함수
 	bool DieToggle;
@@ -57,7 +62,7 @@ private:
 			void SetScaleTimelineUpdate(float Value);
 
 
-		//Range 타임라인
+	//Range 타임라인
 		//Range 종료시
 		FOnTimelineEvent RangeTimelineFinishedCallback;
 		UFUNCTION()
@@ -89,6 +94,21 @@ private:
 			//Bind함수
 			UFUNCTION()
 			void FoliageRangeTimelineUpdate(float Value);
+
+	//DFStartRadius 타임라인
+			//종료시
+			FOnTimelineEvent DFStartRadiusTimelineFinishedCallback;
+			UFUNCTION()
+			void DFStartRadiusTimelineFinish();
+
+			//Pull
+			UPROPERTY(EditAnywhere, Category = "Timeline");
+			class UCurveFloat* DFStartRadiusCurve;
+			//callback함수
+			FOnTimelineFloat DFStartRadiusTimelineCallback;
+			//Bind함수
+			UFUNCTION()
+			void DFStartRadiusTimelineUpdate(float Value);
 
 private:
 	UFUNCTION()

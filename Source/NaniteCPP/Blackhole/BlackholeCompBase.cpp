@@ -60,6 +60,9 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 				SetIsShrink(true);
 			}
 		}
+
+		//SetNiagara
+
 	}
 }
 

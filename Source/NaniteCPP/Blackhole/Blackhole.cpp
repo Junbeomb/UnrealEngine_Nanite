@@ -53,6 +53,11 @@ ABlackhole::ABlackhole()
 
 		//pullRange랑 겹치면
 		PullRange->OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapPullRange);
+
+	//DFStartRadius 타임라인
+		DFStartRadiusTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DFSTartRadiusTimeline"));
+		DFStartRadiusTimelineCallback.BindUFunction(this, FName("DFStartRadiusTimelineUpdate"));
+		DFStartRadiusTimelineFinishedCallback.BindUFunction(this, FName("DFStartRadiusTimelineFinish"));
 }
 
 void ABlackhole::BeginPlay()
@@ -60,7 +65,7 @@ void ABlackhole::BeginPlay()
 	Super::BeginPlay();
 
 	//ScaleTimeline
-	if (MeshCurve != nullptr) {
+	if (MeshCurve) {
 		MeshTimeline->AddInterpFloat(MeshCurve, floatTimelineCallback,FName("MeshScale"));
 		MeshTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
 		MeshTimeline->PlayFromStart();
@@ -87,23 +92,31 @@ void ABlackhole::BeginPlay()
 		RangeTimeline->PlayFromStart();
 	}
 
+	//DistanceField 점점 증가하는 타임라인
+	if (DFStartRadiusCurve) {
+		DFStartRadiusTimeline->AddInterpFloat(DFStartRadiusCurve, DFStartRadiusTimelineCallback, FName("DFStartRadius"));
+		DFStartRadiusTimeline->SetTimelineFinishedFunc(DFStartRadiusTimelineFinishedCallback);
+		DFStartRadiusTimeline->PlayFromStart();
+	}
+
 }
 
+
+//블랙홀 메쉬 스케일 타임라인
 void ABlackhole::SetScaleTimelineUpdate(float Value)
 {
-	//블랙홀의Mesh 크기가 Timeline에 따라 늘어나거나 줄어듬
 	BlackholeBaseMesh->SetWorldScale3D({ Value,Value,Value });
 }
 
 void ABlackhole::SetScaleTimelineFinish()
 {
-	//줄어드는 Timeline이 끝나면
 	if (DieToggle) {
 		Destroy();
 		return;
 	}
 }
 
+//Range 타임라인들
 void ABlackhole::PullRangeTimelineUpdate(float Value)
 {
 	PullRange->SetSphereRadius(Value);
@@ -123,7 +136,19 @@ void ABlackhole::FoliageRangeTimelineUpdate(float Value)
 
 void ABlackhole::RangeTimelineFinish()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Range Timeline Finish"));
+	//UE_LOG(LogTemp, Warning, TEXT("Range Timeline Finish"));
+}
+
+//DFStartRadius 타임라인
+void ABlackhole::DFStartRadiusTimelineUpdate(float Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%f"), Value);
+	DFStartRadius = Value;
+}
+
+void ABlackhole::DFStartRadiusTimelineFinish()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DFStartRaiuds Timeline Finished"));
 }
 
 

@@ -92,5 +92,9 @@ private:
 	UPROPERTY()
 	bool IsShrink;
 
+	//나이아가라 늦게 시작
+	UPROPERTY()
+	bool LateNiagaraSpawnToggle;
+
 		
 };

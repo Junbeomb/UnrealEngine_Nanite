@@ -12,7 +12,7 @@ ABlackholeHeavyBase::ABlackholeHeavyBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	BaseStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlackholeBaseMesh"));
-	BaseStaticMesh->SetupAttachment(RootComponent);
+	RootComponent = BaseStaticMesh;
 		
 	Niagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	Niagara->SetupAttachment(BaseStaticMesh);

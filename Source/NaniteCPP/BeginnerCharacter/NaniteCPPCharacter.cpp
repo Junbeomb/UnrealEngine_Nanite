@@ -151,8 +151,7 @@ void ANaniteCPPCharacter::Look(const FInputActionValue& Value)
 
 void ANaniteCPPCharacter::Interact()
 {
-
-	UE_LOG(LogTemp, Warning, TEXT("Interact"));
+	//이부분 이어서 하기
 	if (IsInteractBaseHover) {
 		LastCompBase->TurnOnToggleFunction();
 	}
