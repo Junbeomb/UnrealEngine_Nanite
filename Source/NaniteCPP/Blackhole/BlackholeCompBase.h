@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Blackhole.h"
+#include "NiagaraComponent.h"
 #include "BlackholeCompBase.generated.h"
 
 
@@ -32,22 +33,18 @@ protected:
 
 private:
 
-	void SetDeltaTime(float a) { TickDeltaTime = a; };
-	const float GetDeltaTime() { return TickDeltaTime; };
-
-	void SetIsPull(bool a) { IsPull = a; };
-
-	void SetIsShrink(bool a) { IsShrink = a; };
-	const bool GetIsShrink() { return IsShrink; };
-
-	void SetBlackhole(ABlackhole* a) { Blackhole = a; };
 	void SetPullTargetLocation(FVector a) { PullTargetLocation = a; };
 
 	FVector DirectBH() { 
-		//블랙홀과의 거리
+		//블랙홀과의 거리,방향
 		UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		return PullTargetLocation - (SMC->GetComponentLocation());
 	};
+
+	//해당 거리 안에 들어오는지
+	bool IsDistanceToBH(float CriteriaDistance) {
+		return DirectBH().Length() <= CriteriaDistance;
+	}
 
 	void SetPullStartDistance() { PullStartDistanceToBlackhole = DirectBH().Length(); };
 
@@ -57,7 +54,6 @@ private:
 	}
 
 	UPROPERTY()
-	float TickDeltaTime;
 	ABlackhole* Blackhole;
 
 	//빨려들어가는지
@@ -88,13 +84,24 @@ private:
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
 
+	//곧 Destroy됨
+	UPROPERTY()
+	bool IsWillDie;
 	//줄어들고 있는지
 	UPROPERTY()
 	bool IsShrink;
 
 	//나이아가라 늦게 시작
+	UNiagaraComponent* NiagaraComp;
+	float InitialNSVortexForceAmount;
+	float InitialNSSpawnRate;
 	UPROPERTY()
-	bool LateNiagaraSpawnToggle;
+	bool IsLateNiagaraSpawnToggle;
+	UPROPERTY()
+	bool IsVisibleNiagara;
+	//DFStartRadius
+	UPROPERTY()
+	float DFStartDistance;
 
 		
 };

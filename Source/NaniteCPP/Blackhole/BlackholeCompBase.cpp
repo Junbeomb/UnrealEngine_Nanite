@@ -3,6 +3,7 @@
 #include "Math/UnrealMathUtility.h"
 
 
+
 UBlackholeCompBase::UBlackholeCompBase()
 {
 
@@ -12,6 +13,9 @@ UBlackholeCompBase::UBlackholeCompBase()
 	PullStrength = 150.f;
 	LinearDampingAmount = 0.8f;
 	SmallScale = 0.1f;
+
+	InitialNSVortexForceAmount = 1000;
+	InitialNSSpawnRate = 20000;
 }
 
 
@@ -27,17 +31,14 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	SetDeltaTime(DeltaTime);
-
 
 	if (GetIsPull()) {
 		PullDirection = DirectBH(); //액터와 블랙홀 간의 방향 최신화
 		//주인 액터의 staticmeshcomponent 얻어오기
 		UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
-		if (GetIsShrink()) {
+		if (IsShrink) {
 			SMC->SetWorldLocation(PullTargetLocation);
-
 			//임시 Destroy
 			GetOwner()->Destroy();
 		}
@@ -47,7 +48,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			//UE_LOG(LogTemp, Warning, TEXT("%s"), *SMC->GetComponentLocation().ToString());
 
 			//빨아들이기 (AddForce하면 pivot은 움직이지 않음. 따라서 DirectBH에서 GetOwner()->GetActorLocation() 을 하면 안댐)
-			FVector ForceValue = PullDirection * (DistanceNormalized / 5 + (1 - DistanceNormalized)) * PullStrength * GetDeltaTime();
+			FVector ForceValue = PullDirection * (DistanceNormalized / 5 + (1 - DistanceNormalized)) * PullStrength * DeltaTime;
 			SMC->AddForce(ForceValue, "None", true);
 
 			SMC->SetLinearDamping(DistanceNormalized * LinearDampingAmount);
@@ -56,13 +57,45 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			SMC->SetWorldScale3D({ TempScale,TempScale,TempScale });
 
 			//블랙홀가 가까워지면 Shrink On
-			if (PullDirection.Length() <= 30.f) {
-				SetIsShrink(true);
+			if (IsDistanceToBH(30.f)) {
+				IsShrink = true;
 			}
 		}
 
 		//SetNiagara
+		if (IsLateNiagaraSpawnToggle && IsDistanceToBH(DFStartDistance) || !IsLateNiagaraSpawnToggle) {
+			if (IsVisibleNiagara) {
+				NiagaraComp->SetNiagaraVariablePosition(TEXT("Attractor Position Offset"), PullDirection);
+				NiagaraComp->SetNiagaraVariableFloat(TEXT("DFMask Start Distance"), DFStartDistance);
+			}
+			else {
+				NiagaraComp = Cast<UNiagaraComponent>(GetOwner()->GetComponentByClass(UNiagaraComponent::StaticClass()));
+				NiagaraComp->SetVisibility(true);
+				NiagaraComp->SetHiddenInGame(false);
+				NiagaraComp->Activate(true);
 
+				NiagaraComp->SetNiagaraVariablePosition(TEXT("Vortex Axis"), DirectBH());
+				NiagaraComp->SetNiagaraVariableFloat(TEXT("Vortex Force Amount"), InitialNSVortexForceAmount);
+				NiagaraComp->SetNiagaraVariableFloat(TEXT("SpawnRate"), InitialNSSpawnRate);
+
+				IsVisibleNiagara = true;
+			}
+		}
+
+		//SetDFStartDistance
+		if (IsValid(Blackhole)) {
+			DFStartDistance = Blackhole->DFStartRadius;
+		}
+
+		//SetDFMask
+		for (UMaterialInstanceDynamic* a : DMIList) {
+			a->SetScalarParameterValue("DFMaskStartDistance", DFStartDistance - 30);
+		}
+
+		//WillDie
+		if (IsDistanceToBH(DFStartDistance)) {
+			IsWillDie = true;
+		}
 	}
 }
 
@@ -72,7 +105,7 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), BHLocation.X);
 
 	//블랙홀 저장
-	SetBlackhole(BH);
+	Blackhole = BH;
 	//블랙홀 위치 저장
 	SetPullTargetLocation(BHLocation);
 
@@ -103,6 +136,6 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 		a->SetScalarParameterValue("DistanceDissolveToggle", 1.f);
 	}
 
-	SetIsPull(true);
-	SetIsShrink(false);
+	IsPull = true;
+	IsShrink = false;
 }
