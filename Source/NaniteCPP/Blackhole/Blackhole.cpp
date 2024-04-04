@@ -25,7 +25,7 @@ ABlackhole::ABlackhole()
 	TurnOffDFRange = CreateDefaultSubobject<USphereComponent>(TEXT("TurnOffDFRange"));
 	TurnOffDFRange->SetupAttachment(RootComponent);
 	TurnOffDFRange->SetSphereRadius(0.f);
-	TurnOffDFRange->SetHiddenInGame(false);
+	TurnOffDFRange->SetHiddenInGame(true);
 
 	PullRange = CreateDefaultSubobject<USphereComponent>(TEXT("PullRange"));
 	PullRange->SetupAttachment(RootComponent);
@@ -189,7 +189,7 @@ void ABlackhole::DieBlackhole()
 			MeshTimeline->Reverse();
 	});
 
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, TimerDelegate, 6, false);
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, TimerDelegate, 12, false);
 
 }
 

@@ -17,6 +17,7 @@ ABlackholeHeavyBase::ABlackholeHeavyBase()
 	Niagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	Niagara->SetupAttachment(BaseStaticMesh);
 
+
 	BlackholeComp = CreateDefaultSubobject<UBlackholeCompBase>(TEXT("BlackholeComp"));
 
 	RotationStrength = 10.f;
@@ -27,6 +28,15 @@ void ABlackholeHeavyBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void ABlackholeHeavyBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	Niagara->SetVisibility(false);
+	Niagara->SetHiddenInGame(true);
+	Niagara->SetAutoActivate(false);
 }
 
 // Called every frame

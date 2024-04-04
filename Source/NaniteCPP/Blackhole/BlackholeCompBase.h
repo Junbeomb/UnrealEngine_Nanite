@@ -96,6 +96,12 @@ private:
 	UNiagaraComponent* NiagaraComp;
 	float InitialNSVortexForceAmount;
 	float InitialNSSpawnRate;
+
+	float DecreaseTime;
+	float DecreaseTimeTotal;
+	float DecreaseSpawnRateTime;
+	float DecreaseSpawnRateTimeTotal;
+
 	UPROPERTY()
 	bool IsLateNiagaraSpawnToggle;
 	UPROPERTY()

@@ -13,7 +13,13 @@ UBlackholeCompBase::UBlackholeCompBase()
 	SmallScale = 0.1f;
 
 	InitialNSVortexForceAmount = 1000;
-	InitialNSSpawnRate = 20000;
+	InitialNSSpawnRate = 7000;
+
+	DecreaseTime = 0.0f;
+	DecreaseTimeTotal = 3.0f; //3초간 줄어들기
+
+	DecreaseSpawnRateTime = 0.0f;
+	DecreaseSpawnRateTimeTotal = 3.0f; //3초간 줄어들기
 
 }
 
@@ -43,8 +49,33 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 		if (IsShrink) {
 			SMC->SetWorldLocation(PullTargetLocation);
-			//임시 Destroy
-			GetOwner()->Destroy();
+
+			//Niagara Particle 감소
+			if (NiagaraComp) {
+				//VortexForce
+				DecreaseTime += DeltaTime;
+				if (DecreaseTime <= DecreaseTimeTotal) {
+					float VortexAmount = InitialNSVortexForceAmount - ((DecreaseTime / DecreaseTimeTotal) * InitialNSVortexForceAmount);
+					VortexAmount = UKismetMathLibrary::MapRangeClamped(VortexAmount, 0, InitialNSVortexForceAmount, 0, InitialNSVortexForceAmount);
+					NiagaraComp->SetNiagaraVariableFloat(TEXT("Vortex Force Amount"), VortexAmount);
+				}
+				else {
+					//SpawnRate
+					DecreaseSpawnRateTime += DeltaTime;
+					if (DecreaseSpawnRateTime <= DecreaseSpawnRateTimeTotal) {
+						float SpawnAmount = InitialNSSpawnRate - ((DecreaseSpawnRateTime / DecreaseSpawnRateTimeTotal) * InitialNSSpawnRate);
+						SpawnAmount = UKismetMathLibrary::MapRangeClamped(SpawnAmount, 0, InitialNSSpawnRate, 0, InitialNSSpawnRate);
+				UE_LOG(LogTemp, Warning, TEXT("%f"), SpawnAmount);
+						NiagaraComp->SetNiagaraVariableFloat(TEXT("SpawnRate"), SpawnAmount);
+					}
+					else {
+						//Destroy
+						UE_LOG(LogTemp, Warning, TEXT("Destroy"));
+						GetOwner()->Destroy();
+					}
+				}
+			}
+
 		}
 		else {
 			//블랙홀 과의 거리 0~1 로 만든 값 저장
@@ -62,6 +93,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			//블랙홀가 가까워지면 Shrink On
 			if (IsDistanceToBH(30.f)) {
+				SMC->SetHiddenInGame(true);
 				IsShrink = true;
 			}
 		}
@@ -146,7 +178,7 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 	}
 
 	IsPull = true;
-	IsShrink = false;
+	//IsShrink = false;
 }
 
 FVector UBlackholeCompBase::DirectBH() {

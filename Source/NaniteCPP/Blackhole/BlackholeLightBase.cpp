@@ -18,6 +18,7 @@ ABlackholeLightBase::ABlackholeLightBase()
 	BlackholeComp = CreateDefaultSubobject<UBlackholeCompBase>(TEXT("BlackholeComp"));
 
 	RotationStrength = 20.f;
+
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +28,14 @@ void ABlackholeLightBase::BeginPlay()
 	
 }
 
+void ABlackholeLightBase::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	Niagara->SetVisibility(false);
+	Niagara->SetHiddenInGame(true);
+	Niagara->SetAutoActivate(false);
+}
 // Called every frame
 void ABlackholeLightBase::Tick(float DeltaTime)
 {
