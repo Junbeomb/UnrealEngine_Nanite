@@ -25,12 +25,12 @@ ABlackhole::ABlackhole()
 	TurnOffDFRange = CreateDefaultSubobject<USphereComponent>(TEXT("TurnOffDFRange"));
 	TurnOffDFRange->SetupAttachment(RootComponent);
 	TurnOffDFRange->SetSphereRadius(0.f);
-	TurnOffDFRange->SetHiddenInGame(true);
+	TurnOffDFRange->SetHiddenInGame(false);
 
 	PullRange = CreateDefaultSubobject<USphereComponent>(TEXT("PullRange"));
 	PullRange->SetupAttachment(RootComponent);
 	PullRange->SetSphereRadius(0.f);
-	PullRange->SetHiddenInGame(true);
+	PullRange->SetHiddenInGame(false);
 
 	//∫Ì∑¢»¶ ∏≈Ω¨ º≥¡§
 	//ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/1_Blackhole/SM_BlackholeMesh"));
@@ -51,8 +51,10 @@ ABlackhole::ABlackhole()
 		DFRangeTimelineCallback.BindUFunction(this, FName("DFRangeTimelineUpdate"));
 		FoliageRangeTimelineCallback.BindUFunction(this, FName("FoliageRangeTimelineUpdate"));
 
+		//DFRange∂˚ ∞„ƒ°∏È
+		TurnOffDFRange -> OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapDFRange);
 		//pullRange∂˚ ∞„ƒ°∏È
-		PullRange->OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapPullRange);
+		PullRange -> OnComponentBeginOverlap.AddDynamic(this, &ABlackhole::OverlapPullRange);
 
 	//DFStartRadius ≈∏¿”∂Û¿Œ
 		DFStartRadiusTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DFSTartRadiusTimeline"));
@@ -142,13 +144,13 @@ void ABlackhole::RangeTimelineFinish()
 //DFStartRadius ≈∏¿”∂Û¿Œ
 void ABlackhole::DFStartRadiusTimelineUpdate(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Value);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), Value);
 	DFStartRadius = Value;
 }
 
 void ABlackhole::DFStartRadiusTimelineFinish()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DFStartRaiuds Timeline Finished"));
+	//UE_LOG(LogTemp, Warning, TEXT("DFStartRaiuds Timeline Finished"));
 }
 
 
@@ -163,6 +165,14 @@ void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, cla
 		}
 	}
 
+}
+
+void ABlackhole::OverlapDFRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UBlackholeCompBase* BHComp = Cast<UBlackholeCompBase>(OtherActor->GetComponentByClass(UBlackholeCompBase::StaticClass()));
+	if (BHComp) {
+		BHComp->SetDFOff(false);
+	}
 }
 
 

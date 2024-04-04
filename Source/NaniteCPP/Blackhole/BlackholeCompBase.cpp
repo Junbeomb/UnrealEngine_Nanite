@@ -6,9 +6,7 @@
 
 UBlackholeCompBase::UBlackholeCompBase()
 {
-
 	PrimaryComponentTick.bCanEverTick = true;
-
 
 	PullStrength = 150.f;
 	LinearDampingAmount = 0.8f;
@@ -16,14 +14,18 @@ UBlackholeCompBase::UBlackholeCompBase()
 
 	InitialNSVortexForceAmount = 1000;
 	InitialNSSpawnRate = 20000;
+
 }
+
+
 
 
 // Called when the game starts
 void UBlackholeCompBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 }
 
 
@@ -31,11 +33,13 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!SMC) return;
+
 
 	if (GetIsPull()) {
 		PullDirection = DirectBH(); //액터와 블랙홀 간의 방향 최신화
 		//주인 액터의 staticmeshcomponent 얻어오기
-		UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		
 
 		if (IsShrink) {
 			SMC->SetWorldLocation(PullTargetLocation);
@@ -85,11 +89,16 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		//SetDFStartDistance
 		if (IsValid(Blackhole)) {
 			DFStartDistance = Blackhole->DFStartRadius;
+			//UE_LOG(LogTemp, Warning, TEXT("%f"), Blackhole->DFStartRadius);
 		}
 
 		//SetDFMask
 		for (UMaterialInstanceDynamic* a : DMIList) {
-			a->SetScalarParameterValue("DFMaskStartDistance", DFStartDistance - 30);
+			
+			//거리 최대 200 만큼 빼주기
+			a->SetScalarParameterValue(TEXT("DFMaskStartDistance"), DFStartDistance);
+			//최대 대략 70 
+			a->SetScalarParameterValue(TEXT("DFMaskFalloff"), DFStartDistance/3);
 		}
 
 		//WillDie
@@ -101,6 +110,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 {
+	if (!SMC) return;
 
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), BHLocation.X);
 
@@ -111,7 +121,6 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 
 	SetPullStartDistance();
 	SetInitialMaxScale();
-	UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 	SMC->SetSimulatePhysics(true);
 	SMC->SetEnableGravity(false);
 	SMC->SetAngularDamping(100.f);
@@ -133,9 +142,22 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 
 	//머티리얼 사라지게 하기
 	for (UMaterialInstanceDynamic* a : DMIList) {
-		a->SetScalarParameterValue("DistanceDissolveToggle", 1.f);
+		a->SetScalarParameterValue(TEXT("DistanceDissolveToggle"), 1.f);
 	}
 
 	IsPull = true;
 	IsShrink = false;
+}
+
+FVector UBlackholeCompBase::DirectBH() {
+	//블랙홀과의 거리,방향
+	return PullTargetLocation - (SMC->GetComponentLocation());
+};
+
+void UBlackholeCompBase::SetDFOff(bool IsOn)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("%f"), Blackhole->DFStartRadius);
+	if (!SMC) return;
+
+	SMC->SetAffectDistanceFieldLighting(IsOn);
 }

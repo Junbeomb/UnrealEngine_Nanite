@@ -27,6 +27,8 @@ public:
 	
 	const FRotator GetInitialRotationDegree() { return InitialRotationDegree; };
 
+	void SetDFOff(bool IsOn);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -35,11 +37,7 @@ private:
 
 	void SetPullTargetLocation(FVector a) { PullTargetLocation = a; };
 
-	FVector DirectBH() { 
-		//블랙홀과의 거리,방향
-		UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		return PullTargetLocation - (SMC->GetComponentLocation());
-	};
+	FVector DirectBH();
 
 	//해당 거리 안에 들어오는지
 	bool IsDistanceToBH(float CriteriaDistance) {
@@ -52,6 +50,9 @@ private:
 		UStaticMeshComponent* Temp = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass())); 
 		InitialMaxScale = Temp->GetRelativeScale3D();
 	}
+
+	UPROPERTY()
+	UStaticMeshComponent* SMC;
 
 	UPROPERTY()
 	ABlackhole* Blackhole;
