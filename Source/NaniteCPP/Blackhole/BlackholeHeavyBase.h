@@ -20,7 +20,7 @@ class NANITECPP_API ABlackholeHeavyBase : public AActor
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Niagara;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	UBlackholeCompBase* BlackholeComp;
 
 	UPROPERTY(EditAnywhere)

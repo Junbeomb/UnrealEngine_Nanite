@@ -92,9 +92,11 @@ private:
 	UPROPERTY()
 	bool IsShrink;
 
-	//나이아가라 늦게 시작
+	//나이아가라
 	UNiagaraComponent* NiagaraComp;
+	UPROPERTY(EditAnywhere, Category = "Niagara")
 	float InitialNSVortexForceAmount;
+	UPROPERTY(EditAnywhere, Category = "Niagara")
 	float InitialNSSpawnRate;
 
 	float DecreaseTime;
@@ -102,6 +104,7 @@ private:
 	float DecreaseSpawnRateTime;
 	float DecreaseSpawnRateTimeTotal;
 
+	//나이아가라 늦게 시작
 	UPROPERTY()
 	bool IsLateNiagaraSpawnToggle;
 	UPROPERTY()

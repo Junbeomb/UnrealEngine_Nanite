@@ -45,7 +45,6 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	if (GetIsPull()) {
 		PullDirection = DirectBH(); //액터와 블랙홀 간의 방향 최신화
 		//주인 액터의 staticmeshcomponent 얻어오기
-		
 
 		if (IsShrink) {
 			SMC->SetWorldLocation(PullTargetLocation);
@@ -65,7 +64,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 					if (DecreaseSpawnRateTime <= DecreaseSpawnRateTimeTotal) {
 						float SpawnAmount = InitialNSSpawnRate - ((DecreaseSpawnRateTime / DecreaseSpawnRateTimeTotal) * InitialNSSpawnRate);
 						SpawnAmount = UKismetMathLibrary::MapRangeClamped(SpawnAmount, 0, InitialNSSpawnRate, 0, InitialNSSpawnRate);
-				UE_LOG(LogTemp, Warning, TEXT("%f"), SpawnAmount);
+						//UE_LOG(LogTemp, Warning, TEXT("%f"), SpawnAmount);
 						NiagaraComp->SetNiagaraVariableFloat(TEXT("SpawnRate"), SpawnAmount);
 					}
 					else {
@@ -81,7 +80,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			//블랙홀 과의 거리 0~1 로 만든 값 저장
 			DistanceNormalized = UKismetMathLibrary::MapRangeClamped(PullDirection.Length(), 0, PullStartDistanceToBlackhole, 0, 1);
 			//UE_LOG(LogTemp, Warning, TEXT("%s"), *SMC->GetComponentLocation().ToString());
-
+			UE_LOG(LogTemp, Warning, TEXT("Shrink false"));
 			//빨아들이기 (AddForce하면 pivot은 움직이지 않음. 따라서 DirectBH에서 GetOwner()->GetActorLocation() 을 하면 안댐)
 			FVector ForceValue = PullDirection * (DistanceNormalized / 5 + (1 - DistanceNormalized)) * PullStrength * DeltaTime;
 			SMC->AddForce(ForceValue, "None", true);
