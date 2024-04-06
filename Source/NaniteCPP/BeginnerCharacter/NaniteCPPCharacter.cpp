@@ -62,6 +62,8 @@ void ANaniteCPPCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	WalkSpeed = GetVelocity().Length();
+
 	FVector StartTrace = FirstPersonCameraComponent->GetComponentLocation();
 	FVector FinishTrace = FirstPersonCameraComponent->GetForwardVector() * 300.f + StartTrace;
 	FHitResult HitResult;
@@ -115,6 +117,9 @@ void ANaniteCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::Interact);
 
+		// Interact
+		EnhancedInputComponent->BindAction(WatchMapAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::WatchMap);
+
 	}
 	else
 	{
@@ -154,6 +159,16 @@ void ANaniteCPPCharacter::Interact()
 	//이부분 이어서 하기
 	if (IsInteractBaseHover) {
 		LastCompBase->TurnOnToggleFunction();
+	}
+}
+
+void ANaniteCPPCharacter::WatchMap()
+{
+	if (AnimWatchMap == 0.f) {
+		AnimWatchMap = 1.f;
+	}
+	else {
+		AnimWatchMap = 0.f;
 	}
 }
 

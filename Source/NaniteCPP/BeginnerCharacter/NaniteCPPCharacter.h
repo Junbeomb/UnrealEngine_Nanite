@@ -22,7 +22,7 @@ class ANaniteCPPCharacter : public ACharacter
 	GENERATED_BODY()
 
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
+	UPROPERTY(VisibleDefaultsOnly,BlueprintReadWrite, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* Mesh1P;
 
 	/** First person camera */
@@ -44,12 +44,18 @@ class ANaniteCPPCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* WatchMapAction;
+
 	UPROPERTY(EditAnywhere, Category = Interact)
 	AActor* LastInteractBase;
 	UPROPERTY(EditAnywhere, Category = Interact)
 	class UComp_InteractBase* LastCompBase;
 	UPROPERTY(EditAnywhere, Category = Interact)
 	bool IsInteractBaseHover;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
+	float AnimWatchMap;
 
 	
 public:
@@ -58,8 +64,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	float WalkSpeed;
+
 	/** Called for Interact input */
 	void Interact();
+
+	/** Called for WatchMap input */
+	void WatchMap();
 
 
 protected:
