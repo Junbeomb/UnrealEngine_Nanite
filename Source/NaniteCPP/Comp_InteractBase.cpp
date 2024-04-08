@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+
 #include "Comp_InteractBase.h"
 
 
@@ -20,7 +21,6 @@ UComp_InteractBase::UComp_InteractBase()
 void UComp_InteractBase::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
 	
 }
