@@ -194,6 +194,10 @@ void AFoliagePlantBase::OverlapSphereOrCapsule(class UPrimitiveComponent* Overla
 //Timeline이 끝나면
 void AFoliagePlantBase::BlendWeightTimelineFinish()
 {
+
+	//크기만큼 대기하다가 BP로 변환시키기
+	//블프 완성되면 ㄱㄱ
+
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComponent->SetSimulatePhysics(false);
 

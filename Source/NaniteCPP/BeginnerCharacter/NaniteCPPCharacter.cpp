@@ -10,7 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
-#include "../Comp_InteractBase.h"
+#include "../InteractionSystem/Comp_InteractBase.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
