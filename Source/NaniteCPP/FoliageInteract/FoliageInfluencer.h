@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "FoliageInfluencer.generated.h"
 
+UENUM(BlueprintType)
+enum class EFoliageType : uint8
+{
+	JustGo UMETA(DisplayName = "JustGo"),
+	Blackhole UMETA(DisplayName = "Blackhole"),
+	ChangeBlend UMETA(DisplayName = "ChangeBlend")
+};
+
+
 UCLASS()
 class NANITECPP_API AFoliageInfluencer : public AActor
 {
@@ -25,6 +34,11 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 	//ºÎµúÈùcomponent, actorµéÀ» Ã£´Â ÇÔ¼ö
 	bool FindTrace();
 	TArray<FHitResult> OutResults;
+
+	UFUNCTION()
+	void CheckBlend(AActor* CheckActor);
+	UPROPERTY(EditAnywhere,Category="Foliage")
+	EFoliageType FoliageType;
 
 protected:
 	virtual void BeginPlay() override;

@@ -26,9 +26,12 @@ public:
 
 	UFUNCTION()
 	void StartBlend();
+	UFUNCTION()
+	void JustGo();
 
 	UFUNCTION()
 	void CreateDMIAndDFOff(UPrimitiveComponent* UComp,int NumMaterial);
+
 
 private:
 

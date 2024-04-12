@@ -4,6 +4,10 @@
 #include "FoliageInfluencer.h"
 #include "Kismet/GameplayStatics.h"
 #include "FoliageHelpProjectile.h"
+#include "FoliagePlantBase.h"
+#include "FoliageRockBase.h"
+#include "../Blending/Comp_BlendMesh.h"
+#include <string.h>
 
 #include "Components/InstancedStaticMeshComponent.h"
 //#include "Containers/UnrealString.h"
@@ -22,23 +26,13 @@ AFoliageInfluencer::AFoliageInfluencer()
 	IsBlackholeInfluencer = false;
 }
 
+
+
 void AFoliageInfluencer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TSubclassOf<AFoliageHelpProjectile> ClassToFind;
-	ClassToFind = AFoliageHelpProjectile::StaticClass();
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
 
-	if (FoundActors.Num() == 0) {
-		FActorSpawnParameters ActorSpawnParams;
-		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
-		FTransform transform;
-		transform.SetScale3D({ 1,1,1 });
-		GetWorld()->SpawnActor<AFoliageHelpProjectile>(AFoliageHelpProjectile::StaticClass(), transform, ActorSpawnParams);
-	}
 	
 }
 
@@ -90,14 +84,57 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 						if (FoliageBlueprints.Num() > 0) {
 							for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
-								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
 								//배열에 해당 SM->BP 가 있으면
 								if (isContain) {
 									FActorSpawnParameters ActorSpawnParams;
 									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-									GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인====================================================
+									AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
+									if (PlantBase != nullptr) {
+										FString Right;
+										value.Split("SM_", NULL,&Right);
+
+										if (Right.Contains("L_")) {
+											USkeletalMeshComponent* SK = PlantBase->MeshComponent;
+											int NumMaterial = SK->GetNumMaterials();
+
+											for (int i = 0; i < NumMaterial; ++i) {
+												UMaterialInstanceDynamic* TempDMI = SK->CreateDynamicMaterialInstance(i, SK->GetMaterial(i));
+												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+											}
+										}
+										//블랜드 컴포넌트 유무 검사 및 함수 실행
+										CheckBlend(PlantBase);
+									}
+									else {
+										AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
+										if (RockBase != nullptr) {
+											FString Right;
+											value.Split("SM_", NULL, &Right);
+
+											if (Right.Contains("L_")) {
+												UStaticMeshComponent* SM = RockBase->MeshComponent;
+												int NumMaterial = SM->GetNumMaterials();
+
+												for (int i = 0; i < NumMaterial; ++i) {
+													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+												}
+											}
+											//블랜드 컴포넌트 유무 검사 및 함수 실행
+											CheckBlend(RockBase);
+										}
+									}
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인===================================================
 									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
 								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
@@ -144,5 +181,21 @@ bool AFoliageInfluencer::FindTrace()
 	}
 
 	return false;
+}
+
+void AFoliageInfluencer::CheckBlend(AActor* CheckActor)
+{
+	UComp_BlendMesh* UBM = Cast<UComp_BlendMesh>(CheckActor->GetComponentByClass(UComp_BlendMesh::StaticClass()));
+
+	if (IsValid(CheckActor->GetComponentByClass(UComp_BlendMesh::StaticClass()))) {
+		switch (FoliageType) {
+		case EFoliageType::JustGo:
+			UBM->JustGo();
+			break;
+		case EFoliageType::ChangeBlend:
+			UBM->StartBlend();
+			break;
+		}
+	}
 }
 

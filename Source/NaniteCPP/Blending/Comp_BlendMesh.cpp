@@ -23,7 +23,7 @@ UComp_BlendMesh::UComp_BlendMesh()
 void UComp_BlendMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	StartBlend();
+	//StartBlend();
 	// ...
 	
 }
@@ -98,6 +98,11 @@ void UComp_BlendMesh::StartBlend()
 		SKC->SetAffectDistanceFieldLighting(false);
 		CreateDMIAndDFOff(SKC, SKC->GetNumMaterials());
 	}
+}
+
+void UComp_BlendMesh::JustGo()
+{
+	UE_LOG(LogTemp, Warning, TEXT("JustGo"));
 }
 
 void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMaterial)
