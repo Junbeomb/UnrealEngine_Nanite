@@ -110,6 +110,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
 											}
 										}
+
 										//블랜드 컴포넌트 유무 검사 및 함수 실행
 										CheckBlend(PlantBase);
 									}
