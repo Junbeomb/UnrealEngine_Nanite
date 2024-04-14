@@ -25,7 +25,7 @@ void UComp_BlendMesh::BeginPlay()
 	Super::BeginPlay();
 	//StartBlend();
 	// ...
-	
+	StaticOrSkeletal();
 }
 
 
@@ -103,6 +103,26 @@ void UComp_BlendMesh::StartBlend()
 void UComp_BlendMesh::JustGo()
 {
 	UE_LOG(LogTemp, Warning, TEXT("JustGo"));
+}
+
+UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
+{
+	UMeshComponent* TempMesh;
+	if (IsValid(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()))) {
+		UE_LOG(LogTemp, Warning, TEXT("Static"));
+		OwnerIsStatic = true;
+		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+		return TempMesh;
+	}
+	else if(IsValid(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()))){
+		UE_LOG(LogTemp, Warning, TEXT("Skeletal"));
+		OwnerIsStatic = false;
+		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
+		return TempMesh;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("Nothing"));
+	return NULL;
 }
 
 void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMaterial)

@@ -30,6 +30,9 @@ public:
 	void JustGo();
 
 	UFUNCTION()
+	UMeshComponent* StaticOrSkeletal();
+
+	UFUNCTION()
 	void CreateDMIAndDFOff(UPrimitiveComponent* UComp,int NumMaterial);
 
 
@@ -44,6 +47,8 @@ private:
 	bool IsBlendStart;
 
 	bool IsHighQuality;
+
+	bool OwnerIsStatic;
 
 	float SumSeconds;
 
