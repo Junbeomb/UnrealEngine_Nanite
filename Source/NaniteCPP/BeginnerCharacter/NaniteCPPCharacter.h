@@ -95,6 +95,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
 
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	bool HighQualityGun;
+
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

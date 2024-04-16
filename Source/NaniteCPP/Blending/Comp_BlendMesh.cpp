@@ -2,6 +2,8 @@
 
 
 #include "Comp_BlendMesh.h"
+#include "NaniteCPP/BeginnerCharacter/NaniteCPPCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "TurnOffDF.h"
 
 // Sets default values for this component's properties
@@ -52,17 +54,20 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			for (UMaterialInstanceDynamic* a : DMIList) {
 				a->SetScalarParameterValue(TEXT("IsChanging?"), 0.0f);
 				a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
-				if (IsHighQuality) {
-					a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
+				if (IsLow()) {
+					a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
 				}
 				else {
-					a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
+					a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
 				}
 			}
 			
 			IsHighQuality = !IsHighQuality;
 
 			IsBlendStart = false;
+
+			//
+			D_FinishBlending.Broadcast();
 		}
 		else { //머티리얼 바꾸기
 			for (UMaterialInstanceDynamic* a : DMIList) {
@@ -76,6 +81,16 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 void UComp_BlendMesh::StartBlend()
 {
+
+	bool IsLowObject = IsLow();
+
+	ANaniteCPPCharacter* Player = Cast<ANaniteCPPCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(),0));
+	if (Player->HighQualityGun != IsLowObject) {
+		//UE_LOG(LogTemp, Warning, TEXT("%s"),*Player->GetName());
+		D_FinishBlending.Broadcast();
+		return;
+	}
+
 	IsBlendStart = true;
 	
 	FVector Origin;
@@ -109,20 +124,29 @@ UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
 {
 	UMeshComponent* TempMesh;
 	if (IsValid(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()))) {
-		UE_LOG(LogTemp, Warning, TEXT("Static"));
+		//UE_LOG(LogTemp, Warning, TEXT("Static"));
 		OwnerIsStatic = true;
 		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		return TempMesh;
 	}
 	else if(IsValid(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()))){
-		UE_LOG(LogTemp, Warning, TEXT("Skeletal"));
+		//UE_LOG(LogTemp, Warning, TEXT("Skeletal"));
 		OwnerIsStatic = false;
 		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 		return TempMesh;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Nothing"));
+	UE_LOG(LogTemp, Warning, TEXT("Stati or Skeletal Both Nothing"));
 	return NULL;
+}
+
+bool UComp_BlendMesh::IsLow()
+{
+	UMeshComponent* TempMesh = StaticOrSkeletal();
+	float tempCheck;
+	TempMesh->CreateDynamicMaterialInstance(0, TempMesh->GetMaterial(0))->GetScalarParameterValue(TEXT("IsLow?"),tempCheck);
+
+	return tempCheck > 0.5;
 }
 
 void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMaterial)

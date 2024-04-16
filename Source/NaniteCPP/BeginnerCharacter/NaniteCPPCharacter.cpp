@@ -21,7 +21,7 @@ ANaniteCPPCharacter::ANaniteCPPCharacter()
 {
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
-	
+	HighQualityGun = false;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -37,6 +37,7 @@ ANaniteCPPCharacter::ANaniteCPPCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(-90.0f, 0.0f, 90.0f));
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(0.0f, 10.f, 0.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+
 
 }
 

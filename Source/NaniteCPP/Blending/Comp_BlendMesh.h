@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Comp_BlendMesh.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NANITECPP_API UComp_BlendMesh : public UActorComponent
 {
@@ -31,9 +31,14 @@ public:
 
 	UFUNCTION()
 	UMeshComponent* StaticOrSkeletal();
+	UFUNCTION()
+	bool IsLow();
 
 	UFUNCTION()
 	void CreateDMIAndDFOff(UPrimitiveComponent* UComp,int NumMaterial);
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FD_Delegate D_FinishBlending;
 
 
 private:
