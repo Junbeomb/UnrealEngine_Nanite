@@ -6,7 +6,7 @@
 #include "Interface_Interact.h"
 #include "InteractStatue.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
 UCLASS()
 class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 {
@@ -23,6 +23,11 @@ public:
 	UComp_InteractBase* CompBase;
 
 	virtual void PressEStart() override;
+
+	FD_Delegate D_BPStartBlend;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FD_Delegate D_BPFinishBlend;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

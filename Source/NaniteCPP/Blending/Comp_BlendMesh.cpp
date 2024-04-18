@@ -40,9 +40,8 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		SumSeconds += DeltaTime;
 
 		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //다 바꿨으면
-			//UE_LOG(LogTemp, Warning, TEXT("Finish"));
+			
 			IsTickStart = false;
-			SumSeconds = 0.0f;
 
 			if (SMC){
 				SMC->SetAffectDistanceFieldLighting(false);
@@ -51,27 +50,9 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				SKC->SetAffectDistanceFieldLighting(false);
 			}
 
-			for (UMaterialInstanceDynamic* a : DMIList) {
-				a->SetScalarParameterValue(TEXT("IsChanging?"), 0.0f);
-				a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
-				if (IsLow()) {
-					a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
-				}
-				else {
-					a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
-				}
-			}
-			
-			IsHighQuality = !IsHighQuality;
+			UpScore();
+			FinishBlendSetVariable();
 
-			IsBlendStart = false;
-
-			if (Player) {
-				UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
-				Player->UpScore();
-			}
-
-			//
 			D_FinishBlending.Broadcast();
 		}
 		else { //머티리얼 바꾸기
@@ -82,7 +63,7 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 	else if(IsMassTickStart){
 		for (UMaterialInstanceDynamic* a : DMIList) {
-			a->SetScalarParameterValue(TEXT("Subtract"), SumSeconds * ExtentSubtractAmountOneSecond);
+			a->SetScalarParameterValue(TEXT("MassRadius"), SumSeconds * ExtentSubtractAmountOneSecond);
 		}
 	}
 
@@ -124,9 +105,51 @@ void UComp_BlendMesh::StartBlend()
 	}
 }
 
+void UComp_BlendMesh::StartBlendMass(FVector CenterLocation, AInteractStatue* InteractStatue)
+{
+	BlendMassStatue = InteractStatue;
+	IsBlendStart = true;
+	if (IsLow()) {
+		DMIList.Empty();
+		UMeshComponent* TempMesh = StaticOrSkeletal();
+		int NumMaterial = TempMesh->GetNumMaterials();
+
+		for (int i = 0; i < NumMaterial; ++i) {
+			UMaterialInstanceDynamic* TempDMI = TempMesh->CreateDynamicMaterialInstance(i, TempMesh->GetMaterial(i));
+			TempDMI->SetScalarParameterValue("IsMassBlending?", 1.0f);
+			TempDMI->SetScalarParameterValue("IsChanging?", 1.0f);
+			TempDMI->SetVectorParameterValue("MassCenter", CenterLocation);
+
+			DMIList.Add(TempDMI);
+		}
+	}
+	else {
+		JustGo();
+	}
+
+
+
+}
+
+void UComp_BlendMesh::StartBlendMassTickStartFunc()
+{
+	IsMassTickStart = true;
+}
+
+void UComp_BlendMesh::StartBlendMassTickFinishFunc()
+{
+	IsMassTickStart = false;
+
+	UpScore();
+	FinishBlendSetVariable();
+
+	//Niagara 추가하기
+	D_FinishBlending.Broadcast();
+}
+
 void UComp_BlendMesh::JustGo()
 {
-	UE_LOG(LogTemp, Warning, TEXT("JustGo"));
+	D_JustGo.Broadcast();
 }
 
 UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
@@ -172,5 +195,33 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 	GetWorld()->SpawnActor<ATurnOffDF>(ATurnOffDF::StaticClass(), TempTransform);
 
 	IsTickStart = true;
+}
+
+void UComp_BlendMesh::UpScore()
+{
+	if (Player) {
+		UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
+		Player->UpScore();
+	}
+}
+
+void UComp_BlendMesh::FinishBlendSetVariable()
+{
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetScalarParameterValue(TEXT("IsChanging?"), 0.0f);
+		a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
+		if (IsLow()) {
+			a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
+		}
+		else {
+			a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
+		}
+	}
+	SumSeconds = 0.0f;
+
+	IsHighQuality = !IsHighQuality;
+
+	IsBlendStart = false;
+
 }
 

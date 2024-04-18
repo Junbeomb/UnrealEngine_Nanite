@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "NaniteCPP/BeginnerCharacter/NaniteCPPCharacter.h"
+#include "../InteractionSystem/InteractStatue.h"
 #include "Comp_BlendMesh.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
@@ -29,6 +30,12 @@ public:
 	UFUNCTION()
 	void StartBlend();
 	UFUNCTION()
+	void StartBlendMass(FVector CenterLocation,AInteractStatue* InteractStatue );
+	UFUNCTION()
+	void StartBlendMassTickStartFunc();
+	UFUNCTION()
+	void StartBlendMassTickFinishFunc();
+	UFUNCTION()
 	void JustGo();
 
 	UFUNCTION()
@@ -42,14 +49,23 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FD_Delegate D_FinishBlending;
 
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
+	FD_Delegate D_JustGo;
+
 
 private:
+
+	void UpScore();
+	void FinishBlendSetVariable();
+
 	ANaniteCPPCharacter* Player;
 
 	UStaticMeshComponent* SMC;
 	USkeletalMeshComponent* SKC;
 
 	TArray<UMaterialInstanceDynamic*> DMIList;
+
+	AInteractStatue* BlendMassStatue;
 
 	bool IsTickStart;
 	bool IsMassTickStart;
