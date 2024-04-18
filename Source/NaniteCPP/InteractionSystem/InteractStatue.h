@@ -4,11 +4,11 @@
 #include "GameFramework/Actor.h"
 #include "Comp_InteractBase.h"
 #include "Interface_Interact.h"
-#include "InteractActorBase.generated.h"
+#include "InteractStatue.generated.h"
 
 
 UCLASS()
-class NANITECPP_API AInteractActorBase : public AActor, public IInterface_Interact
+class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 {
 	GENERATED_BODY()
 
@@ -17,7 +17,7 @@ class NANITECPP_API AInteractActorBase : public AActor, public IInterface_Intera
 	
 public:	
 	// Sets default values for this actor's properties
-	AInteractActorBase();
+	AInteractStatue();
 
 	UPROPERTY(EditAnywhere)
 	UComp_InteractBase* CompBase;
