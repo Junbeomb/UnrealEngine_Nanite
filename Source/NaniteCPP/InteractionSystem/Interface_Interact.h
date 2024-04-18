@@ -23,8 +23,8 @@ class NANITECPP_API IInterface_Interact
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Hello")
-	void PressEStart();
+	
+	virtual void PressEStart();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Hello")
 	bool GetSlowHoverEffect();

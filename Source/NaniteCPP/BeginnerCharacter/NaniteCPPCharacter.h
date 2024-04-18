@@ -57,6 +57,9 @@ class ANaniteCPPCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess="true"))
 	float AnimWatchMap;
 
+	UPROPERTY(VisibleAnywhere, Category = Score)
+	int Score = 0;
+
 	
 public:
 	ANaniteCPPCharacter();
@@ -97,6 +100,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	bool HighQualityGun;
+
+	UFUNCTION(BlueprintCallable, Category=Score)
+	void UpScore();
 
 
 protected:

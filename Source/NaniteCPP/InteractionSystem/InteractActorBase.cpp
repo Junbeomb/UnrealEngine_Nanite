@@ -15,6 +15,11 @@ AInteractActorBase::AInteractActorBase()
 	CompBase = CreateDefaultSubobject<UComp_InteractBase>(TEXT("Comp_InteractBase"));
 }
 
+void AInteractActorBase::PressEStart()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
+}
+
 // Called when the game starts or when spawned
 void AInteractActorBase::BeginPlay()
 {

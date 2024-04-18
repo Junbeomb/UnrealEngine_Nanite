@@ -2,6 +2,7 @@
 
 
 
+#include "InteractActorBase.h"
 #include "Comp_InteractBase.h"
 
 
@@ -64,6 +65,7 @@ void UComp_InteractBase::TurnOffHover()
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("TurnOnToggleFunction"));
+	IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
+	OwnerInterface->PressEStart();
 }
 

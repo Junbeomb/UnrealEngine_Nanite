@@ -23,13 +23,9 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 	TArray<UMaterialInstanceDynamic*> DMI_List;
 
 
-
-
-
-
-
-
 public:	
+
+
 	// Sets default values for this component's properties
 	UComp_InteractBase();
 

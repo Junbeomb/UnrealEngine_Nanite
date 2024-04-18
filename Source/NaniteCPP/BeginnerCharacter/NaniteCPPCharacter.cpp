@@ -21,7 +21,7 @@ ANaniteCPPCharacter::ANaniteCPPCharacter()
 {
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
-	HighQualityGun = false;
+	HighQualityGun =true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -118,7 +118,6 @@ void ANaniteCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::Interact);
 
-		// Interact
 		EnhancedInputComponent->BindAction(WatchMapAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::WatchMap);
 
 	}
@@ -181,4 +180,9 @@ void ANaniteCPPCharacter::SetHasRifle(bool bNewHasRifle)
 bool ANaniteCPPCharacter::GetHasRifle()
 {
 	return bHasRifle;
+}
+
+void ANaniteCPPCharacter::UpScore()
+{
+	Score++;
 }

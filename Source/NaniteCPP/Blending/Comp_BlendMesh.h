@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "NaniteCPP/BeginnerCharacter/NaniteCPPCharacter.h"
 #include "Comp_BlendMesh.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
@@ -21,6 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -42,6 +44,7 @@ public:
 
 
 private:
+	ANaniteCPPCharacter* Player;
 
 	UStaticMeshComponent* SMC;
 	USkeletalMeshComponent* SKC;
@@ -49,6 +52,7 @@ private:
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
 	bool IsTickStart;
+	bool IsMassTickStart;
 	bool IsBlendStart;
 
 	bool IsHighQuality;

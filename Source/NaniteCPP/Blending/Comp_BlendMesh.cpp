@@ -2,7 +2,6 @@
 
 
 #include "Comp_BlendMesh.h"
-#include "NaniteCPP/BeginnerCharacter/NaniteCPPCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "TurnOffDF.h"
 
@@ -17,6 +16,8 @@ UComp_BlendMesh::UComp_BlendMesh()
 
 	SMC = NULL;
 	SKC = NULL;
+
+	Player = Cast<ANaniteCPPCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	// ...
 }
 
@@ -25,8 +26,7 @@ UComp_BlendMesh::UComp_BlendMesh()
 void UComp_BlendMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	//StartBlend();
-	// ...
+
 	StaticOrSkeletal();
 }
 
@@ -66,6 +66,11 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 			IsBlendStart = false;
 
+			if (Player) {
+				UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
+				Player->UpScore();
+			}
+
 			//
 			D_FinishBlending.Broadcast();
 		}
@@ -75,17 +80,21 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			}
 		}
 	}
+	else if(IsMassTickStart){
+		for (UMaterialInstanceDynamic* a : DMIList) {
+			a->SetScalarParameterValue(TEXT("Subtract"), SumSeconds * ExtentSubtractAmountOneSecond);
+		}
+	}
 
 	// ...
 }
 
 void UComp_BlendMesh::StartBlend()
 {
-
 	bool IsLowObject = IsLow();
 
-	ANaniteCPPCharacter* Player = Cast<ANaniteCPPCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(),0));
-	if (Player->HighQualityGun != IsLowObject) {
+	
+	if (Player && Player->HighQualityGun != IsLowObject) {
 		//UE_LOG(LogTemp, Warning, TEXT("%s"),*Player->GetName());
 		D_FinishBlending.Broadcast();
 		return;
@@ -136,7 +145,7 @@ UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
 		return TempMesh;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Stati or Skeletal Both Nothing"));
+	UE_LOG(LogTemp, Warning, TEXT("Static or Skeletal Both Nothing"));
 	return NULL;
 }
 
