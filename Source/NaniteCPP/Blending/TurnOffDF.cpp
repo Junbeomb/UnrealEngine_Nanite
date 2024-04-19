@@ -15,13 +15,11 @@ ATurnOffDF::ATurnOffDF()
 void ATurnOffDF::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void ATurnOffDF::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

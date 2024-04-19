@@ -8,7 +8,7 @@
 #include "../InteractionSystem/InteractStatue.h"
 #include "Comp_BlendMesh.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Blend);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NANITECPP_API UComp_BlendMesh : public UActorComponent
 {
@@ -47,10 +47,10 @@ public:
 	void CreateDMIAndDFOff(UPrimitiveComponent* UComp,int NumMaterial);
 
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
-	FD_Delegate D_FinishBlending;
+	FD_Blend D_FinishBlending;
 
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
-	FD_Delegate D_JustGo;
+	FD_Blend D_JustGo;
 
 
 private:

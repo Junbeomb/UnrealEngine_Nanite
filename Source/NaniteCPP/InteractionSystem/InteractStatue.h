@@ -24,6 +24,7 @@ public:
 
 	virtual void PressEStart() override;
 
+	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FD_Delegate D_BPStartBlend;
 
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
