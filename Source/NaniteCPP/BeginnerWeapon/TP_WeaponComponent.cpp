@@ -5,6 +5,7 @@
 #include "../BeginnerCharacter/NaniteCPPCharacter.h"
 #include "NaniteCPPProjectile.h"
 #include "../BasicProjectile.h"
+#include "../Blending/BlendingProjectile.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -21,6 +22,55 @@ UTP_WeaponComponent::UTP_WeaponComponent()
 
 }
 
+void UTP_WeaponComponent::CalculateProjectile()
+{
+
+
+
+	//UE_LOG(LogTemp, Warning, TEXT("Spawn Actor"));
+	World = GetWorld();
+	if (World != nullptr)
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
+		const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+		const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
+
+		//라인 트레이스 재료
+		FHitResult HitResult;
+		FVector StartTrace = PlayerController->PlayerCameraManager->GetCameraLocation();
+		FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector() * 1000 + StartTrace;
+
+		//디버그
+		DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, true, 1, 0, 1);
+
+		//라인 트레이스
+		FVector TargetVector;
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, FinishTrace, ECollisionChannel::ECC_Visibility)) {
+			TargetVector = HitResult.Location;
+		}
+		else {
+			TargetVector = HitResult.TraceEnd;
+		}
+
+		TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetSocketLocation(TEXT("Muzzle")), TargetVector);
+
+		//스폰 셋
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+	}
+}
+
+void UTP_WeaponComponent::SpawnBlackhole()
+{
+	if (Character == nullptr || Character->GetController() == nullptr)
+	{
+		return;
+	}
+	if (BlackholeProjectileClass != nullptr)
+	{
+		CalculateProjectile();
+		World->SpawnActor<ABasicProjectile>(BlackholeProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
+	}
+}
 
 void UTP_WeaponComponent::Fire()
 {
@@ -28,64 +78,29 @@ void UTP_WeaponComponent::Fire()
 	{
 		return;
 	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("%s"),*ProjectileClass);
-	// Try and fire a projectile
-	if (ProjectileClass != nullptr)
+	if (BlendingProjectileClass != nullptr)
 	{
-		UWorld* const World = GetWorld();
-		if (World != nullptr)
+		CalculateProjectile();
+		World->SpawnActor<ABlendingProjectile>(BlendingProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
+		
+		// Try and play the sound if specified
+		if (FireSound != nullptr)
 		{
-			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-
-			//라인 트레이스 재료
-			FHitResult HitResult;
-			FVector StartTrace = PlayerController->PlayerCameraManager->GetCameraLocation();
-			FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector()*1000 + StartTrace;
-
-			//디버그
-			DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, true, 1, 0, 1);
-
-
-			//라인 트레이스
-			FVector TargetVector;
-			if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, FinishTrace, ECollisionChannel::ECC_Visibility)) {
-				TargetVector = HitResult.Location;
-			}
-			else {
-				TargetVector = HitResult.TraceEnd;
-			}
-
-			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetSocketLocation(TEXT("Muzzle")), TargetVector);
-			
-			//스폰 셋
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, Character->GetActorLocation());
+		}
 	
-		   //UE_LOG(LogTemp, Warning, TEXT("%s"),ProjectileClass.Get());
-			//스폰 액터
-			World->SpawnActor<ABasicProjectile>(ProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
+		// Try and play a firing animation if specified
+		if (FireAnimation != nullptr)
+		{
+			// Get the animation object for the arms mesh
+			UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
+			if (AnimInstance != nullptr)
+			{
+				AnimInstance->Montage_Play(FireAnimation, 1.f);
+			}
 		}
 	}
 	
-	// Try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, Character->GetActorLocation());
-	}
-	
-	// Try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
 }
 
 void UTP_WeaponComponent::AttachWeapon(ANaniteCPPCharacter* TargetCharacter)
@@ -116,11 +131,16 @@ void UTP_WeaponComponent::AttachWeapon(ANaniteCPPCharacter* TargetCharacter)
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
 
-			// Fire
+			//BlendingGun
 			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UTP_WeaponComponent::Fire);
+
+			//BlackholeFire
+			EnhancedInputComponent->BindAction(FireBlackhole, ETriggerEvent::Triggered, this, &UTP_WeaponComponent::SpawnBlackhole);
 		}
 	}
 }
+
+
 
 void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {

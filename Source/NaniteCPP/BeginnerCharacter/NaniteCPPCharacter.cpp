@@ -118,6 +118,7 @@ void ANaniteCPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::Interact);
 
+		//Map
 		EnhancedInputComponent->BindAction(WatchMapAction, ETriggerEvent::Triggered, this, &ANaniteCPPCharacter::WatchMap);
 
 	}

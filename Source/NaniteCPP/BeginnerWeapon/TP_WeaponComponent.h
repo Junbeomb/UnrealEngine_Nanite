@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "../BasicProjectile.h"
+#include "../Blending/BlendingProjectile.h"
 #include "TP_WeaponComponent.generated.h"
 
 class ANaniteCPPCharacter;
@@ -17,7 +18,10 @@ class NANITECPP_API UTP_WeaponComponent : public USkeletalMeshComponent
 public:
 	/** Projectile class to spawn */
 	UPROPERTY(EditAnywhere, Category="Projectile")
-	TSubclassOf<ABasicProjectile> ProjectileClass;
+	TSubclassOf<ABlendingProjectile> BlendingProjectileClass;
+	/** Projectile class to spawn */
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<ABasicProjectile> BlackholeProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gameplay")
@@ -39,6 +43,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* FireAction;
 
+	/** Fire Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* FireBlackhole;
+
+
 
 
 	/** Sets default values for this component's properties */
@@ -52,6 +61,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SpawnBlackhole();
+
+	void CalculateProjectile();
+
 protected:
 	/** Ends gameplay for this component. */
 	UFUNCTION()
@@ -60,4 +74,9 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	ANaniteCPPCharacter* Character;
+
+	//calcualate
+	UWorld* World;
+	FRotator TargetRotation;
+	FActorSpawnParameters ActorSpawnParams;
 };
