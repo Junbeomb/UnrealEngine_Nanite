@@ -52,6 +52,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Delegate")
 	FD_Blend D_JustGo;
 
+	bool IsBlendStart;
 
 private:
 
@@ -69,7 +70,7 @@ private:
 
 	bool IsTickStart;
 	bool IsMassTickStart;
-	bool IsBlendStart;
+
 
 	bool IsHighQuality;
 

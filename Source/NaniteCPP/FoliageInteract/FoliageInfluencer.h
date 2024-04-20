@@ -30,15 +30,20 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* FoliageTransMesh;
 
+	UPROPERTY(EditAnywhere, Category="Blending")
+	TSubclassOf<class AMaterialChangeBall> MaterialChangeBall;
+
 
 	//ºÎµúÈùcomponent, actorµéÀ» Ã£´Â ÇÔ¼ö
 	bool FindTrace();
 	TArray<FHitResult> OutResults;
 
 	UFUNCTION()
-	void CheckBlend(AActor* CheckActor);
+	void CheckBlend(AActor* CheckActor, FVector ImpactPoint);
 	UPROPERTY(EditAnywhere,Category="Foliage")
 	EFoliageType FoliageType;
+
+	FActorSpawnParameters ActorSpawnParams;
 
 protected:
 	virtual void BeginPlay() override;

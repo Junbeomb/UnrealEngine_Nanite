@@ -24,9 +24,6 @@ UTP_WeaponComponent::UTP_WeaponComponent()
 
 void UTP_WeaponComponent::CalculateProjectile()
 {
-
-
-
 	//UE_LOG(LogTemp, Warning, TEXT("Spawn Actor"));
 	World = GetWorld();
 	if (World != nullptr)

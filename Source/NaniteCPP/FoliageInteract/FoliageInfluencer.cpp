@@ -7,6 +7,7 @@
 #include "FoliagePlantBase.h"
 #include "FoliageRockBase.h"
 #include "../Blending/Comp_BlendMesh.h"
+#include "../Blending/MaterialChangeBall.h"
 #include <string.h>
 
 #include "Components/InstancedStaticMeshComponent.h"
@@ -61,7 +62,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 								//배열에 해당 SM->BP 가 있으면
 								if (isContain) {
-									FActorSpawnParameters ActorSpawnParams;
+									
 									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 									GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
@@ -88,7 +89,6 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 								//배열에 해당 SM->BP 가 있으면
 								if (isContain) {
-									FActorSpawnParameters ActorSpawnParams;
 									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
@@ -112,7 +112,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 										}
 
 										//블랜드 컴포넌트 유무 검사 및 함수 실행
-										CheckBlend(PlantBase);
+										CheckBlend(PlantBase, Hit.Location);
 									}
 									else {
 										AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
@@ -128,13 +128,14 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
 													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
 												}
+
 											}
 											//블랜드 컴포넌트 유무 검사 및 함수 실행
-											CheckBlend(RockBase);
+											CheckBlend(RockBase, Hit.Location);
 										}
 									}
-									//High,Low 인지확인====================================================
-									//High,Low 인지확인====================================================
+									//High,Low 인지확인===================================================
+									//High,Low 인지확인===================================================
 									//High,Low 인지확인===================================================
 									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
@@ -184,7 +185,7 @@ bool AFoliageInfluencer::FindTrace()
 	return false;
 }
 
-void AFoliageInfluencer::CheckBlend(AActor* CheckActor)
+void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 {
 	UComp_BlendMesh* UBM = Cast<UComp_BlendMesh>(CheckActor->GetComponentByClass(UComp_BlendMesh::StaticClass()));
 
@@ -194,7 +195,20 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor)
 			UBM->JustGo();
 			break;
 		case EFoliageType::ChangeBlend:
-			UBM->StartBlend();
+			if (!UBM->IsBlendStart) {
+				if (MaterialChangeBall) {
+					FVector Origin;
+					FVector BoxExtent;
+					CheckActor->GetActorBounds(false, Origin, BoxExtent, false);
+					FTransform TempTransform = { {0,0,0}, ImpactPoint ,BoxExtent / 100};
+
+					UE_LOG(LogTemp, Warning, TEXT("%s"), *ImpactPoint.ToString());
+					ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+					GetWorld()->SpawnActor<AMaterialChangeBall>(MaterialChangeBall, TempTransform, ActorSpawnParams);
+					UBM->StartBlend();
+				}
+			}
 			break;
 		}
 	}
