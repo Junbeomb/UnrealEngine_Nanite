@@ -13,6 +13,12 @@ class NANITECPP_API AMaterialChangeBall : public AActor
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* StaticMesh;
+	FVector InitialScale;
+	class UComp_BlendMesh* CompBlend;
+
+	bool TickStart;
+	float CountTick;
+
 	
 public:	
 	// Sets default values for this actor's properties

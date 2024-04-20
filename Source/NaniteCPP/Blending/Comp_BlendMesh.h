@@ -54,6 +54,7 @@ public:
 
 	bool IsBlendStart;
 
+	float ExtentSubtractAmountOneSecond;
 private:
 
 	void UpScore();
@@ -80,7 +81,6 @@ private:
 
 	float WhichOneIsLongestXYZ;
 
-	float ExtentSubtractAmountOneSecond;
 
 		
 };
