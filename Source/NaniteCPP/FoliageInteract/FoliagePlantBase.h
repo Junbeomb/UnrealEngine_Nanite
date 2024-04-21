@@ -36,6 +36,8 @@ public:
 	UPROPERTY(EditAnywhere, category = "collision")
 	bool isVeryLargePhysics;
 
+	class UComp_BlendMesh* Comp_Blend;
+
 	//시작시 사운드
 	UPROPERTY(EditAnywhere, category = "Sound")
 	UAudioComponent* SoundEffect;
@@ -49,6 +51,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	void ReturnToFoliage();
 
 	//월드에 있는 FoliageInfluencers 정보들
 	UPROPERTY(EditAnywhere, category = "Physics")

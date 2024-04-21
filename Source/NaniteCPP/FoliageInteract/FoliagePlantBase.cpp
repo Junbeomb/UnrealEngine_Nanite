@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "InstancedFoliageActor.h"
+#include "../Blending/Comp_BlendMesh.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -36,6 +37,8 @@ AFoliagePlantBase::AFoliagePlantBase()
 	OverlappingBlockPlayer->SetCapsuleRadius(22.f);
 
 	SoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEffect"));
+
+	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 	//SoundEffect->SetSound();
 
 	//pullRange랑 겹치면
@@ -70,7 +73,12 @@ AFoliagePlantBase::AFoliagePlantBase()
 void AFoliagePlantBase::BeginPlay()
 {
 	Super::BeginPlay();
+	Comp_Blend->D_FinishBlending.BindUObject(this, &AFoliagePlantBase::ReturnToFoliage);
+	Comp_Blend->D_JustGo.BindUObject(this, &AFoliagePlantBase::ReturnToFoliage);
+}
 
+void AFoliagePlantBase::ReturnToFoliage() 
+{
 	//sphere를 쓸 건지 capsule을 쓸건지
 	if (overlapIsSphere) {
 		OverlappingCapsule->DestroyComponent();
@@ -99,14 +107,12 @@ void AFoliagePlantBase::BeginPlay()
 	//월드 내의 Foliage를 가져와서 첫번째꺼를 WorldFoliage에 담기
 	TArray<AActor*> Temp;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInstancedFoliageActor::StaticClass(), Temp);
-	if(Temp.Num() > 0)
+	if (Temp.Num() > 0)
 		WorldFoliage = Cast<AInstancedFoliageActor>(Temp[0]);
-
 
 	//옆에 FoliageInfluencer 있는지 확인하기
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AFoliagePlantBase::checkToFoliageInfluencer,0.05, false);
-
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AFoliagePlantBase::checkToFoliageInfluencer, 0.05, false);
 }
 
 void AFoliagePlantBase::checkToFoliageInfluencer() {
@@ -204,6 +210,8 @@ void AFoliagePlantBase::BlendWeightTimelineFinish()
 	if (!TimelineFinishDoOnce) {
 		TimelineFinishDoOnce = true;
 
+
+
 		//WorldFoliage에 있는 식물들 모두 가져와서 저장.
 		//Beginplay에서 WorldFoliage의 0번째를 가져왔으므로 landscape의 첫번째 Foliage만을 가져온다.
 		//따라서 OpenWorld처럼 Landscape여러장을 겹쳐놓은 맵에서 가져올때에는 InstancedFoliageActor[0] 번째에 모든 종류의 메쉬가 있어야한다.
@@ -212,7 +220,7 @@ void AFoliagePlantBase::BlendWeightTimelineFinish()
 
 
 		int count = 0;
-		int classIndex;
+		int classIndex = 0;
 
 		for (UActorComponent* Comp : Temp) {
 
@@ -221,15 +229,31 @@ void AFoliagePlantBase::BlendWeightTimelineFinish()
 			FString LeftS;
 			FString RightS;
 
-			MeshComponent->GetSkeletalMeshAsset()->GetName().Split(TEXT("SK_"), &LeftS, &RightS);
-			FString value = *InstancedMesh->GetStaticMesh()->GetName();
+			if (Comp_Blend->IsLow()) {
+				MeshComponent->GetSkeletalMeshAsset()->GetName().Split(TEXT("SK_"), &LeftS, &RightS);
+				RightS = "L_" + RightS;
 
+				FString value = *InstancedMesh->GetStaticMesh()->GetName();
 
-			bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-			if (isContain) {
-				classIndex = count;
+				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+				if (isContain) {
+					classIndex = count;
+				}
+				++count;
 			}
-			++count;
+			else {
+				MeshComponent->GetSkeletalMeshAsset()->GetName().Split(TEXT("SK_"), &LeftS, &RightS);
+				RightS = "H_" + RightS;
+
+				FString value = *InstancedMesh->GetStaticMesh()->GetName();
+
+				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+				if (isContain) {
+					classIndex = count;
+				}
+				++count;
+			}
+
 		}
 
 		Cast<UInstancedStaticMeshComponent>(Temp[classIndex])->AddInstance(MeshComponent->GetComponentTransform(), true);

@@ -37,6 +37,10 @@ private:
 	//월드에있는 Foliage 가져오기
 	class AInstancedFoliageActor* WorldFoliage;
 
+	class UComp_BlendMesh* Comp_Blend;
+
+	void ReturnToFoliage();
+
 	//FoliageInfluencer가 주위에 있는지 확인
 	UFUNCTION()
 	void checkToFoliageInfluencer();

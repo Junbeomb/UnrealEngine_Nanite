@@ -3,6 +3,7 @@
 
 #include "FoliageRockBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "../Blending/Comp_BlendMesh.h"
 #include "InstancedFoliageActor.h"
 
 // Sets default values
@@ -16,13 +17,20 @@ AFoliageRockBase::AFoliageRockBase()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 
+	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
+
 }
 
 // Called when the game starts or when spawned
 void AFoliageRockBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Comp_Blend->D_FinishBlending.BindUObject(this, &AFoliageRockBase::ReturnToFoliage);
+	Comp_Blend->D_JustGo.BindUObject(this, &AFoliageRockBase::ReturnToFoliage);
+}
+
+void AFoliageRockBase::ReturnToFoliage()
+{
 	//월드 내의 모든 FoliageInfluencer를 array 에 담기
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFoliageInfluencer::StaticClass(), AllFoliageInfluencers);
 	FoliageInfluencersLen = AllFoliageInfluencers.Num();
@@ -95,7 +103,7 @@ void AFoliageRockBase::NoInfluencersInRangeFunc()
 
 
 		int count = 0;
-		int classIndex;
+		int classIndex = 0;
 
 		for (UActorComponent* Comp : Temp) {
 
@@ -104,15 +112,28 @@ void AFoliageRockBase::NoInfluencersInRangeFunc()
 			FString LeftS;
 			FString RightS;
 
-			MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
-			FString value = *InstancedMesh->GetStaticMesh()->GetName();
+			if (Comp_Blend->IsLow()) {
+				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
+				FString value = *InstancedMesh->GetStaticMesh()->GetName();
 
-
-			bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-			if (isContain) {
-				classIndex = count;
+				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+				if (isContain) {
+					classIndex = count;
+				}
+				++count;
 			}
-			++count;
+			else {
+				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_L_"), &LeftS, &RightS);
+				RightS = "H_" + RightS;
+				FString value = *InstancedMesh->GetStaticMesh()->GetName();
+
+				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+				if (isContain) {
+					classIndex = count;
+				}
+				++count;
+			}
+
 		}
 
 		Cast<UInstancedStaticMeshComponent>(Temp[classIndex])->AddInstance(MeshComponent->GetComponentTransform(), true);

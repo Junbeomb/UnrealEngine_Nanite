@@ -12,7 +12,7 @@ UComp_BlendMesh::UComp_BlendMesh()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	ExtentSubtractAmountOneSecond = 400.f;
+	ExtentSubtractAmountOneSecond = 100.f;
 
 	SMC = NULL;
 	SKC = NULL;
@@ -41,6 +41,8 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //다 바꿨으면
 			
+			//UE_LOG(LogTemp, Warning, TEXT("%f"), SumSeconds);
+
 			IsTickStart = false;
 
 			if (SMC){
@@ -53,7 +55,7 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			UpScore();
 			FinishBlendSetVariable();
 
-			D_FinishBlending.Broadcast();
+			D_FinishBlending.Execute();
 		}
 		else { //머티리얼 바꾸기
 			for (UMaterialInstanceDynamic* a : DMIList) {
@@ -77,7 +79,7 @@ void UComp_BlendMesh::StartBlend()
 	
 	if (Player && Player->HighQualityGun != IsLowObject) {
 		//UE_LOG(LogTemp, Warning, TEXT("%s"),*Player->GetName());
-		D_FinishBlending.Broadcast();
+		D_FinishBlending.Execute();
 		return;
 	}
 
@@ -144,12 +146,12 @@ void UComp_BlendMesh::StartBlendMassTickFinishFunc()
 	FinishBlendSetVariable();
 
 	//Niagara 추가하기
-	D_FinishBlending.Broadcast();
+	D_FinishBlending.Execute();
 }
 
 void UComp_BlendMesh::JustGo()
 {
-	D_JustGo.Broadcast();
+	D_JustGo.Execute();
 }
 
 UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
@@ -200,7 +202,7 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 void UComp_BlendMesh::UpScore()
 {
 	if (Player) {
-		UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
+		//UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
 		Player->UpScore();
 	}
 }
@@ -212,6 +214,7 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 		a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
 		if (IsLow()) {
 			a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
+			//UE_LOG(LogTemp, Warning, TEXT("123123"));
 		}
 		else {
 			a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);

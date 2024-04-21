@@ -35,7 +35,7 @@ void AMaterialChangeBall::Tick(float DeltaTime)
 		CountTick += DeltaTime;
 
 		if (CountTick > 1.0) {
-			UE_LOG(LogTemp, Warning, TEXT("%f"), InitialScale.GetMax() / (CompBlend->ExtentSubtractAmountOneSecond / 100));
+			//UE_LOG(LogTemp, Warning, TEXT("%f"), InitialScale.GetMax() / (CompBlend->ExtentSubtractAmountOneSecond / 100));
 			//Delay -> 6초뒤 Mesh줄어드는 Animation실행
 			FTimerHandle DestroyTimerHandle;
 			FTimerDelegate TimerDelegate;
@@ -49,7 +49,7 @@ void AMaterialChangeBall::Tick(float DeltaTime)
 
 		}
 
-		StaticMesh->SetWorldScale3D(InitialScale * CountTick);
+		StaticMesh->SetWorldScale3D((InitialScale/2) * CountTick);
 
 	}
 }
