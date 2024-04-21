@@ -200,10 +200,10 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 					FVector Origin;
 					FVector BoxExtent;
 					CheckActor->GetActorBounds(false, Origin, BoxExtent, false);
-					//UE_LOG(LogTemp, Warning, TEXT("%s"), *BoxExtent.ToString());
 					FTransform TempTransform = { {0,0,0}, ImpactPoint ,BoxExtent / 100};
 					ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+					//UE_LOG(LogTemp, Warning, TEXT("%s"), *BoxExtent.ToString());
 					GetWorld()->SpawnActor<AMaterialChangeBall>(MaterialChangeBall, TempTransform, ActorSpawnParams);
 					UBM->StartBlend();
 				}

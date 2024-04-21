@@ -21,9 +21,9 @@ void AMaterialChangeBall::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	InitialScale = GetActorScale3D();
+	InitialScale = StaticMesh->GetRelativeScale3D();
 	
-	StaticMesh->SetWorldScale3D({ 0,0,0 });
+	//StaticMesh->SetWorldScale3D({ 0,0,0 });
 	TickStart = true;
 }
 
@@ -49,7 +49,7 @@ void AMaterialChangeBall::Tick(float DeltaTime)
 
 		}
 
-		StaticMesh->SetWorldScale3D((InitialScale/2) * CountTick);
+		//StaticMesh->SetWorldScale3D((InitialScale/2) * CountTick);
 
 	}
 }
