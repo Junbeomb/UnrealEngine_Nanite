@@ -101,13 +101,19 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 										FString Right;
 										value.Split("SM_", NULL,&Right);
 
-										if (Right.Contains("L_")) {
-											USkeletalMeshComponent* SK = PlantBase->MeshComponent;
-											int NumMaterial = SK->GetNumMaterials();
+										USkeletalMeshComponent* SK = PlantBase->MeshComponent;
+										int NumMaterial = SK->GetNumMaterials();
 
+										if (Right.Contains("L_")) {
 											for (int i = 0; i < NumMaterial; ++i) {
 												UMaterialInstanceDynamic* TempDMI = SK->CreateDynamicMaterialInstance(i, SK->GetMaterial(i));
 												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+											}
+										}
+										else if (Right.Contains("H_")) {
+											for (int i = 0; i < NumMaterial; ++i) {
+												UMaterialInstanceDynamic* TempDMI = SK->CreateDynamicMaterialInstance(i, SK->GetMaterial(i));
+												TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
 											}
 										}
 
@@ -120,15 +126,20 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 											FString Right;
 											value.Split("SM_", NULL, &Right);
 
-											if (Right.Contains("L_")) {
-												UStaticMeshComponent* SM = RockBase->MeshComponent;
-												int NumMaterial = SM->GetNumMaterials();
+											UStaticMeshComponent* SM = RockBase->MeshComponent;
+											int NumMaterial = SM->GetNumMaterials();
 
+											if (Right.Contains("L_")) {
 												for (int i = 0; i < NumMaterial; ++i) {
 													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
 													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
 												}
-
+											}
+											else if (Right.Contains("H_")) {
+												for (int i = 0; i < NumMaterial; ++i) {
+													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+													TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
+												}
 											}
 											//블랜드 컴포넌트 유무 검사 및 함수 실행
 											CheckBlend(RockBase, Hit.Location);

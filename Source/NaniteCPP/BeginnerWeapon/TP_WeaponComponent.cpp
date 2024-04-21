@@ -38,7 +38,7 @@ void UTP_WeaponComponent::CalculateProjectile()
 		FVector FinishTrace = PlayerController->PlayerCameraManager->GetActorForwardVector() * 1000 + StartTrace;
 
 		//디버그
-		DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, true, 1, 0, 1);
+		//DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, true, 1, 0, 1);
 
 		//라인 트레이스
 		FVector TargetVector;
