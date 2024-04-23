@@ -4,6 +4,10 @@
 #include "GameFramework/Actor.h"
 #include "Comp_InteractBase.h"
 #include "Interface_Interact.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "InteractStatue.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FD_Delegate);
@@ -14,6 +18,18 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* StaticMesh;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* BombNS;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* WindNS;
+
+	TArray<UInstancedStaticMeshComponent*> InstancedMesh;
+
+	TArray<UMaterialInstanceDynamic*> DMIList;
+
+	void StartMassBlend();
 	
 public:	
 	// Sets default values for this actor's properties

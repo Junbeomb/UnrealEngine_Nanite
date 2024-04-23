@@ -2,8 +2,8 @@
 
 
 
-#include "InteractStatue.h"
 #include "Comp_InteractBase.h"
+#include "InteractStatue.h"
 
 
 
