@@ -2,6 +2,7 @@
 
 #include "InteractStatue.h"
 
+#include "Components/SphereComponent.h"
 #include "InstancedFoliageActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/InstancedStaticMeshComponent.h"
@@ -18,6 +19,10 @@ AInteractStatue::AInteractStatue()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	StaticMesh->SetupAttachment(RootComponent);
+
+	CheckInstanceSMC = CreateDefaultSubobject<USphereComponent>(TEXT("CheckISMC"));
+	CheckInstanceSMC->SetupAttachment(RootComponent);
+	CheckInstanceSMC->SetSphereRadius(0.f);
 
 	Bomb = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Bomb"));
 	Bomb->SetupAttachment(RootComponent);
@@ -38,6 +43,11 @@ AInteractStatue::AInteractStatue()
 	MassBlendTimelineUpdateCallback.BindUFunction(this, FName("SetMassBlendTimelineUpdate"));
 	NormalAmplifyTimelineUpdateCallback.BindUFunction(this, FName("SetNormalAmplifyTimelineUpdate"));
 	EmissiveTimelineUpdateCallback.BindUFunction(this, FName("SetEmissiveTimelineUpdate"));
+
+	//SMCSPhereTimeline
+	SMCSphereTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("SMCSPhereTImeline"));
+	SMCSphereTimelineFinishedCallback.BindUFunction(this, FName("SetSMCSphereTimelineFinish"));
+	SMCSphereTimelineUpdateCallback.BindUFunction(this, FName("SetSMCSPhereTimelineUpdate"));
 
 }
 
@@ -96,7 +106,6 @@ void AInteractStatue::StartMassBlend()
 
 	//MassBlendTimeline
 	if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
-
 		MassBlendTimeline->AddInterpFloat(MassBlendCurve, MassBlendTimelineUpdateCallback, FName("Blend"));
 		MassBlendTimeline->AddInterpFloat(NormalAmplifyCurve, NormalAmplifyTimelineUpdateCallback, FName("NormalAmplify"));
 		MassBlendTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineUpdateCallback, FName("Emissive"));
@@ -104,6 +113,12 @@ void AInteractStatue::StartMassBlend()
 		MassBlendTimeline->SetTimelineFinishedFunc(MassBlendTimelineFinishedCallback);
 
 		MassBlendTimeline->PlayFromStart();
+	}
+
+	if (SMCSphereCurve) {
+		SMCSphereTimeline->AddInterpFloat(SMCSphereCurve, SMCSphereTimelineUpdateCallback, FName("SphereRadius"));
+		SMCSphereTimeline->SetTimelineFinishedFunc(SMCSphereTimelineFinishedCallback);
+		SMCSphereTimeline->PlayFromStart();
 	}
 
 }
@@ -118,7 +133,6 @@ void AInteractStatue::SetMassBlendTimelineFinish()
 }
 void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Value);
 	BlendRadius = BombDistance * Value;
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
 		DMI->SetScalarParameterValue("MassRadius", BlendRadius);
@@ -147,13 +161,32 @@ void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
 
+//==================SMCSphereTimeline====================
+//==================SMCSphereTimeline====================
+//==================SMCSphereTimeline====================
+void AInteractStatue::SetSMCSphereTimelineFinish()
+{
+	for (UMaterialInstanceDynamic* DMI : DMIList) {
+		DMI->SetScalarParameterValue("IsMassBlending?", 0.0f);
+		DMI->SetScalarParameterValue("IsChanging?", 0.0f);
+		DMIList.Remove(DMI);
+	}
+
+}
+void AInteractStatue::SetSMCSphereTimelineUpdate(float Value)
+{
+	CheckInstanceSMC->SetSphereRadius(Value * BombDistance);
+}
+//==================SMCSphereTimeline====================
+//==================SMCSphereTimeline====================
+//==================SMCSphereTimeline====================
+
 
 // Called when the game starts or when spawned
 void AInteractStatue::BeginPlay()
 {
 	Super::BeginPlay();
 	CompBase->SetDynamicMaterial(StaticMesh, false);
-
 }
 
 // Called every frame

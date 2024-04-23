@@ -30,6 +30,9 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 	UNiagaraComponent* Bomb;
 
 	UPROPERTY(EditAnywhere)
+	class USphereComponent* CheckInstanceSMC;
+
+	UPROPERTY(EditAnywhere)
 	float BombDistance;
 	float BlendRadius;
 
@@ -48,6 +51,7 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 
 	void StartMassBlend();
 
+	//MassBlendTimeline
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 	UTimelineComponent* MassBlendTimeline;
 		UPROPERTY(EditAnywhere, Category = "Timeline");
@@ -74,6 +78,21 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		FOnTimelineFloat EmissiveTimelineUpdateCallback;
 		UFUNCTION()
 		void SetEmissiveTimelineUpdate(float Value);
+
+	//SMCSPhereTimeline
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	UTimelineComponent* SMCSphereTimeline;
+		UPROPERTY(EditAnywhere,Category="Timeline")
+		UCurveFloat* SMCSphereCurve;
+		//종료시
+		FOnTimelineEvent SMCSphereTimelineFinishedCallback;
+		UFUNCTION()
+		void SetSMCSphereTimelineFinish();
+		FOnTimelineFloat SMCSphereTimelineUpdateCallback;
+		UFUNCTION()
+		void SetSMCSphereTimelineUpdate(float Value);
+
+		//callback함수
 	
 public:	
 	// Sets default values for this actor's properties
