@@ -78,8 +78,8 @@ void AInteractStatue::PressEStart()
 	}
 
 	//NiagaraComponent 세팅
-	Bomb->SetAutoActivate(true);
-	WindNS->SetAutoActivate(true);
+	Bomb->Activate(true);
+	WindNS->Activate(true);
 
 	Bomb->SetNiagaraVariableFloat("Lifetime", BombDistance / 1000); //1초당 1000cm만큼 이동하므로
 	WindNS->SetNiagaraVariableVec2("PersonLocation", { GetActorLocation().X,GetActorLocation().Y });
@@ -137,7 +137,7 @@ void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
 		DMI->SetScalarParameterValue("MassRadius", BlendRadius);
 	}
-	Bomb->SetNiagaraVariableVec3("Scale Factor", FVector(BlendRadius / 50));
+	Bomb->SetNiagaraVariableVec3("Scale Factor", { BlendRadius / 50, BlendRadius / 50, BlendRadius / 50 });
 	WindNS->SetNiagaraVariableFloat("Radius", BlendRadius);
 }
 
