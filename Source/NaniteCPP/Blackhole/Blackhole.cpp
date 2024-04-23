@@ -37,7 +37,7 @@ ABlackhole::ABlackhole()
 	//BlackholeBaseMesh->SetStaticMesh(BlackholeStatic);
 
 	//블랙홀 생성 Timeline
-		MeshTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("MeshTimeline"));
+		MeshTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("MeshTimeline"));
 		//callback함수bind
 		floatTimelineCallback.BindUFunction(this,FName("SetScaleTimelineUpdate"));
 		floatTimelineFinishedCallback.BindUFunction(this, FName("SetScaleTimelineFinish"));

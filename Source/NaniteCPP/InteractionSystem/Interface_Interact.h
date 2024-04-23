@@ -23,7 +23,6 @@ class NANITECPP_API IInterface_Interact
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	
 	virtual void PressEStart();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Hello")
