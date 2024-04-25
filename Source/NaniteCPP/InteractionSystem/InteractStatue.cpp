@@ -52,6 +52,12 @@ AInteractStatue::AInteractStatue()
 	SMCSphereTimelineFinishedCallback.BindUFunction(this, FName("SetSMCSphereTimelineFinish"));
 	SMCSphereTimelineUpdateCallback.BindUFunction(this, FName("SetSMCSPhereTimelineUpdate"));
 
+	//ShakeSMTimeline
+	ShakeSMTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ShakeSMTimeline"));
+	ShakeSMTimelineFinishedCallback.BindUFunction(this, FName("SetShakeSMTimelineFinish"));
+	ShakeSMTimelineUpdateCallback.BindUFunction(this, FName("SetShakeSMTImelineUpdate"));
+	SizeSMTimelineUpdateCallback.BindUFunction(this, FName("SetSizeSMTImelineUpdate"));
+
 }
 
 void AInteractStatue::PressEStart()
@@ -70,9 +76,9 @@ void AInteractStatue::PressEStart()
 		if (a->GetStaticMesh()->GetName().Contains("SM_L_")) {
 			for (int i = 0; i < a->GetNumMaterials(); i++) {
 				UMaterialInstanceDynamic* TempDMI = a->CreateDynamicMaterialInstance(i, a->GetMaterial(i));
-				TempDMI->SetScalarParameterValue("IsMassBlending?", 1.0f);
-				TempDMI->SetScalarParameterValue("IsChanging?", 1.0f);
-				TempDMI->SetVectorParameterValue("MassCenter", GetActorLocation());
+				TempDMI->SetScalarParameterValue(FName("IsMassBlending?"), 1.0f);
+				TempDMI->SetScalarParameterValue(FName("IsChanging?"), 1.0f);
+				TempDMI->SetVectorParameterValue(FName("MassCenter"), GetActorLocation());
 
 				DMIList.Add(TempDMI);
 			}
@@ -80,18 +86,19 @@ void AInteractStatue::PressEStart()
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *a->GetStaticMesh()->GetName());
 	}
 
-	//NiagaraComponent 세팅
-	Bomb->Activate(true);
-	WindNS->Activate(true);
 
-	Bomb->SetNiagaraVariableFloat("Lifetime", BombDistance / 1000); //1초당 1000cm만큼 이동하므로
-	WindNS->SetNiagaraVariableVec2("PersonLocation", { GetActorLocation().X,GetActorLocation().Y });
-	WindNS->SetNiagaraVariableInt("Resolution", 256);
-	WindNS->SetNiagaraVariableFloat("SimulationSize", 4096.f);
+	//Statue StaticMesh 움직이게하기
+	for (int i = 0; i < StaticMesh->GetNumMaterials(); i++) {
+		UMaterialInstanceDynamic* MID = StaticMesh->CreateDynamicMaterialInstance(i, StaticMesh->GetMaterial(i));
+		ShakeSMDMIList.Add(MID);
+	}
+	if (ShakeSMCurve && SizeSMCurve) {
+		ShakeSMTimeline->AddInterpFloat(ShakeSMCurve, ShakeSMTimelineUpdateCallback, FName("ShaekSM"));
+		ShakeSMTimeline->AddInterpFloat(SizeSMCurve, SizeSMTimelineUpdateCallback, FName("SizeSM"));
+		ShakeSMTimeline->SetTimelineFinishedFunc(ShakeSMTimelineFinishedCallback);
+		ShakeSMTimeline->PlayFromStart();
+	}
 
-	StaticMesh->DestroyComponent();
-
-	StartMassBlend();
 }
 
 void AInteractStatue::StartMassBlend()
@@ -137,7 +144,7 @@ void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 {
 	BlendRadius = BombDistance * Value;
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
-		DMI->SetScalarParameterValue("MassRadius", BlendRadius);
+		DMI->SetScalarParameterValue(FName("MassRadius"), BlendRadius);
 	}
 	Bomb->SetNiagaraVariableVec3("Scale Factor", { BlendRadius / 50, BlendRadius / 50, BlendRadius / 50 });
 	WindNS->SetNiagaraVariableFloat("Radius", BlendRadius);
@@ -147,21 +154,60 @@ void AInteractStatue::SetNormalAmplifyTimelineUpdate(float Value)
 {
 
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
-		DMI->SetScalarParameterValue("MassVertexNormalAmplify", Value);
+		DMI->SetScalarParameterValue(FName("MassVertexNormalAmplify"), Value);
 	}
-	PCI->SetScalarParameterValue("MassVertexNormalAmplify", Value);
+	PCI->SetScalarParameterValue(FName("MassVertexNormalAmplify"), Value);
 }
 
 void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
 {
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
-		DMI->SetVectorParameterValue("EmissiveColor", Value * InitialEmissiveColor);
+		DMI->SetVectorParameterValue(FName("EmissiveColor"), Value * InitialEmissiveColor);
 	}
-	PCI->SetVectorParameterValue("EmissiveColor", Value * InitialEmissiveColor);
+	PCI->SetVectorParameterValue(FName("EmissiveColor"), Value * InitialEmissiveColor);
 }
+
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
+
+//==================ShakeSMTimeline====================
+//==================ShakeSMTimeline====================
+//==================ShakeSMTimeline====================
+void AInteractStatue::SetShakeSMTimelineFinish()
+{
+	StaticMesh->DestroyComponent();
+
+	//NiagaraComponent 세팅
+	Bomb->Activate(true);
+	WindNS->Activate(true);
+
+	Bomb->SetNiagaraVariableFloat("Lifetime", BombDistance / 1000); //1초당 1000cm만큼 이동하므로
+	WindNS->SetNiagaraVariableVec2("PersonLocation", { GetActorLocation().X,GetActorLocation().Y });
+	WindNS->SetNiagaraVariableInt("Resolution", 256);
+	WindNS->SetNiagaraVariableFloat("SimulationSize", 4096.f);
+
+
+	StartMassBlend();
+}
+void AInteractStatue::SetShakeSMTimelineUpdate(float Value)
+{
+	AddActorLocalOffset({ sin(double(Value) * 10000) * 3 ,sin(double(Value) * 10000) * 3 ,Value});
+	for (UMaterialInstanceDynamic* a : ShakeSMDMIList) {
+		FLinearColor TempLinear = {0.f, 0.f, (Value * 5000.f + 1.f), 1.0f};
+		a->SetVectorParameterValue(FName("EmissiveColor"), TempLinear);
+		a->SetScalarParameterValue(FName("PannerSpeed"), Value * 10 + 1.0f);
+
+	}
+}
+void AInteractStatue::SetSizeSMTimelineUpdate(float Value)
+{
+	StaticMesh->SetWorldScale3D({ Value,Value,Value });
+}
+//==================ShakeSMTimeline====================
+//==================ShakeSMTimeline====================
+//==================ShakeSMTimeline====================
+
 
 //==================SMCSphereTimeline====================
 //==================SMCSphereTimeline====================
@@ -169,8 +215,8 @@ void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
 void AInteractStatue::SetSMCSphereTimelineFinish()
 {
 	for (UMaterialInstanceDynamic* DMI : DMIList) {
-		DMI->SetScalarParameterValue("IsMassBlending?", 0.0f);
-		DMI->SetScalarParameterValue("IsChanging?", 0.0f);
+		DMI->SetScalarParameterValue(FName("IsMassBlending?"), 0.0f);
+		DMI->SetScalarParameterValue(FName("IsChanging?"), 0.0f);
 		DMIList.Remove(DMI);
 	}
 

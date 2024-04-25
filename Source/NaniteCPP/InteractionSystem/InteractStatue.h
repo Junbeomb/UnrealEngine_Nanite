@@ -54,6 +54,8 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
+	TArray<UMaterialInstanceDynamic*> ShakeSMDMIList;
+
 	void StartMassBlend();
 
 	//MassBlendTimeline
@@ -84,6 +86,25 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		UFUNCTION()
 		void SetEmissiveTimelineUpdate(float Value);
 
+	//ShakeStaticMeshTimeline
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	UTimelineComponent* ShakeSMTimeline;
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* ShakeSMCurve;
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* SizeSMCurve;
+		//종료시
+		FOnTimelineEvent ShakeSMTimelineFinishedCallback;
+		UFUNCTION()
+		void SetShakeSMTimelineFinish();
+		//callback함수
+		FOnTimelineFloat ShakeSMTimelineUpdateCallback;
+		UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
+		void SetShakeSMTimelineUpdate(float Value);
+		FOnTimelineFloat SizeSMTimelineUpdateCallback;
+		UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
+			void SetSizeSMTimelineUpdate(float Value);
+
 	//SMCSPhereTimeline
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 	UTimelineComponent* SMCSphereTimeline;
@@ -93,11 +114,10 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		FOnTimelineEvent SMCSphereTimelineFinishedCallback;
 		UFUNCTION()
 		void SetSMCSphereTimelineFinish();
+		//callback함수
 		FOnTimelineFloat SMCSphereTimelineUpdateCallback;
 		UFUNCTION()
 		void SetSMCSphereTimelineUpdate(float Value);
-
-		//callback함수
 
 
 	
