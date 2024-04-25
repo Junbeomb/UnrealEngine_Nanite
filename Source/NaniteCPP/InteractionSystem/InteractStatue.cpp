@@ -202,8 +202,8 @@ void AInteractStatue::OverlapSMCRange(UPrimitiveComponent* OverlappedComp, AActo
 			RightS = "SM_H_" + RightS;
 
 			for (UInstancedStaticMeshComponent* a : InstancedMesh) {
-				if (a->GetName().Contains(RightS)) {
-				UE_LOG(LogTemp, Warning, TEXT("%s"),*a->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("%s"),*a->GetStaticMesh()->GetName());
+				if (a->GetStaticMesh()->GetName().Contains(RightS)) {
 					a->AddInstance(TempTransform,true);
 				}
 			}
