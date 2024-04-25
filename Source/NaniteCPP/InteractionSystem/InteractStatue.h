@@ -29,8 +29,13 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Bomb;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
 	class USphereComponent* CheckInstanceSMC;
+
+
+	UFUNCTION()
+	void OverlapSMCRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 	UPROPERTY(EditAnywhere)
 	float BombDistance;
@@ -93,6 +98,8 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		void SetSMCSphereTimelineUpdate(float Value);
 
 		//callbackÇÔ¼ö
+
+
 	
 public:	
 	// Sets default values for this actor's properties
@@ -112,5 +119,4 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

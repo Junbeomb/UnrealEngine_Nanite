@@ -20,9 +20,12 @@ AInteractStatue::AInteractStatue()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	StaticMesh->SetupAttachment(RootComponent);
 
-	CheckInstanceSMC = CreateDefaultSubobject<USphereComponent>(TEXT("CheckISMC"));
+	CheckInstanceSMC = CreateDefaultSubobject<USphereComponent>(TEXT("CheckInstanceSMC"));
 	CheckInstanceSMC->SetupAttachment(RootComponent);
 	CheckInstanceSMC->SetSphereRadius(0.f);
+	CheckInstanceSMC->SetHiddenInGame(false);
+	//CheckInstanceSMC랑 겹치면
+	CheckInstanceSMC->OnComponentBeginOverlap.AddDynamic(this, &AInteractStatue::OverlapSMCRange);
 
 	Bomb = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Bomb"));
 	Bomb->SetupAttachment(RootComponent);
@@ -104,6 +107,12 @@ void AInteractStatue::StartMassBlend()
 		PCI->GetVectorParameterValue(FName("EmissiveColor"), EColor);
 	}
 
+	if (SMCSphereCurve) {
+		SMCSphereTimeline->AddInterpFloat(SMCSphereCurve, SMCSphereTimelineUpdateCallback, FName("SphereRadius"));
+		SMCSphereTimeline->SetTimelineFinishedFunc(SMCSphereTimelineFinishedCallback);
+		SMCSphereTimeline->PlayFromStart();
+	}
+
 	//MassBlendTimeline
 	if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
 		MassBlendTimeline->AddInterpFloat(MassBlendCurve, MassBlendTimelineUpdateCallback, FName("Blend"));
@@ -114,13 +123,6 @@ void AInteractStatue::StartMassBlend()
 
 		MassBlendTimeline->PlayFromStart();
 	}
-
-	if (SMCSphereCurve) {
-		SMCSphereTimeline->AddInterpFloat(SMCSphereCurve, SMCSphereTimelineUpdateCallback, FName("SphereRadius"));
-		SMCSphereTimeline->SetTimelineFinishedFunc(SMCSphereTimelineFinishedCallback);
-		SMCSphereTimeline->PlayFromStart();
-	}
-
 }
 
 //==================BlendMassTimeline====================
@@ -177,6 +179,42 @@ void AInteractStatue::SetSMCSphereTimelineUpdate(float Value)
 {
 	CheckInstanceSMC->SetSphereRadius(Value * BombDistance);
 }
+
+//겹치면
+void AInteractStatue::OverlapSMCRange(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	//Overlap 이벤트가 발생하지 않음.
+
+	UInstancedStaticMeshComponent* TempISMC = Cast<UInstancedStaticMeshComponent>(SweepResult.GetComponent());
+	if (TempISMC) {
+		FString TempName = TempISMC->GetStaticMesh()->GetName();
+		if (TempName.Contains("SM_L_")) {
+			int32 TempHitItem = SweepResult.Item;
+
+			//Add UpScore!!
+
+			FTransform TempTransform;
+			TempISMC->GetInstanceTransform(TempHitItem, TempTransform, true);
+
+			FString RightS;
+			TempName.Split("SM_L_", NULL, &RightS);
+			RightS = "SM_H_" + RightS;
+
+			for (UInstancedStaticMeshComponent* a : InstancedMesh) {
+				if (a->GetName().Contains(RightS)) {
+				UE_LOG(LogTemp, Warning, TEXT("%s"),*a->GetName());
+					a->AddInstance(TempTransform,true);
+				}
+			}
+
+			//Add SpawnNiagara
+
+			TempISMC->RemoveInstance(TempHitItem);
+		}
+	}
+}
+
 //==================SMCSphereTimeline====================
 //==================SMCSphereTimeline====================
 //==================SMCSphereTimeline====================
