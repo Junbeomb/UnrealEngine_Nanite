@@ -8,6 +8,8 @@
 #include "FoliageRockBase.h"
 #include "../Blending/Comp_BlendMesh.h"
 #include "../Blending/MaterialChangeBall.h"
+#include "../Blackhole/BlackholeLightBase.h"
+#include "../Blackhole/BlackholeHeavyBase.h"
 #include <string.h>
 
 #include "Components/InstancedStaticMeshComponent.h"
@@ -65,7 +67,61 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 									
 									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-									GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인====================================================
+									//High,Low 인지확인====================================================
+									ABlackholeLightBase* PlantBase = Cast<ABlackholeLightBase>(SpawnBP);
+									if (PlantBase != nullptr) {
+										FString Right;
+										value.Split("SM_", NULL, &Right);
+
+										UStaticMeshComponent* SM = PlantBase->BaseStaticMesh;
+										int NumMaterial = SM->GetNumMaterials();
+
+										if (Right.Contains("L_")) {
+											for (int i = 0; i < NumMaterial; ++i) {
+												UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+											}
+										}
+										else if (Right.Contains("H_")) {
+											for (int i = 0; i < NumMaterial; ++i) {
+												UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+												TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
+											}
+										}
+
+									}
+									else {
+										ABlackholeHeavyBase* RockBase = Cast<ABlackholeHeavyBase>(SpawnBP);
+										if (RockBase != nullptr) {
+											FString Right;
+											value.Split("SM_", NULL, &Right);
+
+											UStaticMeshComponent* SM = RockBase->BaseStaticMesh;
+											int NumMaterial = SM->GetNumMaterials();
+
+											if (Right.Contains("L_")) {
+												for (int i = 0; i < NumMaterial; ++i) {
+													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+												}
+											}
+											else if (Right.Contains("H_")) {
+												for (int i = 0; i < NumMaterial; ++i) {
+													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
+													TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
+												}
+											}
+	
+										}
+									}
+									//High,Low 인지확인===================================================
+									//High,Low 인지확인===================================================
+									//High,Low 인지확인===================================================
+
 									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
 								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);

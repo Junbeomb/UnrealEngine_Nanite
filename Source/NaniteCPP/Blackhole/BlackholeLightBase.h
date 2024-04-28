@@ -14,8 +14,7 @@ class NANITECPP_API ABlackholeLightBase : public AActor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* BaseStaticMesh;
+
 
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Niagara;
@@ -25,8 +24,19 @@ class NANITECPP_API ABlackholeLightBase : public AActor
 
 	UPROPERTY(EditAnywhere)
 	float RotationStrength;
+
+
+
 	
 public:	
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* BaseStaticMesh;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* L_Niagara;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* H_Niagara;
 	// Sets default values for this actor's properties
 	ABlackholeLightBase();
 

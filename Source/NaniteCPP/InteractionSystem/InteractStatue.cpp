@@ -220,6 +220,7 @@ void AInteractStatue::SetSMCSphereTimelineFinish()
 		DMIList.Remove(DMI);
 	}
 
+	Destroy();
 }
 void AInteractStatue::SetSMCSphereTimelineUpdate(float Value)
 {

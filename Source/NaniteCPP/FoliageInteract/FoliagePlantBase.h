@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "FoliageInfluencer.h"
+#include "NiagaraComponent.h"
 #include "Components/TimelineComponent.h"
 #include "FoliagePlantBase.generated.h"
 
@@ -109,4 +110,10 @@ private:
 	UFUNCTION()
 	void OverlapSphereOrCapsule(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* L_Niagara;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* H_Niagara;
 };
