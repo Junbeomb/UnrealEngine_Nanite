@@ -29,10 +29,6 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Bomb;
 
-	UPROPERTY(EditAnywhere, Category = "ShpereCollision")
-	class USphereComponent* CheckInstanceSMC;
-
-
 	UFUNCTION()
 	void OverlapSMCRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

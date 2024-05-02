@@ -20,13 +20,6 @@ AInteractStatue::AInteractStatue()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	StaticMesh->SetupAttachment(RootComponent);
 
-	CheckInstanceSMC = CreateDefaultSubobject<USphereComponent>(TEXT("CheckInstanceSMC"));
-	CheckInstanceSMC->SetupAttachment(RootComponent);
-	CheckInstanceSMC->SetSphereRadius(0.f);
-	CheckInstanceSMC->SetHiddenInGame(false);
-	//CheckInstanceSMC랑 겹치면
-	CheckInstanceSMC->OnComponentBeginOverlap.AddDynamic(this, &AInteractStatue::OverlapSMCRange);
-
 	Bomb = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Bomb"));
 	Bomb->SetupAttachment(RootComponent);
 
@@ -46,11 +39,6 @@ AInteractStatue::AInteractStatue()
 	MassBlendTimelineUpdateCallback.BindUFunction(this, FName("SetMassBlendTimelineUpdate"));
 	NormalAmplifyTimelineUpdateCallback.BindUFunction(this, FName("SetNormalAmplifyTimelineUpdate"));
 	EmissiveTimelineUpdateCallback.BindUFunction(this, FName("SetEmissiveTimelineUpdate"));
-
-	//SMCSPhereTimeline
-	SMCSphereTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("SMCSPhereTImeline"));
-	SMCSphereTimelineFinishedCallback.BindUFunction(this, FName("SetSMCSphereTimelineFinish"));
-	SMCSphereTimelineUpdateCallback.BindUFunction(this, FName("SetSMCSPhereTimelineUpdate"));
 
 	//ShakeSMTimeline
 	ShakeSMTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ShakeSMTimeline"));
@@ -112,12 +100,6 @@ void AInteractStatue::StartMassBlend()
 	if (PCI) {
 		FLinearColor EColor;
 		PCI->GetVectorParameterValue(FName("EmissiveColor"), EColor);
-	}
-
-	if (SMCSphereCurve) {
-		SMCSphereTimeline->AddInterpFloat(SMCSphereCurve, SMCSphereTimelineUpdateCallback, FName("SphereRadius"));
-		SMCSphereTimeline->SetTimelineFinishedFunc(SMCSphereTimelineFinishedCallback);
-		SMCSphereTimeline->PlayFromStart();
 	}
 
 	//MassBlendTimeline
@@ -207,65 +189,6 @@ void AInteractStatue::SetSizeSMTimelineUpdate(float Value)
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
-
-
-//==================SMCSphereTimeline====================
-//==================SMCSphereTimeline====================
-//==================SMCSphereTimeline====================
-void AInteractStatue::SetSMCSphereTimelineFinish()
-{
-	for (UMaterialInstanceDynamic* DMI : DMIList) {
-		DMI->SetScalarParameterValue(FName("IsMassBlending?"), 0.0f);
-		DMI->SetScalarParameterValue(FName("IsChanging?"), 0.0f);
-		DMIList.Remove(DMI);
-	}
-
-	Destroy();
-}
-void AInteractStatue::SetSMCSphereTimelineUpdate(float Value)
-{
-	CheckInstanceSMC->SetSphereRadius(Value * BombDistance);
-}
-
-//겹치면
-void AInteractStatue::OverlapSMCRange(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-
-	//Overlap 이벤트가 발생하지 않음.
-
-	UInstancedStaticMeshComponent* TempISMC = Cast<UInstancedStaticMeshComponent>(SweepResult.GetComponent());
-	if (TempISMC) {
-		FString TempName = TempISMC->GetStaticMesh()->GetName();
-		if (TempName.Contains("SM_L_")) {
-			int32 TempHitItem = SweepResult.Item;
-
-			//Add UpScore!!
-
-			FTransform TempTransform;
-			TempISMC->GetInstanceTransform(TempHitItem, TempTransform, true);
-
-			FString RightS;
-			TempName.Split("SM_L_", NULL, &RightS);
-			RightS = "SM_H_" + RightS;
-
-			for (UInstancedStaticMeshComponent* a : InstancedMesh) {
-				//UE_LOG(LogTemp, Warning, TEXT("%s"),*a->GetStaticMesh()->GetName());
-				if (a->GetStaticMesh()->GetName().Contains(RightS)) {
-					a->AddInstance(TempTransform,true);
-				}
-			}
-
-			//Add SpawnNiagara
-
-			TempISMC->RemoveInstance(TempHitItem);
-		}
-	}
-}
-
-//==================SMCSphereTimeline====================
-//==================SMCSphereTimeline====================
-//==================SMCSphereTimeline====================
-
 
 // Called when the game starts or when spawned
 void AInteractStatue::BeginPlay()
