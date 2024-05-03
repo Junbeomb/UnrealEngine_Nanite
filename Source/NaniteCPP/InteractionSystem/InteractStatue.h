@@ -29,10 +29,6 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Bomb;
 
-	UFUNCTION()
-	void OverlapSMCRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-
 	UPROPERTY(EditAnywhere)
 	float BombDistance;
 	float BlendRadius;
@@ -101,22 +97,6 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
 			void SetSizeSMTimelineUpdate(float Value);
 
-	//SMCSPhereTimeline
-	UPROPERTY(EditAnywhere, Category = "Timeline")
-	UTimelineComponent* SMCSphereTimeline;
-		UPROPERTY(EditAnywhere,Category="Timeline")
-		UCurveFloat* SMCSphereCurve;
-		//종료시
-		FOnTimelineEvent SMCSphereTimelineFinishedCallback;
-		UFUNCTION()
-		void SetSMCSphereTimelineFinish();
-		//callback함수
-		FOnTimelineFloat SMCSphereTimelineUpdateCallback;
-		UFUNCTION()
-		void SetSMCSphereTimelineUpdate(float Value);
-
-
-	
 public:	
 	// Sets default values for this actor's properties
 	AInteractStatue();
