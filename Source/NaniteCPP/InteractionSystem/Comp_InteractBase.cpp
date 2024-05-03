@@ -23,7 +23,6 @@ void UComp_InteractBase::BeginPlay()
 {
 	Super::BeginPlay();
 	// ...
-	
 }
 
 

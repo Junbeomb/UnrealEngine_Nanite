@@ -2,7 +2,14 @@ Binaries
 DerivedDataCache
 Intermediate
 Saved
-Content
+
+Content/Characters
+Content/LevelPrototyping
+Content/Megascans
+Content/MsPresets
+Content/StarterContent
+Content/ThirdPerson
+
 Config
 .vscode
 .vs
