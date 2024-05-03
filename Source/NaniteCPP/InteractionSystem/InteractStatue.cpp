@@ -11,9 +11,7 @@
 // Sets default values
 AInteractStatue::AInteractStatue()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 
@@ -31,7 +29,7 @@ AInteractStatue::AInteractStatue()
 	Bomb->SetAutoActivate(false);
 	WindNS->SetAutoActivate(false);
 
-	BombDistance = 2000.f;
+	BombDistance = 4000.f;
 
 	//MassBlendTimeline
 	MassBlendTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("MassBlendTimeline"));
@@ -52,7 +50,7 @@ AInteractStatue::AInteractStatue()
 void AInteractStatue::BeginPlay()
 {
 	Super::BeginPlay();
-	CompBase->SetDynamicMaterial(StaticMesh, false);
+	//CompBase->SetDynamicMaterial(StaticMesh, false);
 
 	//월드내의 Foliage Static Mesh 리스트 가져오기
 	TArray<AActor*> Temp;
@@ -68,7 +66,7 @@ void AInteractStatue::BeginPlay()
 			}
 		}
 	}
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *StaticMesh->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *StaticMesh->GetName());
 
 }
 
@@ -104,10 +102,10 @@ void AInteractStatue::PressEStart()
 void AInteractStatue::StartMassBlend()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("startMassBlend"));
-
+	\
 	//D_BPStartBlend.Execute();
 
-
+	PCI->SetScalarParameterValue(FName("MassDivide"), 20.f);
 	if (PCI) {
 		FLinearColor EColor;
 		PCI->GetVectorParameterValue(FName("MassEmissiveColor"), EColor);
@@ -128,16 +126,18 @@ void AInteractStatue::StartMassBlend()
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
+
 void AInteractStatue::SetMassBlendTimelineFinish()
 {
 	//D_BPFinishBlend.Execute();
 	Bomb->DestroyComponent();
 }
+
 void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 {
 	BlendRadius = BombDistance * Value;
-	PCI->SetScalarParameterValue(FName("MassRadius"), BlendRadius);
 
+	PCI->SetScalarParameterValue(FName("MassRadius"), BlendRadius);
 	Bomb->SetNiagaraVariableVec3("Scale Factor", { BlendRadius / 50, BlendRadius / 50, BlendRadius / 50 });
 	WindNS->SetNiagaraVariableFloat("Radius", BlendRadius);
 }
@@ -145,6 +145,7 @@ void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 void AInteractStatue::SetNormalAmplifyTimelineUpdate(float Value)
 {
 	PCI->SetScalarParameterValue(FName("MassAmplify"), Value);
+	UE_LOG(LogTemp, Warning, TEXT("%f"),Value);
 }
 
 void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
@@ -197,5 +198,5 @@ void AInteractStatue::SetSizeSMTimelineUpdate(float Value)
 // Called every frame
 void AInteractStatue::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//Super::Tick(DeltaTime);
 }

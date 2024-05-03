@@ -2,9 +2,11 @@ Binaries
 DerivedDataCache
 Intermediate
 Saved
-Content/AssetPacks
+Content
+Config
 .vscode
 .vs
+.vsconfig
 *.VC.db
 *.opensdf
 *.opendb
