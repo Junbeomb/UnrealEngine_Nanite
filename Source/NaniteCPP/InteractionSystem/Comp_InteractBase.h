@@ -22,6 +22,12 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 	UPROPERTY(EditDefaultsOnly, Category="Interact")
 	TArray<UMaterialInstanceDynamic*> DMI_List;
 
+	UPROPERTY(EditAnywhere)
+	UMaterialInstance* OverlayMaterial;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* OwnerStatic;
+
 
 public:	
 

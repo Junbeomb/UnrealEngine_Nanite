@@ -14,6 +14,7 @@ UComp_InteractBase::UComp_InteractBase()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
 	// ...
 }
 
@@ -22,6 +23,9 @@ UComp_InteractBase::UComp_InteractBase()
 void UComp_InteractBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+
 	// ...
 }
 
@@ -44,22 +48,14 @@ void UComp_InteractBase::SetDynamicMaterial(UStaticMeshComponent* Mesh, bool IsS
 
 void UComp_InteractBase::TurnOnHover()
 {
-	if (IsSlowHoverEffect) {
-		SlowHoverTickEvent = true;
-	}
-	else {
-		for (UMaterialInstanceDynamic* a : DMI_List) {
-			a->SetScalarParameterValue(TEXT("HoverValue"), 1.f);
-		}
+	if (OverlayMaterial) {
+		OwnerStatic->SetOverlayMaterial(OverlayMaterial);
 	}
 }
 
 void UComp_InteractBase::TurnOffHover()
 {
-	for (UMaterialInstanceDynamic* a : DMI_List) {
-		a->SetScalarParameterValue(TEXT("HoverValue"), 0.f);
-	}
-	SlowHoverTickEvent = false;
+	OwnerStatic->SetOverlayMaterial(NULL);
 }
 
 void UComp_InteractBase::TurnOnToggleFunction()
