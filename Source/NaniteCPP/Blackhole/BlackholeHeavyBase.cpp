@@ -27,7 +27,6 @@ ABlackholeHeavyBase::ABlackholeHeavyBase()
 void ABlackholeHeavyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABlackholeHeavyBase::OnConstruction(const FTransform& Transform)

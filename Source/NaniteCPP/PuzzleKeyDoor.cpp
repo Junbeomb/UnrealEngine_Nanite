@@ -16,6 +16,11 @@ APuzzleKeyDoor::APuzzleKeyDoor()
 	RootComponent = DoorMesh;
 
 	Comp_Interact = CreateDefaultSubobject<UComp_InteractBase>(TEXT("Comp_Interact"));
+
+	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
+	//callbackÇÔ¼öbind
+	TimelineCallback.BindUFunction(this, FName("SetDoorTimelineUpdate"));
+	TimelineFinishedCallback.BindUFunction(this, FName("SetDoorTimelineFinish"));
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +51,7 @@ void APuzzleKeyDoor::OpenDoor()
 
 void APuzzleKeyDoor::SetDoorTimelineFinish()
 {
+	UE_LOG(LogTemp, Warning, TEXT("FinishTimeline"));
 }
 
 void APuzzleKeyDoor::SetDoorTimelineUpdate(float Value)
