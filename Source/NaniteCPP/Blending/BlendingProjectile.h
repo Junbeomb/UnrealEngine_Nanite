@@ -24,6 +24,14 @@ class NANITECPP_API ABlendingProjectile : public AActor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
+
+	UFUNCTION()
+	void HitProjectile(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UPROPERTY(EditAnywhere, Category = Blending)
+	TSubclassOf<class AMaterialChangeBall> ChangeBall;
+
+	FActorSpawnParameters ActorSpawnParams;
 	
 public:	
 	// Sets default values for this actor's properties

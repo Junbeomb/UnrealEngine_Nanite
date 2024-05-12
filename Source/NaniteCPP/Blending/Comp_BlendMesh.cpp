@@ -40,19 +40,15 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		SumSeconds += DeltaTime;
 
 		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //다 바꿨으면
-			
-			//UE_LOG(LogTemp, Warning, TEXT("%f"), SumSeconds);
-
 			IsTickStart = false;
 
-			if (SMC){
+			if (SMC) {
 				SMC->SetAffectDistanceFieldLighting(false);
 			}
 			else {
 				SKC->SetAffectDistanceFieldLighting(false);
 			}
 
-			UpScore();
 			FinishBlendSetVariable();
 
 			D_FinishBlending.Execute();
@@ -63,13 +59,6 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			}
 		}
 	}
-	else if(IsMassTickStart){
-		for (UMaterialInstanceDynamic* a : DMIList) {
-			a->SetScalarParameterValue(TEXT("MassRadius"), SumSeconds * ExtentSubtractAmountOneSecond);
-		}
-	}
-
-	// ...
 }
 
 void UComp_BlendMesh::StartBlend()
@@ -105,48 +94,6 @@ void UComp_BlendMesh::StartBlend()
 		SKC->SetAffectDistanceFieldLighting(false);
 		CreateDMIAndDFOff(SKC, SKC->GetNumMaterials());
 	}
-}
-
-void UComp_BlendMesh::StartBlendMass(FVector CenterLocation, AInteractStatue* InteractStatue)
-{
-	BlendMassStatue = InteractStatue;
-	IsBlendStart = true;
-	if (IsLow()) {
-		DMIList.Empty();
-		UMeshComponent* TempMesh = StaticOrSkeletal();
-		int NumMaterial = TempMesh->GetNumMaterials();
-
-		for (int i = 0; i < NumMaterial; ++i) {
-			UMaterialInstanceDynamic* TempDMI = TempMesh->CreateDynamicMaterialInstance(i, TempMesh->GetMaterial(i));
-			TempDMI->SetScalarParameterValue("IsMassBlending?", 1.0f);
-			TempDMI->SetScalarParameterValue("IsChanging?", 1.0f);
-			TempDMI->SetVectorParameterValue("MassCenter", CenterLocation);
-
-			DMIList.Add(TempDMI);
-		}
-	}
-	else {
-		JustGo();
-	}
-
-
-
-}
-
-void UComp_BlendMesh::StartBlendMassTickStartFunc()
-{
-	IsMassTickStart = true;
-}
-
-void UComp_BlendMesh::StartBlendMassTickFinishFunc()
-{
-	IsMassTickStart = false;
-
-	UpScore();
-	FinishBlendSetVariable();
-
-	//Niagara 추가하기
-	D_FinishBlending.Execute();
 }
 
 void UComp_BlendMesh::JustGo()
@@ -199,13 +146,6 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 	IsTickStart = true;
 }
 
-void UComp_BlendMesh::UpScore()
-{
-	if (Player) {
-		//UE_LOG(LogTemp, Warning, TEXT("UpScore!!"));
-		Player->UpScore();
-	}
-}
 
 void UComp_BlendMesh::FinishBlendSetVariable()
 {
