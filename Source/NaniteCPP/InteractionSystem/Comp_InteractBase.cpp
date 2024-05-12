@@ -26,6 +26,8 @@ void UComp_InteractBase::BeginPlay()
 
 	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *GetOwner()->GetName());
+	
 	// ...
 }
 
@@ -60,6 +62,7 @@ void UComp_InteractBase::TurnOffHover()
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s"),*GetOwner()->GetName());
 	IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
 	OwnerInterface->PressEStart();
 }

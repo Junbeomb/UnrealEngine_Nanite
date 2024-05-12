@@ -25,6 +25,4 @@ public:
 
 	virtual void PressEStart();
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Hello")
-	bool GetSlowHoverEffect();
 };
