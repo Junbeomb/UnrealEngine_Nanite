@@ -4,8 +4,6 @@
 #include "PuzzleKeyDoor.h"
 #include "InteractionSystem/Comp_InteractBase.h"
 
-
-
 // Sets default values
 APuzzleKeyDoor::APuzzleKeyDoor()
 {
