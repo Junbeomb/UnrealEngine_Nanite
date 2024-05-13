@@ -14,29 +14,26 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 	GENERATED_BODY()
 
 
-
-	UPROPERTY(EditDefaultsOnly, Category="Interact")
-	bool IsSlowHoverEffect;
-	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-	bool SlowHoverTickEvent;
-	UPROPERTY(EditDefaultsOnly, Category="Interact")
-	TArray<UMaterialInstanceDynamic*> DMI_List;
-
 	UPROPERTY(EditAnywhere)
 	UMaterialInstance* OverlayMaterial;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInstanceDynamic* DMIOverlay;
+
+	UPROPERTY(EditAnywhere)
+	FLinearColor OverlayColor;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* OwnerStatic;
 
 
-public:	
 
+
+public:	
 
 	// Sets default values for this component's properties
 	UComp_InteractBase();
 
-	UFUNCTION(Category = "Interact")
-	void SetDynamicMaterial(UStaticMeshComponent* Mesh, bool IsSlow);
 	UFUNCTION(Category = "Interact")
 	void TurnOnHover();
 	UFUNCTION(Category = "Interact")
@@ -44,13 +41,15 @@ public:
 	UFUNCTION(Category = "Interact")
 	void TurnOnToggleFunction();
 
+	UFUNCTION()
+	void DestroyThisComponentFunc();
+	UFUNCTION()
+	void SetOverlayMaterial();
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
 };

@@ -10,12 +10,8 @@
 // Sets default values for this component's properties
 UComp_InteractBase::UComp_InteractBase()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
-
-	// ...
 }
 
 
@@ -26,26 +22,8 @@ void UComp_InteractBase::BeginPlay()
 
 	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *GetOwner()->GetName());
-	
+	SetOverlayMaterial();
 	// ...
-}
-
-
-// Called every frame
-void UComp_InteractBase::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-void UComp_InteractBase::SetDynamicMaterial(UStaticMeshComponent* Mesh, bool IsSlow)
-{
-	IsSlowHoverEffect = IsSlow;
-
-	int index = 0;
-	for (UMaterialInterface* a : Mesh->GetMaterials()) {
-		DMI_List.Add(Mesh->CreateDynamicMaterialInstance(index++, a));
-	}
 }
 
 void UComp_InteractBase::TurnOnHover()
@@ -62,8 +40,24 @@ void UComp_InteractBase::TurnOffHover()
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"),*GetOwner()->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s"),*GetOwner()->GetName());
 	IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
 	OwnerInterface->PressEStart();
+}
+
+void UComp_InteractBase::DestroyThisComponentFunc()
+{
+	TurnOffHover();
+	DestroyComponent();
+}
+
+void UComp_InteractBase::SetOverlayMaterial()
+{
+	if (OverlayMaterial) {
+		DMIOverlay = UMaterialInstanceDynamic::Create(OverlayMaterial,this);
+		DMIOverlay->SetVectorParameterValue("OverlayColor", OverlayColor);
+		OverlayMaterial = DMIOverlay;
+	}
+	
 }
 
