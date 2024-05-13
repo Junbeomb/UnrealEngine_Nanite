@@ -15,18 +15,17 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 
 
 	UPROPERTY(EditAnywhere)
-	UMaterialInstance* OverlayMaterial;
+	UMaterialInstance* OverlayMaterialInstance;
 
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInstanceDynamic* DMIOverlay;
 
-	UPROPERTY(EditAnywhere)
-	FLinearColor OverlayColor;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* OwnerStatic;
 
-
+	UPROPERTY(EditAnywhere)
+	bool cantToggle = false;
 
 
 public:	
@@ -43,9 +42,16 @@ public:
 
 	UFUNCTION()
 	void DestroyThisComponentFunc();
+
 	UFUNCTION()
 	void SetOverlayMaterial();
 
+
+	UPROPERTY(EditAnywhere)
+	FLinearColor OverlayColor;
+
+	UFUNCTION()
+	void SetCantToggle(bool ct);
 
 protected:
 	// Called when the game starts

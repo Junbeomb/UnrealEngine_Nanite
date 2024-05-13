@@ -3,6 +3,7 @@
 
 #include "PuzzleKeyPad.h"
 #include "Blending/Comp_BlendMesh.h"
+#include "PuzzleKeyDoor.h"
 #include "InteractionSystem/Comp_InteractBase.h"
 
 // Sets default values
@@ -16,7 +17,7 @@ APuzzleKeyPad::APuzzleKeyPad()
 
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 
-	isGetKey = false;
+	//isGetKey = false;
 
 }
 
@@ -36,18 +37,29 @@ void APuzzleKeyPad::OnFinishBlending()
 	Comp_Interact = Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
 	if (Comp_Interact) {
 		Comp_Interact->RegisterComponent();
+		UE_LOG(LogTemp, Warning, TEXT("FinishBlending PuzzleKeyPad"));
+		if (!isGetKey) {
+			Comp_Interact->SetCantToggle(true);
+		}
 	}
 }
 
 void APuzzleKeyPad::PressEStart()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
+	UE_LOG(LogTemp, Warning, TEXT("PressEStart PuzzleKeyPad"));
+
+	APuzzleKeyDoor* puzzleDoor = Cast<APuzzleKeyDoor>(APuzzleKeyDoor::StaticClass());
+	puzzleDoor->OpenDoor();
 	Destroy();
 }
 
-void APuzzleKeyPad::GetKey()
+void APuzzleKeyPad::GainKey()
 {
 	isGetKey = true;
+
+	//if (IsValid(Comp_Interact)) {
+	//	Comp_Interact->SetCantToggle(false);
+	//}
 }
 
 // Called every frame

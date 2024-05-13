@@ -5,19 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
-#include "InteractionSystem/Interface_Interact.h"
 #include "PuzzleKeyDoor.generated.h"
 
 UCLASS()
-class NANITECPP_API APuzzleKeyDoor : public AActor, public IInterface_Interact
+class NANITECPP_API APuzzleKeyDoor : public AActor
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* DoorMesh;
 
-	UPROPERTY(EditAnywhere)
-	class UComp_InteractBase* Comp_Interact;
 	
 	UPROPERTY()
 	float saveZRotation;
@@ -41,15 +38,12 @@ public:
 	// Sets default values for this actor's properties
 	APuzzleKeyDoor();
 
-	virtual void PressEStart() override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void OpenDoor();

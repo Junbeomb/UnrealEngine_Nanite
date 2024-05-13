@@ -4,6 +4,7 @@
 #include "PuzzleKey.h"
 #include "Blending/Comp_BlendMesh.h"
 #include "InteractionSystem/Comp_InteractBase.h"
+#include "PuzzleKeyPad.h"
 
 
 
@@ -42,8 +43,11 @@ void APuzzleKey::OnFinishBlending()
 
 void APuzzleKey::PressEStart()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
-	Destroy();
+	//UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
+	APuzzleKeyPad* KeyPad = Cast<APuzzleKeyPad>(APuzzleKeyPad::StaticClass());
+	KeyPad->GainKey();
+
+	//Destroy();
 }
 
 // Called every frame

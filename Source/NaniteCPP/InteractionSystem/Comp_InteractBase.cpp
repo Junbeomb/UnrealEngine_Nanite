@@ -3,6 +3,7 @@
 
 
 #include "Comp_InteractBase.h"
+#include "UObject/ConstructorHelpers.h"
 #include "InteractStatue.h"
 
 
@@ -12,15 +13,29 @@ UComp_InteractBase::UComp_InteractBase()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
+
 }
 
+
+void UComp_InteractBase::SetCantToggle(bool ct)
+{
+	//cantToggle이 true이면 누르지 못함
+	cantToggle = ct;
+	if (ct) {
+		OverlayColor = { 5,0.5,0.5 };
+	}
+	else {
+		OverlayColor = { 0.5,0.5,5 };
+	}
+	SetOverlayMaterial();
+}
 
 // Called when the game starts
 void UComp_InteractBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
 
 	SetOverlayMaterial();
 	// ...
@@ -28,21 +43,33 @@ void UComp_InteractBase::BeginPlay()
 
 void UComp_InteractBase::TurnOnHover()
 {
-	if (OverlayMaterial) {
-		OwnerStatic->SetOverlayMaterial(OverlayMaterial);
+	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+
+	//임시로 할당
+	//수정 예정
+	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *OverlayMaterialInstance->GetMaterial()->GetName());
+	if ( OwnerStatic && OverlayMaterialInstance) {
+		OwnerStatic->SetOverlayMaterial(OverlayMaterialInstance);
 	}
 }
 
 void UComp_InteractBase::TurnOffHover()
 {
-	OwnerStatic->SetOverlayMaterial(NULL);
+	UE_LOG(LogTemp, Warning, TEXT("TurnOffHover"));
+	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+	if(OwnerStatic)
+		OwnerStatic->SetOverlayMaterial(NULL);
 }
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%s"),*GetOwner()->GetName());
-	IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
-	OwnerInterface->PressEStart();
+	if (!cantToggle) {
+		IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
+		OwnerInterface->PressEStart();
+	}
 }
 
 void UComp_InteractBase::DestroyThisComponentFunc()
@@ -53,10 +80,10 @@ void UComp_InteractBase::DestroyThisComponentFunc()
 
 void UComp_InteractBase::SetOverlayMaterial()
 {
-	if (OverlayMaterial) {
-		DMIOverlay = UMaterialInstanceDynamic::Create(OverlayMaterial,this);
+	if (OverlayMaterialInstance) {
+		DMIOverlay = UMaterialInstanceDynamic::Create(OverlayMaterialInstance,this);
 		DMIOverlay->SetVectorParameterValue("OverlayColor", OverlayColor);
-		OverlayMaterial = DMIOverlay;
+		OverlayMaterialInstance = DMIOverlay;
 	}
 	
 }

@@ -34,7 +34,9 @@ public:
 	virtual void PressEStart() override;
 
 	UFUNCTION()
-	void GetKey();
+	void GainKey();
+
+
 
 protected:
 	// Called when the game starts or when spawned

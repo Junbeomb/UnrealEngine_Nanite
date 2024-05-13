@@ -2,7 +2,6 @@
 
 
 #include "PuzzleKeyDoor.h"
-#include "InteractionSystem/Comp_InteractBase.h"
 
 // Sets default values
 APuzzleKeyDoor::APuzzleKeyDoor()
@@ -12,8 +11,6 @@ APuzzleKeyDoor::APuzzleKeyDoor()
 
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
 	RootComponent = DoorMesh;
-
-	Comp_Interact = CreateDefaultSubobject<UComp_InteractBase>(TEXT("Comp_Interact"));
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
 	//callbackÇÔ¼öbind
@@ -31,12 +28,6 @@ void APuzzleKeyDoor::BeginPlay()
 
 }
 
-// Called every frame
-void APuzzleKeyDoor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 void APuzzleKeyDoor::OpenDoor()
 {
@@ -57,8 +48,4 @@ void APuzzleKeyDoor::SetDoorTimelineUpdate(float Value)
 	SetActorRotation({ 0,0,Value * -90 + saveZRotation });
 }
 
-void APuzzleKeyDoor::PressEStart()
-{
-	OpenDoor();
-}
 

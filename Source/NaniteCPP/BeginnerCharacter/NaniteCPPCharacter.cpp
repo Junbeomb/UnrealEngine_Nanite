@@ -91,7 +91,10 @@ void ANaniteCPPCharacter::Tick(float DeltaTime)
 			IsInteractBaseHover = true;
 		}
 		else {
-			LastCompBase->TurnOffHover();
+			if (LastCompBase) {
+				LastCompBase->TurnOffHover();
+				IsInteractBaseHover = false;
+			}
 		}
 	}
 	else { //lineTrace 안될 시에
