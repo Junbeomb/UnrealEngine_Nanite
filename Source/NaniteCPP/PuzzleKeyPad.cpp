@@ -2,12 +2,21 @@
 
 
 #include "PuzzleKeyPad.h"
+#include "Blending/Comp_BlendMesh.h"
+#include "InteractionSystem/Comp_InteractBase.h"
 
 // Sets default values
 APuzzleKeyPad::APuzzleKeyPad()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	KeyPadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyPadMesh"));
+	RootComponent = KeyPadMesh;
+
+	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
+
+	isGetKey = false;
 
 }
 
@@ -15,7 +24,30 @@ APuzzleKeyPad::APuzzleKeyPad()
 void APuzzleKeyPad::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Comp_Blend->D_FinishBlending.BindUObject(this, &APuzzleKeyPad::OnFinishBlending);
+
 	
+}
+
+void APuzzleKeyPad::OnFinishBlending()
+{
+	//interact component Ãß°¡
+	Comp_Interact = Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
+	if (Comp_Interact) {
+		Comp_Interact->RegisterComponent();
+	}
+}
+
+void APuzzleKeyPad::PressEStart()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
+	Destroy();
+}
+
+void APuzzleKeyPad::GetKey()
+{
+	isGetKey = true;
 }
 
 // Called every frame

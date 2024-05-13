@@ -29,12 +29,7 @@ public:
 
 	UFUNCTION()
 	void StartBlend();
-	UFUNCTION()
-	void StartBlendMass(FVector CenterLocation,AInteractStatue* InteractStatue );
-	UFUNCTION()
-	void StartBlendMassTickStartFunc();
-	UFUNCTION()
-	void StartBlendMassTickFinishFunc();
+
 	UFUNCTION()
 	void JustGo();
 
@@ -65,10 +60,8 @@ private:
 
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
-	AInteractStatue* BlendMassStatue;
 
 	bool IsTickStart;
-	bool IsMassTickStart;
 
 
 	bool IsHighQuality;

@@ -4,16 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "InteractionSystem/Interface_Interact.h"
 #include "PuzzleKeyPad.generated.h"
 
 UCLASS()
-class NANITECPP_API APuzzleKeyPad : public AActor
+class NANITECPP_API APuzzleKeyPad : public AActor, public IInterface_Interact
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* KeyPadMesh;
+
+	UPROPERTY(EditAnywhere)
+	class UComp_BlendMesh* Comp_Blend;
+
+	UPROPERTY(EditAnywhere)
+	class UComp_InteractBase* Comp_Interact;
+
+	UFUNCTION()
+	void OnFinishBlending();
+
+	UPROPERTY(EditAnywhere)
+	bool isGetKey;
 	
 public:	
 	// Sets default values for this actor's properties
 	APuzzleKeyPad();
+
+	virtual void PressEStart() override;
+
+	UFUNCTION()
+	void GetKey();
 
 protected:
 	// Called when the game starts or when spawned

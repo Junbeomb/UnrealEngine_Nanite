@@ -60,6 +60,5 @@ void APuzzleKeyDoor::SetDoorTimelineUpdate(float Value)
 void APuzzleKeyDoor::PressEStart()
 {
 	OpenDoor();
-
 }
 

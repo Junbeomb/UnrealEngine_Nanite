@@ -42,8 +42,8 @@ void APuzzleKey::OnFinishBlending()
 
 void APuzzleKey::PressEStart()
 {
-	Destroy();
 	UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
+	Destroy();
 }
 
 // Called every frame
