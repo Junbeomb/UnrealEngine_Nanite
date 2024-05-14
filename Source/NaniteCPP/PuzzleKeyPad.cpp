@@ -4,6 +4,7 @@
 #include "PuzzleKeyPad.h"
 #include "Blending/Comp_BlendMesh.h"
 #include "PuzzleKeyDoor.h"
+#include "Kismet/GameplayStatics.h"
 #include "InteractionSystem/Comp_InteractBase.h"
 
 // Sets default values
@@ -17,7 +18,7 @@ APuzzleKeyPad::APuzzleKeyPad()
 
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 
-	//isGetKey = false;
+	isGetKey = false;
 
 }
 
@@ -34,12 +35,18 @@ void APuzzleKeyPad::BeginPlay()
 void APuzzleKeyPad::OnFinishBlending()
 {
 	//interact component Ãß°¡
-	Comp_Interact = Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
+	//Comp_Interact = CreateDefaultSubobject<UComp_InteractBase>(TEXT("Comp_Interact"));
+	//Comp_Interact = Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
+	Comp_Interact = NewObject<UComp_InteractBase>(this, UComp_InteractBase::StaticClass(), NAME_None, RF_Transient);
 	if (Comp_Interact) {
+		//UE_LOG(LogTemp, Warning, TEXT("FinishBlending PuzzleKeyPad"));
 		Comp_Interact->RegisterComponent();
-		UE_LOG(LogTemp, Warning, TEXT("FinishBlending PuzzleKeyPad"));
+		//Comp_Interact->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		if (!isGetKey) {
 			Comp_Interact->SetCantToggle(true);
+		}
+		else {
+			Comp_Interact->SetCantToggle(false);
 		}
 	}
 }
@@ -48,18 +55,20 @@ void APuzzleKeyPad::PressEStart()
 {
 	UE_LOG(LogTemp, Warning, TEXT("PressEStart PuzzleKeyPad"));
 
-	APuzzleKeyDoor* puzzleDoor = Cast<APuzzleKeyDoor>(APuzzleKeyDoor::StaticClass());
+	APuzzleKeyDoor* puzzleDoor = Cast<APuzzleKeyDoor>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleKeyDoor::StaticClass()));
 	puzzleDoor->OpenDoor();
-	Destroy();
+
+	Comp_Interact->DestroyThisComponentFunc();
 }
 
 void APuzzleKeyPad::GainKey()
 {
+	UE_LOG(LogTemp, Warning, TEXT("GainKey() PuzzleKeyPad"));
 	isGetKey = true;
 
-	//if (IsValid(Comp_Interact)) {
-	//	Comp_Interact->SetCantToggle(false);
-	//}
+	if (IsValid(Comp_Interact)) {
+		Comp_Interact->SetCantToggle(false);
+	}
 }
 
 // Called every frame

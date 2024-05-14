@@ -18,18 +18,20 @@ class NANITECPP_API APuzzleKeyPad : public AActor, public IInterface_Interact
 	UPROPERTY(EditAnywhere)
 	class UComp_BlendMesh* Comp_Blend;
 
+
 	UPROPERTY(EditAnywhere)
-	class UComp_InteractBase* Comp_Interact;
+   class UComp_InteractBase* Comp_Interact;
+
 
 	UFUNCTION()
 	void OnFinishBlending();
 
-	UPROPERTY(EditAnywhere)
-	bool isGetKey;
-	
 public:	
 	// Sets default values for this actor's properties
 	APuzzleKeyPad();
+
+	UPROPERTY(EditAnywhere)
+	bool isGetKey;
 
 	virtual void PressEStart() override;
 

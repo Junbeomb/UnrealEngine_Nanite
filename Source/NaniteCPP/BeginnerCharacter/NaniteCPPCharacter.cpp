@@ -69,7 +69,7 @@ void ANaniteCPPCharacter::Tick(float DeltaTime)
 	FVector FinishTrace = FirstPersonCameraComponent->GetForwardVector() * 300.f + StartTrace;
 	FHitResult HitResult;
 
-	DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false,1,0,1);
+	//DrawDebugLine(GetWorld(), StartTrace, FinishTrace, FColor::Green, false,1,0,1);
 
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, FinishTrace, ECollisionChannel::ECC_Visibility)) { //linetrace 성공 시
 		if (IsValid(HitResult.GetActor()->GetComponentByClass(UComp_InteractBase::StaticClass()))) { //해당 액터가 UComp_InteractBase를 가지고 있으면

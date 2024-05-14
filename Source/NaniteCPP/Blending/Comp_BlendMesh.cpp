@@ -39,7 +39,7 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (IsTickStart) {
 		SumSeconds += DeltaTime;
 
-		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //¥Ÿ πŸ≤Â¿∏∏È
+		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.01) { //¥Ÿ πŸ≤Â¿∏∏È
 			IsTickStart = false;
 
 			if (SMC) {

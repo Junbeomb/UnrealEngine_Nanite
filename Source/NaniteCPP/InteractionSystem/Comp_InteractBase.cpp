@@ -22,11 +22,12 @@ void UComp_InteractBase::SetCantToggle(bool ct)
 	//cantToggle이 true이면 누르지 못함
 	cantToggle = ct;
 	if (ct) {
-		OverlayColor = { 5,0.5,0.5 };
+		OverlayColor = { 5,0.5,0.5,1 };
 	}
 	else {
-		OverlayColor = { 0.5,0.5,5 };
+		OverlayColor = { 0.5,0.5,5,1 };
 	}
+
 	SetOverlayMaterial();
 }
 
@@ -36,20 +37,11 @@ void UComp_InteractBase::BeginPlay()
 	Super::BeginPlay();
 
 	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
-
-	SetOverlayMaterial();
-	// ...
 }
 
 void UComp_InteractBase::TurnOnHover()
 {
 	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-
-	//임시로 할당
-	//수정 예정
-	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *OverlayMaterialInstance->GetMaterial()->GetName());
 	if ( OwnerStatic && OverlayMaterialInstance) {
 		OwnerStatic->SetOverlayMaterial(OverlayMaterialInstance);
 	}
@@ -57,15 +49,14 @@ void UComp_InteractBase::TurnOnHover()
 
 void UComp_InteractBase::TurnOffHover()
 {
-	UE_LOG(LogTemp, Warning, TEXT("TurnOffHover"));
 	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	if(OwnerStatic)
+	if (OwnerStatic) {
 		OwnerStatic->SetOverlayMaterial(NULL);
+	}
 }
 
 void UComp_InteractBase::TurnOnToggleFunction()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("%s"),*GetOwner()->GetName());
 	if (!cantToggle) {
 		IInterface_Interact* OwnerInterface = Cast<IInterface_Interact>(GetOwner());
 		OwnerInterface->PressEStart();
@@ -85,6 +76,5 @@ void UComp_InteractBase::SetOverlayMaterial()
 		DMIOverlay->SetVectorParameterValue("OverlayColor", OverlayColor);
 		OverlayMaterialInstance = DMIOverlay;
 	}
-	
 }
 
