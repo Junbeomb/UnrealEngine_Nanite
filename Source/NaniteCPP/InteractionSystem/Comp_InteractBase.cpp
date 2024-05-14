@@ -6,16 +6,36 @@
 #include "UObject/ConstructorHelpers.h"
 #include "InteractStatue.h"
 
-
-
 // Sets default values for this component's properties
 UComp_InteractBase::UComp_InteractBase()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-
 }
 
+// Called when the game starts
+void UComp_InteractBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
+	DMIOverlay = UMaterialInstanceDynamic::Create(OverlayMaterialInstance, this);
+}
+
+void UComp_InteractBase::TurnOnHover()
+{
+	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+	if ( OwnerStatic && DMIOverlay) {
+		OwnerStatic->SetOverlayMaterial(DMIOverlay);
+	}
+}
+
+void UComp_InteractBase::TurnOffHover()
+{
+	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+	if (OwnerStatic) {
+		OwnerStatic->SetOverlayMaterial(NULL);
+	}
+}
 
 void UComp_InteractBase::SetCantToggle(bool ct)
 {
@@ -28,31 +48,7 @@ void UComp_InteractBase::SetCantToggle(bool ct)
 		OverlayColor = { 0.5,0.5,5,1 };
 	}
 
-	SetOverlayMaterial();
-}
-
-// Called when the game starts
-void UComp_InteractBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	OverlayMaterialInstance = LoadObject<UMaterialInstance>(nullptr, TEXT("/Game/3_InteractSystem/MI_OverlayMaterial"));
-}
-
-void UComp_InteractBase::TurnOnHover()
-{
-	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	if ( OwnerStatic && OverlayMaterialInstance) {
-		OwnerStatic->SetOverlayMaterial(OverlayMaterialInstance);
-	}
-}
-
-void UComp_InteractBase::TurnOffHover()
-{
-	OwnerStatic = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	if (OwnerStatic) {
-		OwnerStatic->SetOverlayMaterial(NULL);
-	}
+	DMIOverlay->SetVectorParameterValue("OverlayColor", OverlayColor);
 }
 
 void UComp_InteractBase::TurnOnToggleFunction()
@@ -68,13 +64,3 @@ void UComp_InteractBase::DestroyThisComponentFunc()
 	TurnOffHover();
 	DestroyComponent();
 }
-
-void UComp_InteractBase::SetOverlayMaterial()
-{
-	if (OverlayMaterialInstance) {
-		DMIOverlay = UMaterialInstanceDynamic::Create(OverlayMaterialInstance,this);
-		DMIOverlay->SetVectorParameterValue("OverlayColor", OverlayColor);
-		OverlayMaterialInstance = DMIOverlay;
-	}
-}
-

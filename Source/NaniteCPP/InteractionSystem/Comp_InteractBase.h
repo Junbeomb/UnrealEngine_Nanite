@@ -44,7 +44,7 @@ public:
 	void DestroyThisComponentFunc();
 
 	UFUNCTION()
-	void SetOverlayMaterial();
+	void SetOverlayMaterialColor();
 
 
 	UPROPERTY(EditAnywhere)

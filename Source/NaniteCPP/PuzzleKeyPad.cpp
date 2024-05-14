@@ -35,13 +35,10 @@ void APuzzleKeyPad::BeginPlay()
 void APuzzleKeyPad::OnFinishBlending()
 {
 	//interact component Ãß°¡
-	//Comp_Interact = CreateDefaultSubobject<UComp_InteractBase>(TEXT("Comp_Interact"));
-	//Comp_Interact = Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
 	Comp_Interact = NewObject<UComp_InteractBase>(this, UComp_InteractBase::StaticClass(), NAME_None, RF_Transient);
 	if (Comp_Interact) {
 		//UE_LOG(LogTemp, Warning, TEXT("FinishBlending PuzzleKeyPad"));
 		Comp_Interact->RegisterComponent();
-		//Comp_Interact->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 		if (!isGetKey) {
 			Comp_Interact->SetCantToggle(true);
 		}
