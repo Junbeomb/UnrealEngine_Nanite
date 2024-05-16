@@ -24,6 +24,9 @@ class NANITECPP_API APuzzlePlasmaGunTable : public AActor, public IInterface_Int
 	UPROPERTY(EditAnywhere)
 	UChildActorComponent* GunChildActor;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> childActorClass;
+
 public:	
 	// Sets default values for this actor's properties
 	APuzzlePlasmaGunTable();

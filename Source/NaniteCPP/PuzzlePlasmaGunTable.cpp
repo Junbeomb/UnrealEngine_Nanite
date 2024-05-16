@@ -1,18 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "PuzzlePlasmaGunTable.h"
 #include "InteractionSystem/Comp_InteractBase.h"
 #include "PuzzlePlasmaGun.h"
 
-// Sets default values
 APuzzlePlasmaGunTable::APuzzlePlasmaGunTable()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	TableMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TableMesh"));
 	RootComponent = TableMesh;
+
+	GunChildActor = CreateDefaultSubobject< UChildActorComponent>(TEXT("ChildActorGun"));
+	GunChildActor->SetupAttachment(TableMesh);
 
 }
 
@@ -32,15 +31,19 @@ void APuzzlePlasmaGunTable::AddGunPart(int num)
 
 void APuzzlePlasmaGunTable::PressEStart()
 {
-	//GunChildActor->SetChildActorClass(APuzzlePlasmaGun::StaticClass());
-	//Comp_Interact->DestroyComponent();
+	if (childActorClass) {
+		GunChildActor->SetChildActorClass(childActorClass);
+		Comp_Interact->DestroyComponent();
+	}
+	else {
+		UE_LOG(LogTemp,Warning,TEXT("childActorClass not exist->(PuzzlePlasmaGunTable.cpp)"))
+	}
 }
 
 // Called when the game starts or when spawned
 void APuzzlePlasmaGunTable::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 
