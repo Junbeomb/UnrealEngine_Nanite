@@ -31,6 +31,10 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
+	FLinearColor colorDefault = { 0.05f,0.05f,0.5f,1.f };
+	FLinearColor colorBright = { 0.05f,0.05f,10.f,1.f };
+	FLinearColor colorRed = { 0.5f,0.05f,0.05f,1.f };
+
 	//timeline=====
 	UPROPERTY(EditAnywhere, Category = "Timeline")
 	class UTimelineComponent* EmissiveTimeline;
@@ -52,6 +56,9 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 
 	UFUNCTION()
 	void TurnOn();
+
+	UFUNCTION()
+	void WrongFunc();
 
 public:	
 	// Sets default values for this actor's properties

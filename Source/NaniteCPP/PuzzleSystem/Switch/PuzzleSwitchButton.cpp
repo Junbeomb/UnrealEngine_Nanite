@@ -13,14 +13,14 @@ APuzzleSwitchButton::APuzzleSwitchButton()
 	ButtonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ButtonMesh"));
 	RootComponent = ButtonMesh;
 
-	Comp_Interact = CreateDefaultSubobject < UComp_InteractBase>(TEXT("Comp_Interact"));
-
-
 	//Timeline
 	EmissiveTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("EmissiveTimeline"));
 	//callbackÇÔ¼öbind
 	EmissiveTimelineCallback.BindUFunction(this, FName("EmissiveTimelineUpdate"));
 	EmissiveTimelineFinishedCallback.BindUFunction(this, FName("EmissiveTimelineFinish"));
+
+
+
 }
 
 
@@ -37,14 +37,13 @@ void APuzzleSwitchButton::BeginPlay()
 	SwitchBox->SwitchBoxOn.AddUObject(this, &APuzzleSwitchButton::TurnOn);
 
 	SwitchDoor = Cast<APuzzleSwitchDoor>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSwitchDoor::StaticClass()));
-	SwitchDoor->wrongAnswer.AddUObject(this, &APuzzleSwitchButton::ResetButton);
+	SwitchDoor->wrongAnswer.AddUObject(this, &APuzzleSwitchButton::WrongFunc);
 
 	
 }
 
 void APuzzleSwitchButton::TurnOn()
 {
-
 	if (EmissiveCurve) {
 		EmissiveTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineCallback, FName("EmissiveCurve"));
 		EmissiveTimeline->SetTimelineFinishedFunc(EmissiveTimelineFinishedCallback);
@@ -52,22 +51,43 @@ void APuzzleSwitchButton::TurnOn()
 	}
 }
 
+void APuzzleSwitchButton::WrongFunc()
+{
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorRed);
+	}
+
+	//delay
+	FTimerHandle DestroyTimerHandle;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([&]
+		{
+			ResetButton();
+		});
+
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, TimerDelegate, 1.5, false);
+
+}
+
 void APuzzleSwitchButton::EmissiveTimelineFinish()
 {
+	ResetButton();
 }
 
 void APuzzleSwitchButton::EmissiveTimelineUpdate(float Value)
 {
-	FLinearColor colorF = { 0.05f,0.05f,0.5f,1.f };
-
 	for (UMaterialInstanceDynamic* a : DMIList) {
-		a->SetVectorParameterValue(TEXT("EmissiveColor"), Value * colorF);
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), Value * colorDefault);
 	}
 }
 
 void APuzzleSwitchButton::ResetButton()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ResetButton!->(PuzzleSwitchButton.cpp)"));
+	//UE_LOG(LogTemp, Warning, TEXT("ResetButton!->(PuzzleSwitchButton.cpp)"));
+
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorDefault);
+	}
 	if (Comp_Interact == nullptr) {
 		Comp_Interact = NewObject<UComp_InteractBase>(this, UComp_InteractBase::StaticClass(), NAME_None, RF_Transient);
 		if (Comp_Interact) {
@@ -80,6 +100,11 @@ void APuzzleSwitchButton::ResetButton()
 
 void APuzzleSwitchButton::PressEStart()
 {
+
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorBright);
+	}
+
 	if (Comp_Interact) {
 		UE_LOG(LogTemp, Warning, TEXT("PressEStart!->(PuzzleSwitchButton.cpp)"));
 		Comp_Interact->DestroyComponent();
