@@ -15,6 +15,12 @@ APuzzleSwitchButton::APuzzleSwitchButton()
 
 	Comp_Interact = CreateDefaultSubobject < UComp_InteractBase>(TEXT("Comp_Interact"));
 
+
+	//Timeline
+	EmissiveTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("EmissiveTimeline"));
+	//callbackÇÔ¼öbind
+	EmissiveTimelineCallback.BindUFunction(this, FName("EmissiveTimelineUpdate"));
+	EmissiveTimelineFinishedCallback.BindUFunction(this, FName("EmissiveTimelineFinish"));
 }
 
 
@@ -38,10 +44,24 @@ void APuzzleSwitchButton::BeginPlay()
 
 void APuzzleSwitchButton::TurnOn()
 {
+
+	if (EmissiveCurve) {
+		EmissiveTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineCallback, FName("EmissiveCurve"));
+		EmissiveTimeline->SetTimelineFinishedFunc(EmissiveTimelineFinishedCallback);
+		EmissiveTimeline->PlayFromStart();
+	}
+}
+
+void APuzzleSwitchButton::EmissiveTimelineFinish()
+{
+}
+
+void APuzzleSwitchButton::EmissiveTimelineUpdate(float Value)
+{
 	FLinearColor colorF = { 0.05f,0.05f,0.5f,1.f };
 
 	for (UMaterialInstanceDynamic* a : DMIList) {
-		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorF);
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), Value * colorF);
 	}
 }
 

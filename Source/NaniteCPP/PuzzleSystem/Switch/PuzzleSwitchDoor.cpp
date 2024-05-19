@@ -12,6 +12,12 @@ APuzzleSwitchDoor::APuzzleSwitchDoor()
 
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
 	RootComponent = DoorMesh;
+
+	//Timeline
+	EmissiveTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("EmissiveTimeline"));
+	//callbackÇÔ¼öbind
+	EmissiveTimelineCallback.BindUFunction(this, FName("EmissiveTimelineUpdate"));
+	EmissiveTimelineFinishedCallback.BindUFunction(this, FName("EmissiveTimelineFinish"));
 }
 
 
@@ -33,10 +39,23 @@ void APuzzleSwitchDoor::BeginPlay()
 
 void APuzzleSwitchDoor::TurnOn()
 {
+	if (EmissiveCurve) {
+		EmissiveTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineCallback, FName("EmissiveCurve"));
+		EmissiveTimeline->SetTimelineFinishedFunc(EmissiveTimelineFinishedCallback);
+		EmissiveTimeline->PlayFromStart();
+	}
+}
+
+void APuzzleSwitchDoor::EmissiveTimelineFinish()
+{
+}
+
+void APuzzleSwitchDoor::EmissiveTimelineUpdate(float Value)
+{
 	FLinearColor colorF = { 0.5f,0.05f,0.05f,1.f };
 
 	for (UMaterialInstanceDynamic* a : DMIList) {
-		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorF);
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), Value * colorF);
 	}
 }
 
