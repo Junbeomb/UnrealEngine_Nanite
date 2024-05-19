@@ -2,10 +2,10 @@
 
 
 #include "PuzzleKeyPad.h"
-#include "Blending/Comp_BlendMesh.h"
+#include "../../Blending/Comp_BlendMesh.h"
+#include "../../InteractionSystem/Comp_InteractBase.h"
 #include "PuzzleKeyDoor.h"
 #include "Kismet/GameplayStatics.h"
-#include "InteractionSystem/Comp_InteractBase.h"
 
 // Sets default values
 APuzzleKeyPad::APuzzleKeyPad()

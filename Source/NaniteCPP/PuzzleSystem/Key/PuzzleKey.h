@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractionSystem/Interface_Interact.h"
+#include "../../InteractionSystem/Interface_Interact.h"
 #include "PuzzleKey.generated.h"
 
 UCLASS()

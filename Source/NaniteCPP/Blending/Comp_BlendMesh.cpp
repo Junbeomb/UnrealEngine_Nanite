@@ -164,7 +164,7 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 
 	IsHighQuality = !IsHighQuality;
 
-	IsBlendStart = false;
+	//IsBlendStart = false;
 
 }
 

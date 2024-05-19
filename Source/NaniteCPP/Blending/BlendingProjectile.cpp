@@ -46,7 +46,6 @@ void ABlendingProjectile::HitProjectile(UPrimitiveComponent* HitComponent, AActo
 			GetWorld()->SpawnActor<AMaterialChangeBall>(ChangeBall, GetActorTransform(), ActorSpawnParams);
 			UBM->StartBlend();
 		}
-
 	}
 
 	Destroy();

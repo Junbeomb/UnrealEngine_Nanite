@@ -2,7 +2,7 @@
 
 
 #include "PuzzleSwitchBox.h"
-#include "Blending/Comp_BlendMesh.h"
+#include "../../Blending/Comp_BlendMesh.h"
 
 
 

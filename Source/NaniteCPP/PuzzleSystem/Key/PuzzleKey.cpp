@@ -2,8 +2,8 @@
 
 
 #include "PuzzleKey.h"
-#include "Blending/Comp_BlendMesh.h"
-#include "InteractionSystem/Comp_InteractBase.h"
+#include "../../Blending/Comp_BlendMesh.h"
+#include "../../InteractionSystem/Comp_InteractBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "PuzzleKeyPad.h"
 

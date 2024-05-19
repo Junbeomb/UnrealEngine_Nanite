@@ -1,6 +1,6 @@
 
 #include "PuzzlePlasmaGunTable.h"
-#include "InteractionSystem/Comp_InteractBase.h"
+#include "../../InteractionSystem/Comp_InteractBase.h"
 #include "PuzzlePlasmaGun.h"
 
 APuzzlePlasmaGunTable::APuzzlePlasmaGunTable()

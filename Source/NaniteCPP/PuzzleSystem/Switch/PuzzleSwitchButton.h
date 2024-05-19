@@ -4,41 +4,49 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractionSystem/Interface_Interact.h"
-#include "PuzzlePlasmaGunTable.generated.h"
+#include "../../InteractionSystem/Interface_Interact.h"
+#include "PuzzleSwitchButton.generated.h"
 
 UCLASS()
-class NANITECPP_API APuzzlePlasmaGunTable : public AActor, public IInterface_Interact
+class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Interact
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* TableMesh;
-	
+	int ButtonNum;
+
 	UPROPERTY(EditAnywhere)
-	TArray<int> GunPartArr;
+	UStaticMeshComponent* ButtonMesh;
 
 	UPROPERTY(EditAnywhere)
 	class UComp_InteractBase* Comp_Interact;
+	
+	UPROPERTY(EditAnywhere)
+	class APuzzleSwitchDoor* SwitchDoor;
 
 	UPROPERTY(EditAnywhere)
-	UChildActorComponent* GunChildActor;
+	class APuzzleSwitchBox* SwitchBox;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> childActorClass;
+	TArray<UMaterialInstanceDynamic*> DMIList;
+
+	UFUNCTION()
+	void ResetButton();
+
+	UFUNCTION()
+	void TurnOn();
 
 public:	
 	// Sets default values for this actor's properties
-	APuzzlePlasmaGunTable();
+	APuzzleSwitchButton();
 
-	UFUNCTION()
-	void AddGunPart(int num);
 
 	virtual void PressEStart() override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 
 };

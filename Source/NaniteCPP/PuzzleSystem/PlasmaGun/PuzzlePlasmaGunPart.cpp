@@ -2,7 +2,7 @@
 
 
 #include "PuzzlePlasmaGunPart.h"
-#include "InteractionSystem/Comp_InteractBase.h"
+#include "../../InteractionSystem/Comp_InteractBase.h"
 #include "PuzzlePlasmaGunTable.h"
 #include "Kismet/GameplayStatics.h"
 

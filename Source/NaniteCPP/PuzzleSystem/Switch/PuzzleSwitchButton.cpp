@@ -1,5 +1,5 @@
 #include "PuzzleSwitchButton.h"
-#include "InteractionSystem/Comp_InteractBase.h"
+#include "../../InteractionSystem/Comp_InteractBase.h"
 #include "PuzzleSwitchDoor.h"
 #include "PuzzleSwitchBox.h"
 #include "Kismet/GameplayStatics.h"
