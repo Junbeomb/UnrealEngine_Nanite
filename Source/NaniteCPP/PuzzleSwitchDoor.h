@@ -21,6 +21,15 @@ class NANITECPP_API APuzzleSwitchDoor : public AActor
 	UPROPERTY(VisibleDefaultsOnly)
 	TArray<int> doorArr;
 
+	UPROPERTY(EditAnywhere)
+	class APuzzleSwitchBox* SwitchBox;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UMaterialInstanceDynamic*> DMIList;
+
+	UFUNCTION()
+	void TurnOn();
+
 public:	
 	APuzzleSwitchDoor();
 

@@ -1,6 +1,7 @@
 #include "PuzzleSwitchButton.h"
 #include "InteractionSystem/Comp_InteractBase.h"
 #include "PuzzleSwitchDoor.h"
+#include "PuzzleSwitchBox.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -20,9 +21,28 @@ APuzzleSwitchButton::APuzzleSwitchButton()
 void APuzzleSwitchButton::BeginPlay()
 {
 	Super::BeginPlay();
+
+	for (int i = 0; i < ButtonMesh->GetNumMaterials(); i++) {
+		UMaterialInstanceDynamic* TempDMI = ButtonMesh->CreateDynamicMaterialInstance(i, ButtonMesh->GetMaterial(i));
+		DMIList.Add(TempDMI);
+	}
+
+	SwitchBox = Cast<APuzzleSwitchBox>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSwitchBox::StaticClass()));
+	SwitchBox->SwitchBoxOn.AddUObject(this, &APuzzleSwitchButton::TurnOn);
+
 	SwitchDoor = Cast<APuzzleSwitchDoor>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSwitchDoor::StaticClass()));
 	SwitchDoor->wrongAnswer.AddUObject(this, &APuzzleSwitchButton::ResetButton);
 
+	
+}
+
+void APuzzleSwitchButton::TurnOn()
+{
+	FLinearColor colorF = { 0.05f,0.05f,0.5f,1.f };
+
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorF);
+	}
 }
 
 void APuzzleSwitchButton::ResetButton()
@@ -35,6 +55,8 @@ void APuzzleSwitchButton::ResetButton()
 		}
 	}
 }
+
+
 
 void APuzzleSwitchButton::PressEStart()
 {

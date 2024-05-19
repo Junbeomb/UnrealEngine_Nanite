@@ -24,8 +24,17 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 	UPROPERTY(EditAnywhere)
 	class APuzzleSwitchDoor* SwitchDoor;
 
+	UPROPERTY(EditAnywhere)
+	class APuzzleSwitchBox* SwitchBox;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UMaterialInstanceDynamic*> DMIList;
+
 	UFUNCTION()
 	void ResetButton();
+
+	UFUNCTION()
+	void TurnOn();
 
 public:	
 	// Sets default values for this actor's properties

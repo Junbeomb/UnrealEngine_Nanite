@@ -2,6 +2,8 @@
 
 
 #include "PuzzleSwitchDoor.h"
+#include "PuzzleSwitchBox.h"
+#include "Kismet/GameplayStatics.h"
 
 
 APuzzleSwitchDoor::APuzzleSwitchDoor()
@@ -10,6 +12,32 @@ APuzzleSwitchDoor::APuzzleSwitchDoor()
 
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
 	RootComponent = DoorMesh;
+}
+
+
+
+void APuzzleSwitchDoor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i = 0; i < DoorMesh->GetNumMaterials(); i++) {
+		UMaterialInstanceDynamic* TempDMI = DoorMesh->CreateDynamicMaterialInstance(i, DoorMesh->GetMaterial(i));
+		DMIList.Add(TempDMI);
+	}
+
+	doorArr.Empty();
+
+	SwitchBox = Cast<APuzzleSwitchBox>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleSwitchBox::StaticClass()));
+	SwitchBox->SwitchBoxOn.AddUObject(this, &APuzzleSwitchDoor::TurnOn);
+}
+
+void APuzzleSwitchDoor::TurnOn()
+{
+	FLinearColor colorF = { 0.5f,0.05f,0.05f,1.f };
+
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetVectorParameterValue(TEXT("EmissiveColor"), colorF);
+	}
 }
 
 void APuzzleSwitchDoor::pushElementDoorArr(int num)
@@ -31,12 +59,6 @@ void APuzzleSwitchDoor::pushElementDoorArr(int num)
 			UE_LOG(LogTemp, Warning, TEXT("Wrong!!->(PuzzleSwitchDoor.cpp)"));
 		}
 	}
-}
-
-void APuzzleSwitchDoor::BeginPlay()
-{
-	Super::BeginPlay();
-	doorArr.Empty();
 }
 
 
