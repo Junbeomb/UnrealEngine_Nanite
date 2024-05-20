@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "NaniteCPP/BeginnerCharacter/NaniteCPPCharacter.h"
-#include "../InteractionSystem/InteractStatue.h"
 #include "Comp_BlendMesh.generated.h"
 
 DECLARE_DELEGATE(FD_Blend);
@@ -63,7 +62,6 @@ private:
 
 	bool IsTickStart;
 
-
 	bool IsHighQuality;
 
 	bool OwnerIsStatic;
@@ -71,7 +69,5 @@ private:
 	float SumSeconds;
 
 	float WhichOneIsLongestXYZ;
-
-
 		
 };

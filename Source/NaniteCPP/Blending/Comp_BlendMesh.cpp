@@ -18,7 +18,6 @@ UComp_BlendMesh::UComp_BlendMesh()
 	SKC = NULL;
 
 	Player = Cast<ANaniteCPPCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	// ...
 }
 
 
@@ -39,18 +38,9 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (IsTickStart) {
 		SumSeconds += DeltaTime;
 
-		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.01) { //다 바꿨으면
+		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //다 바꿨으면
 			IsTickStart = false;
-
-			if (SMC) {
-				SMC->SetAffectDistanceFieldLighting(false);
-			}
-			else {
-				SKC->SetAffectDistanceFieldLighting(false);
-			}
-
 			FinishBlendSetVariable();
-
 			D_FinishBlending.Execute();
 		}
 		else { //머티리얼 바꾸기
@@ -64,10 +54,8 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 void UComp_BlendMesh::StartBlend()
 {
 	bool IsLowObject = IsLow();
-
 	
 	if (Player && Player->HighQualityGun != IsLowObject) {
-		//UE_LOG(LogTemp, Warning, TEXT("%s"),*Player->GetName());
 		D_FinishBlending.Execute();
 		return;
 	}
@@ -79,21 +67,18 @@ void UComp_BlendMesh::StartBlend()
 	GetOwner()->GetActorBounds(false, Origin, BoxExtent, false);
 	WhichOneIsLongestXYZ = BoxExtent.GetMax();
 
-	if (IsValid(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()))) {
-		SMC = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-	}
-	else {
-		SKC = Cast<USkeletalMeshComponent>(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
-	}
-
-	if (SMC) {
+	UMeshComponent* TempMesh = StaticOrSkeletal();
+	if (OwnerIsStatic) {
+		SMC = Cast<UStaticMeshComponent>(TempMesh);
 		SMC->SetAffectDistanceFieldLighting(false);
 		CreateDMIAndDFOff(SMC, SMC->GetNumMaterials());
 	}
 	else {
+		SKC = Cast<USkeletalMeshComponent>(TempMesh);
 		SKC->SetAffectDistanceFieldLighting(false);
 		CreateDMIAndDFOff(SKC, SKC->GetNumMaterials());
 	}
+
 }
 
 void UComp_BlendMesh::JustGo()
@@ -105,13 +90,11 @@ UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
 {
 	UMeshComponent* TempMesh;
 	if (IsValid(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()))) {
-		//UE_LOG(LogTemp, Warning, TEXT("Static"));
 		OwnerIsStatic = true;
 		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		return TempMesh;
 	}
 	else if(IsValid(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()))){
-		//UE_LOG(LogTemp, Warning, TEXT("Skeletal"));
 		OwnerIsStatic = false;
 		TempMesh = Cast<UMeshComponent>(GetOwner()->GetComponentByClass(USkeletalMeshComponent::StaticClass()));
 		return TempMesh;
@@ -154,7 +137,6 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 		a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
 		if (IsLow()) {
 			a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
-			//UE_LOG(LogTemp, Warning, TEXT("123123"));
 		}
 		else {
 			a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
@@ -165,6 +147,5 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 	IsHighQuality = !IsHighQuality;
 
 	//IsBlendStart = false;
-
 }
 

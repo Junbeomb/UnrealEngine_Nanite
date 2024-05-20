@@ -23,10 +23,6 @@ UBlackholeCompBase::UBlackholeCompBase()
 
 }
 
-
-
-
-// Called when the game starts
 void UBlackholeCompBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,7 +36,6 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (!SMC) return;
-
 
 	if (GetIsPull()) {
 		PullDirection = DirectBH(); //액터와 블랙홀 간의 방향 최신화
