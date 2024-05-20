@@ -45,8 +45,11 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 
 	FActorSpawnParameters ActorSpawnParams;
 
-protected:
-	virtual void BeginPlay() override;
+	UFUNCTION()
+	void SpawnAndConvert(UMeshComponent* TempMesh);
+	FString value;
+	FTransform InstanceTransform;
+	UInstancedStaticMeshComponent* InstancedMeshComp;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

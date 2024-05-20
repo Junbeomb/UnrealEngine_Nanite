@@ -30,15 +30,26 @@ AFoliageInfluencer::AFoliageInfluencer()
 }
 
 
-
-void AFoliageInfluencer::BeginPlay()
+void AFoliageInfluencer::SpawnAndConvert(UMeshComponent* TempMesh)
 {
-	Super::BeginPlay();
+	FString Right;
+	value.Split("SM_", NULL, &Right);
 
+	int NumMaterial = TempMesh->GetNumMaterials();
 
-	
+	if (Right.Contains("L_")) {
+		for (int i = 0; i < NumMaterial; ++i) {
+			UMaterialInstanceDynamic* TempDMI = TempMesh->CreateDynamicMaterialInstance(i, TempMesh->GetMaterial(i));
+			TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
+		}
+	}
+	else if (Right.Contains("H_")) {
+		for (int i = 0; i < NumMaterial; ++i) {
+			UMaterialInstanceDynamic* TempDMI = TempMesh->CreateDynamicMaterialInstance(i, TempMesh->GetMaterial(i));
+			TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
+		}
+	}
 }
-
 
 void AFoliageInfluencer::Tick(float DeltaTime)
 {
@@ -49,13 +60,13 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 	for (FHitResult& Hit : OutResults) {
 		if (Hit.bBlockingHit) {
 				if (IsBlackholeInfluencer) { //블랙홀 리스트에서 찾기
-					UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+					InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
 
 					if (InstancedMeshComp) {
-						FTransform InstanceTransform;
+						
 						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
 
-						FString value = *InstancedMeshComp->GetStaticMesh()->GetName();
+						value = *InstancedMeshComp->GetStaticMesh()->GetName();
 						//리스트에서 이름 검색
 
 						if (BlackholeFoliageBlueprints.Num() > 0) {
@@ -64,7 +75,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 								//배열에 해당 SM->BP 가 있으면
 								if (isContain) {
-									
+
 									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
@@ -74,48 +85,14 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 									//High,Low 인지확인====================================================
 									ABlackholeLightBase* PlantBase = Cast<ABlackholeLightBase>(SpawnBP);
 									if (PlantBase != nullptr) {
-										FString Right;
-										value.Split("SM_", NULL, &Right);
-
 										UStaticMeshComponent* SM = PlantBase->BaseStaticMesh;
-										int NumMaterial = SM->GetNumMaterials();
-
-										if (Right.Contains("L_")) {
-											for (int i = 0; i < NumMaterial; ++i) {
-												UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
-											}
-										}
-										else if (Right.Contains("H_")) {
-											for (int i = 0; i < NumMaterial; ++i) {
-												UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-												TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
-											}
-										}
-
+										SpawnAndConvert(SM);
 									}
 									else {
 										ABlackholeHeavyBase* RockBase = Cast<ABlackholeHeavyBase>(SpawnBP);
 										if (RockBase != nullptr) {
-											FString Right;
-											value.Split("SM_", NULL, &Right);
-
 											UStaticMeshComponent* SM = RockBase->BaseStaticMesh;
-											int NumMaterial = SM->GetNumMaterials();
-
-											if (Right.Contains("L_")) {
-												for (int i = 0; i < NumMaterial; ++i) {
-													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
-												}
-											}
-											else if (Right.Contains("H_")) {
-												for (int i = 0; i < NumMaterial; ++i) {
-													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-													TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
-												}
-											}
-	
+											SpawnAndConvert(SM);
 										}
 									}
 									//High,Low 인지확인===================================================
@@ -124,19 +101,17 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
-								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
 							}
 						}
 					}
 				}
 				else { //일반 BP 리스트에서 찾기
-					UInstancedStaticMeshComponent* InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+					InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
 
 					if (InstancedMeshComp) {
-						FTransform InstanceTransform;
 						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
 
-						FString value = *InstancedMeshComp->GetStaticMesh()->GetName();
+						value = *InstancedMeshComp->GetStaticMesh()->GetName();
 						//리스트에서 이름 검색
 
 						if (FoliageBlueprints.Num() > 0) {
@@ -154,24 +129,8 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 									//High,Low 인지확인====================================================
 									AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
 									if (PlantBase != nullptr) {
-										FString Right;
-										value.Split("SM_", NULL,&Right);
-
 										USkeletalMeshComponent* SK = PlantBase->MeshComponent;
-										int NumMaterial = SK->GetNumMaterials();
-
-										if (Right.Contains("L_")) {
-											for (int i = 0; i < NumMaterial; ++i) {
-												UMaterialInstanceDynamic* TempDMI = SK->CreateDynamicMaterialInstance(i, SK->GetMaterial(i));
-												TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
-											}
-										}
-										else if (Right.Contains("H_")) {
-											for (int i = 0; i < NumMaterial; ++i) {
-												UMaterialInstanceDynamic* TempDMI = SK->CreateDynamicMaterialInstance(i, SK->GetMaterial(i));
-												TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
-											}
-										}
+										SpawnAndConvert(SK);
 
 										//블랜드 컴포넌트 유무 검사 및 함수 실행
 										CheckBlend(PlantBase, Hit.Location);
@@ -179,24 +138,8 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 									else {
 										AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
 										if (RockBase != nullptr) {
-											FString Right;
-											value.Split("SM_", NULL, &Right);
-
 											UStaticMeshComponent* SM = RockBase->MeshComponent;
-											int NumMaterial = SM->GetNumMaterials();
-
-											if (Right.Contains("L_")) {
-												for (int i = 0; i < NumMaterial; ++i) {
-													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-													TempDMI->SetScalarParameterValue("IsLow?", 1.0f);
-												}
-											}
-											else if (Right.Contains("H_")) {
-												for (int i = 0; i < NumMaterial; ++i) {
-													UMaterialInstanceDynamic* TempDMI = SM->CreateDynamicMaterialInstance(i, SM->GetMaterial(i));
-													TempDMI->SetScalarParameterValue("IsLow?", 0.0f);
-												}
-											}
+											SpawnAndConvert(SM);
 											//블랜드 컴포넌트 유무 검사 및 함수 실행
 											CheckBlend(RockBase, Hit.Location);
 										}
@@ -206,7 +149,6 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 									//High,Low 인지확인===================================================
 									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
-								//UE_LOG(LogTemp, Warning, TEXT("%d"), isContain);
 							}
 						}
 					}
@@ -270,7 +212,6 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 					FTransform TempTransform = { {0,0,0}, ImpactPoint ,BoxExtent / 100};
 					ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-					//UE_LOG(LogTemp, Warning, TEXT("%s"), *BoxExtent.ToString());
 					GetWorld()->SpawnActor<AMaterialChangeBall>(MaterialChangeBall, TempTransform, ActorSpawnParams);
 					UBM->StartBlend();
 				}
@@ -279,4 +220,6 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 		}
 	}
 }
+
+
 
