@@ -28,14 +28,6 @@ public:
 	class UCapsuleComponent* OverlappingCapsule;
 	UPROPERTY(EditAnywhere,category="collision")
 	bool overlapIsSphere;
-	UPROPERTY(EditAnywhere, category = "collision")
-	UCapsuleComponent* OverlappingBlockPlayer;
-	UPROPERTY(EditAnywhere, category="collision")
-	float sizeBlockPlayer;
-	UPROPERTY(EditAnywhere, category = "collision")
-	float sizeNoPhysics;
-	UPROPERTY(EditAnywhere, category = "collision")
-	bool isVeryLargePhysics;
 
 	class UComp_BlendMesh* Comp_Blend;
 

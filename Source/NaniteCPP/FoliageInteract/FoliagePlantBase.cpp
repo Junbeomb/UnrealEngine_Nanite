@@ -10,7 +10,6 @@
 #include "../Blending/Comp_BlendMesh.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
-
 #include "Containers/UnrealString.h"
 
 AFoliagePlantBase::AFoliagePlantBase()
@@ -31,11 +30,6 @@ AFoliagePlantBase::AFoliagePlantBase()
 	OverlappingCapsule->SetCapsuleHalfHeight(44.f);
 	OverlappingCapsule->SetCapsuleRadius(22.f);
 
-	OverlappingBlockPlayer = CreateDefaultSubobject<UCapsuleComponent>(TEXT("OverlappingBlockPlayer"));
-	OverlappingBlockPlayer->SetupAttachment(RootComponent);
-	OverlappingBlockPlayer->SetCapsuleHalfHeight(44.f);
-	OverlappingBlockPlayer->SetCapsuleRadius(22.f);
-
 	SoundEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEffect"));
 
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
@@ -46,9 +40,6 @@ AFoliagePlantBase::AFoliagePlantBase()
 
 	overlapIsSphere = false;
 	soundOn = false;
-	sizeBlockPlayer = 200.f;
-	sizeNoPhysics = 350.f;
-	isVeryLargePhysics = false;
 	//Influencers가 하나라도 들어와야 블루프린트가 만들어지므로 기본값은 true
 	IsInfluencersInRange = true;
 	//느리게 변환안함.
@@ -66,7 +57,6 @@ AFoliagePlantBase::AFoliagePlantBase()
 	floatTimelineCallback.BindUFunction(this, FName("BlendWeightTimelineUpdate"));
 	floatTimelineFinishedCallback.BindUFunction(this, FName("BlendWeightTimelineFinish"));
 
-	
 }
 
 // Called when the game starts or when spawned
@@ -90,15 +80,6 @@ void AFoliagePlantBase::ReturnToFoliage()
 	if (!soundOn) {
 		SoundEffect->DestroyComponent();
 	}
-
-	float physicsRadius = MeshComponent->Bounds.SphereRadius;
-	if (physicsRadius < sizeBlockPlayer) {
-		//기준 값보다 식물이 작으면 플레이어를 막지 않음.
-		OverlappingBlockPlayer->DestroyComponent();
-	}
-
-	//매우큰 식물인지
-	isVeryLargePhysics = physicsRadius > sizeNoPhysics;
 
 	//월드 내의 모든 FoliageInfluencer를 array 에 담기
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFoliageInfluencer::StaticClass(), AllFoliageInfluencers);
@@ -162,22 +143,17 @@ void AFoliagePlantBase::checkToFoliageInfluencer() {
 //주위에 InfluencersInRange가 아무것도 없을때 실행하는 함수.
 void AFoliagePlantBase::NoInfluencersInRangeFunc()
 {
-	if (isVeryLargePhysics) { //매우큰 식물이면 바로 foliage로 변환
-		AFoliagePlantBase::BlendWeightTimelineFinish();
+	if (!IsSlowFoliageReturn) {
+		FastTimeline->AddInterpFloat(FastCurve, floatTimelineCallback, FName("FastBlend"));
+		FastTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
+
+		FastTimeline->PlayFromStart();
 	}
-	else { //작은 식물이면 Blend Weight 실행
-		if (!IsSlowFoliageReturn) {
-			FastTimeline->AddInterpFloat(FastCurve, floatTimelineCallback, FName("FastBlend"));
-			FastTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
+	else {
+		SlowTimeline->AddInterpFloat(FastCurve, floatTimelineCallback, FName("SlowBlend"));
+		SlowTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
 
-			FastTimeline->PlayFromStart();
-		}
-		else {
-			SlowTimeline->AddInterpFloat(FastCurve, floatTimelineCallback, FName("SlowBlend"));
-			SlowTimeline->SetTimelineFinishedFunc(floatTimelineFinishedCallback);
-
-			SlowTimeline->PlayFromStart();
-		}
+		SlowTimeline->PlayFromStart();
 	}
 }
 
