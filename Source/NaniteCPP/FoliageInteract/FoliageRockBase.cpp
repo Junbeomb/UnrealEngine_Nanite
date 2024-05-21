@@ -88,7 +88,6 @@ void AFoliageRockBase::checkToFoliageInfluencer()
 
 void AFoliageRockBase::NoInfluencersInRangeFunc()
 {
-
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComponent->SetSimulatePhysics(false);
 

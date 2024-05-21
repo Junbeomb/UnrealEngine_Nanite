@@ -1,15 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "InteractStatue.h"
+
+#include "InteractStatueBig.h"
 
 #include "Components/SphereComponent.h"
 #include "InstancedFoliageActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Comp_InteractBase.h"
 
-
-// Sets default values
-AInteractStatue::AInteractStatue()
+AInteractStatueBig::AInteractStatueBig()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -44,30 +43,25 @@ AInteractStatue::AInteractStatue()
 	ShakeSMTimelineUpdateCallback.BindUFunction(this, FName("SetShakeSMTImelineUpdate"));
 	SizeSMTimelineUpdateCallback.BindUFunction(this, FName("SetSizeSMTImelineUpdate"));
 
+
 }
 
 // Called when the game starts or when spawned
-void AInteractStatue::BeginPlay()
+void AInteractStatueBig::BeginPlay()
 {
 	Super::BeginPlay();
-	//CompBase->SetDynamicMaterial(StaticMesh, false);
 
 	//월드내의 Foliage Static Mesh 리스트 가져오기
 	TArray<AActor*> Temp;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInstancedFoliageActor::StaticClass(), Temp);
 	Temp[0]->GetComponents<UInstancedStaticMeshComponent>(InstancedMesh);
-
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *StaticMesh->GetName());
-
+	
 }
-
-void AInteractStatue::PressEStart()
+void AInteractStatueBig::PressEStart()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("PressEStart"));
 
 	CompBase->DestroyThisComponentFunc();
-
-
 
 	//Statue StaticMesh 움직이게하기
 	if (StaticMesh) {
@@ -86,20 +80,20 @@ void AInteractStatue::PressEStart()
 
 }
 
-void AInteractStatue::StartMassBlend()
+void AInteractStatueBig::StartMassBlend()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("startMassBlend"));
 	\
-	//D_BPStartBlend.Execute();
+		//D_BPStartBlend.Execute();
 
-	if (ParamCollection) {
-		PCI = GetWorld()->GetParameterCollectionInstance(ParamCollection);
-		FVector BombCenter = GetActorLocation();
-		PCI->SetVectorParameterValue(FName("MassCenter"), BombCenter);
-		PCI->SetScalarParameterValue(FName("MassDivide"), 20.f);
-		FLinearColor EColor;
-		PCI->GetVectorParameterValue(FName("MassEmissiveColor"), EColor);
-	}
+		if (ParamCollection) {
+			PCI = GetWorld()->GetParameterCollectionInstance(ParamCollection);
+			FVector BombCenter = GetActorLocation();
+			PCI->SetVectorParameterValue(FName("MassCenter"), BombCenter);
+			PCI->SetScalarParameterValue(FName("MassDivide"), 20.f);
+			FLinearColor EColor;
+			PCI->GetVectorParameterValue(FName("MassEmissiveColor"), EColor);
+		}
 
 	//MassBlendTimeline
 	if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
@@ -117,13 +111,13 @@ void AInteractStatue::StartMassBlend()
 //==================BlendMassTimeline====================
 //==================BlendMassTimeline====================
 
-void AInteractStatue::SetMassBlendTimelineFinish()
+void AInteractStatueBig::SetMassBlendTimelineFinish()
 {
 	//D_BPFinishBlend.Execute();
 	Bomb->DestroyComponent();
 }
 
-void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
+void AInteractStatueBig::SetMassBlendTimelineUpdate(float Value)
 {
 	BlendRadius = BombDistance * Value;
 
@@ -132,13 +126,13 @@ void AInteractStatue::SetMassBlendTimelineUpdate(float Value)
 	WindNS->SetNiagaraVariableFloat("Radius", BlendRadius);
 }
 
-void AInteractStatue::SetNormalAmplifyTimelineUpdate(float Value)
+void AInteractStatueBig::SetNormalAmplifyTimelineUpdate(float Value)
 {
 	PCI->SetScalarParameterValue(FName("MassAmplify"), Value);
 	//UE_LOG(LogTemp, Warning, TEXT("%f"),Value);
 }
 
-void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
+void AInteractStatueBig::SetEmissiveTimelineUpdate(float Value)
 {
 	PCI->SetVectorParameterValue(FName("MassEmissiveColor"), Value * InitialEmissiveColor);
 }
@@ -150,7 +144,7 @@ void AInteractStatue::SetEmissiveTimelineUpdate(float Value)
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
-void AInteractStatue::SetShakeSMTimelineFinish()
+void AInteractStatueBig::SetShakeSMTimelineFinish()
 {
 	StaticMesh->DestroyComponent();
 
@@ -165,16 +159,16 @@ void AInteractStatue::SetShakeSMTimelineFinish()
 
 	StartMassBlend();
 }
-void AInteractStatue::SetShakeSMTimelineUpdate(float Value)
+void AInteractStatueBig::SetShakeSMTimelineUpdate(float Value)
 {
-		AddActorLocalOffset({ sin(double(Value) * 10000) * 3 ,sin(double(Value) * 10000) * 3 ,Value});
-		for (UMaterialInstanceDynamic* a : ShakeSMDMIList) {
-			FLinearColor TempLinear = {0.f, 0.f, (Value * 5000.f + 1.f), 1.0f};
-			a->SetVectorParameterValue(FName("EmissiveColor"), TempLinear);
-			a->SetScalarParameterValue(FName("PannerSpeed"), Value * 10 + 1.0f);
-		}
+	AddActorLocalOffset({ sin(double(Value) * 10000) * 3 ,sin(double(Value) * 10000) * 3 ,Value });
+	for (UMaterialInstanceDynamic* a : ShakeSMDMIList) {
+		FLinearColor TempLinear = { 0.f, 0.f, (Value * 5000.f + 1.f), 1.0f };
+		a->SetVectorParameterValue(FName("EmissiveColor"), TempLinear);
+		a->SetScalarParameterValue(FName("PannerSpeed"), Value * 10 + 1.0f);
+	}
 }
-void AInteractStatue::SetSizeSMTimelineUpdate(float Value)
+void AInteractStatueBig::SetSizeSMTimelineUpdate(float Value)
 {
 	StaticMesh->SetWorldScale3D({ Value,Value,Value });
 }
@@ -182,3 +176,4 @@ void AInteractStatue::SetSizeSMTimelineUpdate(float Value)
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
+

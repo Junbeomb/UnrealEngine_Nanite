@@ -106,13 +106,8 @@ public:
 
 	virtual void PressEStart() override;
 
-	FD_BPDelegate D_BPStartBlend;
-	FD_BPDelegate D_BPFinishBlend;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };
