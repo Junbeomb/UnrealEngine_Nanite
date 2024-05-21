@@ -115,17 +115,7 @@ void AInteractStatueBig::StartMassBlend()
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
 
-		//Delay -> 6초뒤 Mesh줄어드는 Animation실행
-		TimerDelegate.BindLambda([&]
-			{
-				if (PPVCurve) {
-					PPVTimeline->AddInterpFloat(PPVCurve, PPVTimelineUpdateCallback, FName("Intensity"));
-					PPVTimeline->SetTimelineFinishedFunc(PPVTimelineFinishedCallback);
-					PPVTimeline->PlayFromStart();
-				}
-			});
 
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 4, false);
 
 		//MassBlendTimeline
 		if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
@@ -138,10 +128,23 @@ void AInteractStatueBig::StartMassBlend()
 			MassBlendTimeline->PlayFromStart();
 		}
 
-		
+		//4초뒤 PPV 값 원래대로 & distancefield 키기
+		TimerDelegate.BindLambda([&]
+		{
+			if (PPVCurve) {
+				PPVTimeline->AddInterpFloat(PPVCurve, PPVTimelineUpdateCallback, FName("Intensity"));
+				PPVTimeline->SetTimelineFinishedFunc(PPVTimelineFinishedCallback);
+				PPVTimeline->PlayFromStart();
+			}
 
+			//df 키기
+			for (UInstancedStaticMeshComponent* a : InstancedMesh) {
+				a->SetAffectDistanceFieldLighting(true);
+			}
 
+		});
 
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 4, false);
 	}
 
 }
