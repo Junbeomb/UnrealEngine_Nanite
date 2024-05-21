@@ -7,6 +7,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Comp_InteractBase.h"
+#include "Engine/PostProcessVolume.h"
+#include "Math/UnrealMathUtility.h"
+
+
 
 AInteractStatueBig::AInteractStatueBig()
 {
@@ -28,7 +32,7 @@ AInteractStatueBig::AInteractStatueBig()
 	Bomb->SetAutoActivate(false);
 	WindNS->SetAutoActivate(false);
 
-	BombDistance = 4000.f;
+	BombDistance = 50000.f;
 
 	//MassBlendTimeline
 	MassBlendTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("MassBlendTimeline"));
@@ -42,6 +46,11 @@ AInteractStatueBig::AInteractStatueBig()
 	ShakeSMTimelineFinishedCallback.BindUFunction(this, FName("SetShakeSMTimelineFinish"));
 	ShakeSMTimelineUpdateCallback.BindUFunction(this, FName("SetShakeSMTImelineUpdate"));
 	SizeSMTimelineUpdateCallback.BindUFunction(this, FName("SetSizeSMTImelineUpdate"));
+
+	//PPVTimeline
+	PPVTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("PPVTimeline"));
+	PPVTimelineFinishedCallback.BindUFunction(this, FName("SetPPVTimelineFinish"));
+	PPVTimelineUpdateCallback.BindUFunction(this, FName("SetPPVTImelineUpdate"));
 
 
 }
@@ -71,6 +80,13 @@ void AInteractStatueBig::PressEStart()
 		}
 	}
 
+	//postProcessVolume 조절
+	PPV = Cast<APostProcessVolume>(UGameplayStatics::GetActorOfClass(GetWorld(), APostProcessVolume::StaticClass()));
+	PPVIntensity = PPV->Settings.BloomIntensity;
+	PPVCompensation = PPV->Settings.AutoExposureBias;
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), PPV->Settings.BloomIntensity);
+
 	if (ShakeSMCurve && SizeSMCurve) {
 		ShakeSMTimeline->AddInterpFloat(ShakeSMCurve, ShakeSMTimelineUpdateCallback, FName("ShaekSM"));
 		ShakeSMTimeline->AddInterpFloat(SizeSMCurve, SizeSMTimelineUpdateCallback, FName("SizeSM"));
@@ -83,28 +99,51 @@ void AInteractStatueBig::PressEStart()
 void AInteractStatueBig::StartMassBlend()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("startMassBlend"));
-	\
-		//D_BPStartBlend.Execute();
+	//D_BPStartBlend.Execute();
 
-		if (ParamCollection) {
-			PCI = GetWorld()->GetParameterCollectionInstance(ParamCollection);
-			FVector BombCenter = GetActorLocation();
-			PCI->SetVectorParameterValue(FName("MassCenter"), BombCenter);
-			PCI->SetScalarParameterValue(FName("MassDivide"), 20.f);
-			FLinearColor EColor;
-			PCI->GetVectorParameterValue(FName("MassEmissiveColor"), EColor);
+	if (ParamCollection) {
+		PCI = GetWorld()->GetParameterCollectionInstance(ParamCollection);
+		FVector BombCenter = GetActorLocation();
+		PCI->SetVectorParameterValue(FName("MassCenter"), BombCenter);
+		PCI->SetScalarParameterValue(FName("MassDivide"), 20.f);
+		FLinearColor EColor;
+		PCI->GetVectorParameterValue(FName("MassEmissiveColor"), EColor);
+
+		PPV->Settings.bOverride_BloomIntensity = true;
+		PPV->Settings.BloomIntensity = 8.0f;
+
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+
+		//Delay -> 6초뒤 Mesh줄어드는 Animation실행
+		TimerDelegate.BindLambda([&]
+			{
+				if (PPVCurve) {
+					PPVTimeline->AddInterpFloat(PPVCurve, PPVTimelineUpdateCallback, FName("Intensity"));
+					PPVTimeline->SetTimelineFinishedFunc(PPVTimelineFinishedCallback);
+					PPVTimeline->PlayFromStart();
+				}
+			});
+
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 4, false);
+
+		//MassBlendTimeline
+		if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
+			MassBlendTimeline->AddInterpFloat(MassBlendCurve, MassBlendTimelineUpdateCallback, FName("Blend"));
+			MassBlendTimeline->AddInterpFloat(NormalAmplifyCurve, NormalAmplifyTimelineUpdateCallback, FName("NormalAmplify"));
+			MassBlendTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineUpdateCallback, FName("Emissive"));
+
+			MassBlendTimeline->SetTimelineFinishedFunc(MassBlendTimelineFinishedCallback);
+
+			MassBlendTimeline->PlayFromStart();
 		}
 
-	//MassBlendTimeline
-	if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
-		MassBlendTimeline->AddInterpFloat(MassBlendCurve, MassBlendTimelineUpdateCallback, FName("Blend"));
-		MassBlendTimeline->AddInterpFloat(NormalAmplifyCurve, NormalAmplifyTimelineUpdateCallback, FName("NormalAmplify"));
-		MassBlendTimeline->AddInterpFloat(EmissiveCurve, EmissiveTimelineUpdateCallback, FName("Emissive"));
+		
 
-		MassBlendTimeline->SetTimelineFinishedFunc(MassBlendTimelineFinishedCallback);
 
-		MassBlendTimeline->PlayFromStart();
+
 	}
+
 }
 
 //==================BlendMassTimeline====================
@@ -129,7 +168,6 @@ void AInteractStatueBig::SetMassBlendTimelineUpdate(float Value)
 void AInteractStatueBig::SetNormalAmplifyTimelineUpdate(float Value)
 {
 	PCI->SetScalarParameterValue(FName("MassAmplify"), Value);
-	//UE_LOG(LogTemp, Warning, TEXT("%f"),Value);
 }
 
 void AInteractStatueBig::SetEmissiveTimelineUpdate(float Value)
@@ -177,3 +215,20 @@ void AInteractStatueBig::SetSizeSMTimelineUpdate(float Value)
 //==================ShakeSMTimeline====================
 //==================ShakeSMTimeline====================
 
+//==================PPVTimeline====================
+//==================PPVTimeline====================
+//==================PPVTimeline====================
+void AInteractStatueBig::SetPPVTimelineFinish()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Finish PPV"));
+}
+
+void AInteractStatueBig::SetPPVTimelineUpdate(float Value)
+{
+	float IntensityValue = FMath::Max(8.f * Value,PPVIntensity);
+	PPV->Settings.BloomIntensity = IntensityValue;
+	UE_LOG(LogTemp, Warning, TEXT("%f"), IntensityValue);
+}
+//==================PPVTimeline====================
+//==================PPVTimeline====================
+//==================PPVTimeline====================

@@ -35,12 +35,16 @@ class NANITECPP_API AInteractStatueBig : public AActor, public IInterface_Intera
 	float BlendRadius;
 
 
-
 	FLinearColor InitialEmissiveColor;
 
 	UPROPERTY(EditAnywhere)
 	UMaterialParameterCollection* ParamCollection;
 	UMaterialParameterCollectionInstance* PCI;
+
+	UPROPERTY(EditAnywhere)
+	class APostProcessVolume* PPV;
+	float PPVIntensity;
+	float PPVCompensation;
 
 
 	TArray<UInstancedStaticMeshComponent*> InstancedMesh;
@@ -60,24 +64,20 @@ class NANITECPP_API AInteractStatueBig : public AActor, public IInterface_Intera
 	class UCurveFloat* NormalAmplifyCurve;
 	UPROPERTY(EditAnywhere, Category = "Timeline");
 	class UCurveFloat* EmissiveCurve;
-
 	//종료시
 	FOnTimelineEvent MassBlendTimelineFinishedCallback;
 	UFUNCTION()
-	void SetMassBlendTimelineFinish();
-
+		void SetMassBlendTimelineFinish();
 	//callback함수
 	FOnTimelineFloat MassBlendTimelineUpdateCallback;
 	UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
 		void SetMassBlendTimelineUpdate(float Value);
-
 	FOnTimelineFloat NormalAmplifyTimelineUpdateCallback;
 	UFUNCTION()
-	void SetNormalAmplifyTimelineUpdate(float Value);
-
+		void SetNormalAmplifyTimelineUpdate(float Value);
 	FOnTimelineFloat EmissiveTimelineUpdateCallback;
 	UFUNCTION()
-	void SetEmissiveTimelineUpdate(float Value);
+		void SetEmissiveTimelineUpdate(float Value);
 
 	//ShakeStaticMeshTimeline
 	UPROPERTY(EditAnywhere, Category = "Timeline")
@@ -89,7 +89,7 @@ class NANITECPP_API AInteractStatueBig : public AActor, public IInterface_Intera
 	//종료시
 	FOnTimelineEvent ShakeSMTimelineFinishedCallback;
 	UFUNCTION()
-	void SetShakeSMTimelineFinish();
+		void SetShakeSMTimelineFinish();
 	//callback함수
 	FOnTimelineFloat ShakeSMTimelineUpdateCallback;
 	UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
@@ -97,6 +97,20 @@ class NANITECPP_API AInteractStatueBig : public AActor, public IInterface_Intera
 	FOnTimelineFloat SizeSMTimelineUpdateCallback;
 	UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
 		void SetSizeSMTimelineUpdate(float Value);
+
+	//PostProcessTimeline
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	UTimelineComponent* PPVTimeline;
+	UPROPERTY(EditAnywhere, Category = "Timeline");
+	class UCurveFloat* PPVCurve;
+	//종료시
+	FOnTimelineEvent PPVTimelineFinishedCallback;
+	UFUNCTION()
+		void SetPPVTimelineFinish();
+	//callback함수
+	FOnTimelineFloat PPVTimelineUpdateCallback;
+	UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
+		void SetPPVTimelineUpdate(float Value);
 	
 public:	
 	// Sets default values for this actor's properties
