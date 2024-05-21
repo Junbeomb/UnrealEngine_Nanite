@@ -14,9 +14,7 @@ class NANITECPP_API AMaterialChangeBall : public AActor
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* StaticMesh;
 	FVector InitialScale;
-	class UComp_BlendMesh* CompBlend;
 
-	bool TickStart;
 	float CountTick;
 
 	

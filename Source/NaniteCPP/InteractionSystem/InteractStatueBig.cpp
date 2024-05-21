@@ -10,8 +10,6 @@
 #include "Engine/PostProcessVolume.h"
 #include "Math/UnrealMathUtility.h"
 
-
-
 AInteractStatueBig::AInteractStatueBig()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -114,8 +112,6 @@ void AInteractStatueBig::StartMassBlend()
 
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
-
-
 
 		//MassBlendTimeline
 		if (MassBlendCurve && NormalAmplifyCurve && EmissiveCurve) {
