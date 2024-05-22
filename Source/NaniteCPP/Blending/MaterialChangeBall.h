@@ -17,7 +17,6 @@ class NANITECPP_API AMaterialChangeBall : public AActor
 
 	float CountTick;
 
-	
 public:	
 	// Sets default values for this actor's properties
 	AMaterialChangeBall();

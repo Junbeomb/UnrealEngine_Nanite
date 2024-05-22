@@ -59,100 +59,100 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 	for (FHitResult& Hit : OutResults) {
 		if (Hit.bBlockingHit) {
-				if (IsBlackholeInfluencer) { //블랙홀 리스트에서 찾기
-					InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+			if (IsBlackholeInfluencer) { //블랙홀 리스트에서 찾기
+				InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
 
-					if (InstancedMeshComp) {
+				if (InstancedMeshComp) {
 						
-						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
+					InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
 
-						value = *InstancedMeshComp->GetStaticMesh()->GetName();
-						//리스트에서 이름 검색
+					value = *InstancedMeshComp->GetStaticMesh()->GetName();
+					//리스트에서 이름 검색
 
-						if (BlackholeFoliageBlueprints.Num() > 0) {
-							for (const TSubclassOf<AActor> FoliageBP : BlackholeFoliageBlueprints) {
-								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+					if (BlackholeFoliageBlueprints.Num() > 0) {
+						for (const TSubclassOf<AActor> FoliageBP : BlackholeFoliageBlueprints) {
+							bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
-								//배열에 해당 SM->BP 가 있으면
-								if (isContain) {
+							//배열에 해당 SM->BP 가 있으면
+							if (isContain) {
 
-									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+								ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+								AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
 
-									//High,Low 인지확인====================================================
-									//High,Low 인지확인====================================================
-									//High,Low 인지확인====================================================
-									ABlackholeLightBase* PlantBase = Cast<ABlackholeLightBase>(SpawnBP);
-									if (PlantBase != nullptr) {
-										UStaticMeshComponent* SM = PlantBase->BaseStaticMesh;
+								//High,Low 인지확인====================================================
+								//High,Low 인지확인====================================================
+								//High,Low 인지확인====================================================
+								ABlackholeLightBase* PlantBase = Cast<ABlackholeLightBase>(SpawnBP);
+								if (PlantBase != nullptr) {
+									UStaticMeshComponent* SM = PlantBase->BaseStaticMesh;
+									SpawnAndConvert(SM);
+								}
+								else {
+									ABlackholeHeavyBase* RockBase = Cast<ABlackholeHeavyBase>(SpawnBP);
+									if (RockBase != nullptr) {
+										UStaticMeshComponent* SM = RockBase->BaseStaticMesh;
 										SpawnAndConvert(SM);
 									}
-									else {
-										ABlackholeHeavyBase* RockBase = Cast<ABlackholeHeavyBase>(SpawnBP);
-										if (RockBase != nullptr) {
-											UStaticMeshComponent* SM = RockBase->BaseStaticMesh;
-											SpawnAndConvert(SM);
-										}
-									}
-									//High,Low 인지확인===================================================
-									//High,Low 인지확인===================================================
-									//High,Low 인지확인===================================================
-
-									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
+								//High,Low 인지확인===================================================
+								//High,Low 인지확인===================================================
+								//High,Low 인지확인===================================================
+
+								InstancedMeshComp->RemoveInstance(Hit.Item);
 							}
 						}
 					}
 				}
-				else { //일반 BP 리스트에서 찾기
-					InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+			}
+			else { //일반 BP 리스트에서 찾기
+				InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
 
-					if (InstancedMeshComp) {
-						InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
+				if (InstancedMeshComp) {
+					InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
 
-						value = *InstancedMeshComp->GetStaticMesh()->GetName();
-						//리스트에서 이름 검색
+					value = *InstancedMeshComp->GetStaticMesh()->GetName();
+					//리스트에서 이름 검색
 
-						if (FoliageBlueprints.Num() > 0) {
-							for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
-								bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+					if (FoliageBlueprints.Num() > 0) {
+						for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
+							bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
-								//배열에 해당 SM->BP 가 있으면
-								if (isContain) {
-									ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+							//배열에 해당 SM->BP 가 있으면
+							if (isContain) {
+								ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-									AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+								AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
 
-									//High,Low 인지확인====================================================
-									//High,Low 인지확인====================================================
-									//High,Low 인지확인====================================================
-									AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
-									if (PlantBase != nullptr) {
-										USkeletalMeshComponent* SK = PlantBase->MeshComponent;
-										SpawnAndConvert(SK);
+								//High,Low 인지확인====================================================
+								//High,Low 인지확인====================================================
+								//High,Low 인지확인====================================================
+								AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
+								if (PlantBase != nullptr) {
+									USkeletalMeshComponent* SK = PlantBase->MeshComponent;
+									SpawnAndConvert(SK);
 
+									//블랜드 컴포넌트 유무 검사 및 함수 실행
+									CheckBlend(PlantBase, Hit.Location);
+								}
+								else {
+									AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
+									if (RockBase != nullptr) {
+										UStaticMeshComponent* SM = RockBase->MeshComponent;
+										SpawnAndConvert(SM);
 										//블랜드 컴포넌트 유무 검사 및 함수 실행
-										CheckBlend(PlantBase, Hit.Location);
+										CheckBlend(RockBase, Hit.Location);
 									}
-									else {
-										AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
-										if (RockBase != nullptr) {
-											UStaticMeshComponent* SM = RockBase->MeshComponent;
-											SpawnAndConvert(SM);
-											//블랜드 컴포넌트 유무 검사 및 함수 실행
-											CheckBlend(RockBase, Hit.Location);
-										}
-									}
-									//High,Low 인지확인===================================================
-									//High,Low 인지확인===================================================
-									//High,Low 인지확인===================================================
-									InstancedMeshComp->RemoveInstance(Hit.Item);
 								}
+								//High,Low 인지확인===================================================
+								//High,Low 인지확인===================================================
+								//High,Low 인지확인===================================================
+								InstancedMeshComp->RemoveInstance(Hit.Item);
 							}
 						}
 					}
 				}
+			}
 		}
 	}
 }

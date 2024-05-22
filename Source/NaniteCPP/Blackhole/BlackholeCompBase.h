@@ -14,27 +14,6 @@ class NANITECPP_API UBlackholeCompBase : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UBlackholeCompBase();
-
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	//처음 빨려들어갈시 변수들 초기화하는 함수
-	void SetPullOn(ABlackhole* BH, FVector BHLocation);
-	const bool GetIsPull() { return IsPull; };
-	
-	const FRotator GetInitialRotationDegree() { return InitialRotationDegree; };
-
-	void SetDFOff(bool IsOn);
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-private:
-
 	void SetPullTargetLocation(FVector a) { PullTargetLocation = a; };
 
 	FVector DirectBH();
@@ -46,10 +25,12 @@ private:
 
 	void SetPullStartDistance() { PullStartDistanceToBlackhole = DirectBH().Length(); };
 
-	void SetInitialMaxScale() { 
-		UStaticMeshComponent* Temp = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass())); 
+	void SetInitialMaxScale() {
+		UStaticMeshComponent* Temp = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 		InitialMaxScale = Temp->GetRelativeScale3D();
 	}
+
+	void SetInitialNSSpawnRate();
 
 	UPROPERTY()
 	UStaticMeshComponent* SMC;
@@ -112,6 +93,25 @@ private:
 	//DFStartRadius
 	UPROPERTY()
 	float DFStartDistance;
+
+public:	
+	// Sets default values for this component's properties
+	UBlackholeCompBase();
+
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//처음 빨려들어갈시 변수들 초기화하는 함수
+	void SetPullOn(ABlackhole* BH, FVector BHLocation);
+	const bool GetIsPull() { return IsPull; };
+	
+	const FRotator GetInitialRotationDegree() { return InitialRotationDegree; };
+
+	void SetDFOff(bool IsOn);
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
 
 		
 };

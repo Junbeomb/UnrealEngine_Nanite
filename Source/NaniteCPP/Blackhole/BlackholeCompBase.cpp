@@ -64,7 +64,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 					}
 					else {
 						//Destroy
-						UE_LOG(LogTemp, Warning, TEXT("Destroy"));
+						//UE_LOG(LogTemp, Warning, TEXT("Destroy"));
 						GetOwner()->Destroy();
 					}
 				}
@@ -75,7 +75,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			//블랙홀 과의 거리 0~1 로 만든 값 저장
 			DistanceNormalized = UKismetMathLibrary::MapRangeClamped(PullDirection.Length(), 0, PullStartDistanceToBlackhole, 0, 1);
 			//UE_LOG(LogTemp, Warning, TEXT("%s"), *SMC->GetComponentLocation().ToString());
-			UE_LOG(LogTemp, Warning, TEXT("Shrink false"));
+			//UE_LOG(LogTemp, Warning, TEXT("Shrink false"));
 			//빨아들이기 (AddForce하면 pivot은 움직이지 않음. 따라서 DirectBH에서 GetOwner()->GetActorLocation() 을 하면 안댐)
 			FVector ForceValue = PullDirection * (DistanceNormalized / 5 + (1 - DistanceNormalized)) * PullStrength * DeltaTime;
 			SMC->AddForce(ForceValue, "None", true);
@@ -147,6 +147,7 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 
 	SetPullStartDistance();
 	SetInitialMaxScale();
+	SetInitialNSSpawnRate();
 	SMC->SetSimulatePhysics(true);
 	SMC->SetEnableGravity(false);
 	SMC->SetAngularDamping(100.f);
@@ -175,10 +176,24 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 	//IsShrink = false;
 }
 
+void UBlackholeCompBase::SetInitialNSSpawnRate()
+{
+
+	FVector Origin;
+	FVector BoxExtent;
+	GetOwner()->GetActorBounds(false, Origin, BoxExtent, false);
+	float TempVolume = BoxExtent.X * BoxExtent.Y * BoxExtent.Z;
+	TempVolume = FMath::Clamp(TempVolume, 0.f, 3.f);
+	InitialNSSpawnRate = InitialNSSpawnRate* (1 / GetWorld()->GetDeltaSeconds()) / 120 * TempVolume;
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), InitialNSSpawnRate);
+}
+
 FVector UBlackholeCompBase::DirectBH() {
 	//블랙홀과의 거리,방향
 	return PullTargetLocation - (SMC->GetComponentLocation());
-};
+}
+
 
 void UBlackholeCompBase::SetDFOff(bool IsOn)
 {
