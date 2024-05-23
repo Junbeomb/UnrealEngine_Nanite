@@ -13,8 +13,6 @@ class NANITECPP_API ABlackholeHeavyBase : public AActor
 {
 	GENERATED_BODY()
 
-
-
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Niagara;
 
@@ -31,11 +29,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BaseStaticMesh;
 	// Sets default values for this actor's properties
+
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* L_Niagara;
 
 	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* H_Niagara;
+
 	ABlackholeHeavyBase();
 
 protected:
