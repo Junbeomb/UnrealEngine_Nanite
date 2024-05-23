@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-
+#include "WindStructData.h"
 #include "WindManager.generated.h"
 
 UCLASS()
@@ -43,12 +43,17 @@ class NANITECPP_API AWindManager : public AActor
 	FVector PlayerLocation;
 
 	UPROPERTY(EditAnywhere)
+	TArray<FWINDDATA> SWindData;
+
+	UPROPERTY(EditAnywhere)
 	TArray<FVector4> WindStartLocationRadius;
 	UPROPERTY(EditAnywhere)
 	TArray<FVector4> WindStartVelocityStrength;
 
 	UFUNCTION()
-	void PullDataToTranslate();
+	void WindStructDataToTranslate();
+
+	TArray<int> DeleteIndexList;
 
 public:	
 	// Sets default values for this actor's properties
@@ -56,6 +61,9 @@ public:
 
 	UFUNCTION()
 	void ResetVariable();
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
