@@ -16,7 +16,7 @@ class NANITECPP_API AWindManager : public AActor
 	class UNiagaraComponent* Niagara;
 	
 	UPROPERTY(EditAnywhere)
-	int InputGridResolution;
+	float InputGridResolution;
 
 	UPROPERTY(EditAnywhere)
 	float SimulationSizeWS;
@@ -55,6 +55,17 @@ class NANITECPP_API AWindManager : public AActor
 
 	TArray<int> DeleteIndexList;
 
+	UFUNCTION()
+	void CacluatePlayerPosition();
+	UFUNCTION()
+	void CacluateWindPosition();
+	UFUNCTION()
+	void SetGridVariable();
+
+	UPROPERTY()
+	FVector2D windLocation;
+	UPROPERTY()
+	FVector2D windOffset;
 public:	
 	// Sets default values for this actor's properties
 	AWindManager();

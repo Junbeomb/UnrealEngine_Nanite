@@ -4,6 +4,7 @@
 #include "WindManager.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -11,9 +12,6 @@
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
-
-
-
 
 // Sets default values
 AWindManager::AWindManager()
@@ -23,7 +21,7 @@ AWindManager::AWindManager()
 
 	Niagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("WindNiagara"));
 
-	InputGridResolution = 256;
+	InputGridResolution = 256.f;
 	SimulationSizeWS = 4096.f;
 }
 
@@ -50,13 +48,13 @@ void AWindManager::SetInitialVariable()
 	Niagara->SetNiagaraVariableFloat("TargetFPS", 60.f);
 
 	Niagara->SetNiagaraVariableFloat("SimulationSizeWS", SimulationSizeWS);
-	Niagara->SetNiagaraVariableInt("WindGridResolution", InputGridResolution);
+	Niagara->SetNiagaraVariableFloat("WindGridResolution", InputGridResolution);
 	if (ParamCollection) {
 		PCI = GetWorld()->GetParameterCollectionInstance(ParamCollection);
 		PCI->SetScalarParameterValue(FName("SimulationSizeWS"), SimulationSizeWS);
 		PCI->SetScalarParameterValue(FName("Wind Resolution"), InputGridResolution);
 	}
-	Niagara->SetNiagaraVariableInt("InputGridResolution", InputGridResolution);
+	Niagara->SetNiagaraVariableFloat("InputGridResolution", InputGridResolution);
 	WindRenderTarget->ResizeTarget(InputGridResolution, InputGridResolution);
 }
 
@@ -76,6 +74,9 @@ void AWindManager::Tick(float DeltaTime)
 	WindStartLocationRadius.Empty();
 	WindStartVelocityStrength.Empty();
 	WindStructDataToTranslate();
+	CacluatePlayerPosition();
+	CacluateWindPosition();
+	SetGridVariable();
 }
 
 void AWindManager::WindStructDataToTranslate()
@@ -111,6 +112,39 @@ void AWindManager::WindStructDataToTranslate()
 	for (const int& a : DeleteIndexList) {
 		SWindData.RemoveAt(a);
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("WindManager"));
+}
+
+void AWindManager::CacluatePlayerPosition()
+{
+	//player 포지션을 niagara에 매 틱마다 넘긴다.
+	FVector2D vector2d = { PlayerLocation.X,PlayerLocation.Y };
+	vector2d = vector2d / (SimulationSizeWS / InputGridResolution);
+	vector2d = FVector2D(FMath::RoundToInt32(vector2d.X),FMath::RoundToInt32(vector2d.Y));
+	Niagara->SetNiagaraVariableVec2("FollowGridLocation", vector2d * (SimulationSizeWS / InputGridResolution));
+}
+
+void AWindManager::CacluateWindPosition()
+{
+	FColor tempColor = FColor(windLocation.X,windLocation.Y,0,0);
+	PCI->SetVectorParameterValue(FName("WindRTLocation"), tempColor);
+
+	FVector2D vector2d = { PlayerLocation.X,PlayerLocation.Y };
+	vector2d = vector2d / (SimulationSizeWS / InputGridResolution);
+	vector2d = FVector2D(FMath::RoundToInt32(vector2d.X), FMath::RoundToInt32(vector2d.Y));
+	vector2d = vector2d * (SimulationSizeWS / InputGridResolution);
+	windOffset = vector2d - windLocation;
+	windLocation = vector2d;
+
+	Niagara->SetNiagaraVariableVec2("WindGridPixelOffset", windOffset * ( - 1, -1 ) *InputGridResolution / SimulationSizeWS);
+}
+
+void AWindManager::SetGridVariable()
+{
+	Niagara->SetNiagaraVariableVec2("InputGridLocation", { PlayerLocation.X,PlayerLocation.Y });
+	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartLocationAndRadius"), WindStartLocationRadius);
+	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartVelocityAndStrength"), WindStartVelocityStrength);
 
 	UE_LOG(LogTemp, Warning, TEXT("WindManager"));
 }
