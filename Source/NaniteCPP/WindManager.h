@@ -53,7 +53,7 @@ class NANITECPP_API AWindManager : public AActor
 	UFUNCTION()
 	void WindStructDataToTranslate();
 
-	TArray<int> DeleteIndexList;
+
 
 	UFUNCTION()
 	void CacluatePlayerPosition();
@@ -72,6 +72,9 @@ public:
 
 	UFUNCTION()
 	void ResetVariable();
+
+	UFUNCTION()
+	void AddWindAtWindData(FWINDDATA wsd);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

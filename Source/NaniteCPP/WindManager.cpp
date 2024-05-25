@@ -28,9 +28,7 @@ AWindManager::AWindManager()
 void AWindManager::BeginPlay()
 {
 	Super::BeginPlay();
-
 	ResetVariable();
-
 }
 
 void AWindManager::ResetVariable()
@@ -42,6 +40,8 @@ void AWindManager::ResetVariable()
 
 	SetActorTickEnabled(true);
 }
+
+
 
 void AWindManager::SetInitialVariable()
 {
@@ -81,6 +81,8 @@ void AWindManager::Tick(float DeltaTime)
 
 void AWindManager::WindStructDataToTranslate()
 {
+	TArray<int> DeleteIndexList;
+
 	for (int i = 0; i < SWindData.Num() - 1; i++) {
 		float TempDuration = SWindData[i].Duration;
 		float TempStartTime = SWindData[i].StartTime;
@@ -146,11 +148,18 @@ void AWindManager::SetGridVariable()
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartLocationAndRadius"), WindStartLocationRadius);
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartVelocityAndStrength"), WindStartVelocityStrength);
 
-	UE_LOG(LogTemp, Warning, TEXT("WindManager"));
+	//UE_LOG(LogTemp, Warning, TEXT("WindManager"));
 }
 
 void AWindManager::ResetTick()
 {
 	SetActorTickEnabled(false);
+}
+
+//바람등록
+void AWindManager::AddWindAtWindData(FWINDDATA wsd)
+{
+	SWindData.Add(wsd);
+	UE_LOG(LogTemp, Warning, TEXT("%d"), SWindData.Num());
 }
 
