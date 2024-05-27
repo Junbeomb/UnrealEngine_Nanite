@@ -9,6 +9,7 @@
 #include "Blending/Comp_BlendMesh.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AIC_BossBase.h"
 
 // Sets default values
 AAIBossBase::AAIBossBase()
@@ -31,6 +32,9 @@ AAIBossBase::AAIBossBase()
 	floatTimelineCallback.BindUFunction(this, FName("DissolveTimelineUpdate"));
 	floatTimelineFinishedCallback.BindUFunction(this, FName("DissolveTimelineFinish"));
 
+	//aicontroller ¼³Á¤
+	AIControllerClass = AAIC_BossBase::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 }
 
@@ -39,10 +43,12 @@ void AAIBossBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!AIC_BossBase || !BehaviorTree) {
-		UE_LOG(LogTemp, Warning, TEXT("AIC_BossBase or BT Empty"));
+	if (!BehaviorTree) {
+		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
 		return;
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), GetController()->GetName());
 
 	for (int i = 0; i < SkeletalMesh->GetNumMaterials(); i++) {
 		 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
@@ -58,7 +64,8 @@ void AAIBossBase::Die()
 {
 	Comp_Blend->StartBlend();
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AIC_BossBase->StopMovement();
+	//AIC_BossBase->StopMovement();
+	GetController()->StopMovement();
 
 	SkeletalMesh->SetSimulatePhysics(true);
 	
@@ -95,6 +102,5 @@ void AAIBossBase::HitResponse()
 void AAIBossBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 

@@ -160,6 +160,6 @@ void AWindManager::ResetTick()
 void AWindManager::AddWindAtWindData(FWINDDATA wsd)
 {
 	SWindData.Add(wsd);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), SWindData.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), SWindData.Num());
 }
 

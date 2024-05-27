@@ -20,3 +20,11 @@ enum class EBossState : uint8
 	Frozen UMETA(DisplayName = "Frozen"),
 	Death UMETA(DisplayName = "Death")
 };
+
+UENUM(BlueprintType)
+enum class EBossSenseType : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Sight UMETA(DisplayName = "Sight"),
+	Damage UMETA(DisplayName = "Damage")
+};

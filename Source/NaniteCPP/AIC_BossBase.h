@@ -7,7 +7,6 @@
 
 #include "E_BossState.h"
 
-
 #include "AIC_BossBase.generated.h"
 
 /**
@@ -24,15 +23,41 @@ class NANITECPP_API AAIC_BossBase : public AAIController
 	UPROPERTY(EditAnywhere)
 	EBossState BState;
 
-	UFUNCTION()
-	void SetStateAsPassive();
-
 	UPROPERTY(EditAnywhere)
 	class UBlackboardComponent* BlackBoardComp;
 
+	UPROPERTY(EditAnywhere)
+	AActor* AttackTarget;
+
+	UPROPERTY(EditAnywhere)
+	class UAIPerceptionComponent* AIPerceptionComponent;
+
+	class UAISenseConfig_Sight* SightConfig;
+
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+	UFUNCTION()
+	bool CanSenseActor(AActor* actor, EBossSenseType sensetype);
 
 public:
 	AAIC_BossBase();
+
+	UFUNCTION()
+	EBossState GetCurrentState();
+
+
+	UFUNCTION()
+	void SetStateAsPassive();
+
+	UFUNCTION()
+	void SetStateAsAttacking(AActor* ATarget, bool useLastKnownAttackTarget);
+
+	UFUNCTION()
+	void SetStateAsFrozen();
+
+	UFUNCTION()
+	void SetStateAsDeath();
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

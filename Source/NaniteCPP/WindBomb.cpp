@@ -39,7 +39,7 @@ void AWindBomb::BlackholeFunc()
 
 void AWindBomb::StartWind()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartWind"));
+	//UE_LOG(LogTemp, Warning, TEXT("StartWind"));
 
 	FWINDDATA tempData;
 	tempData.Duration = Duration;
