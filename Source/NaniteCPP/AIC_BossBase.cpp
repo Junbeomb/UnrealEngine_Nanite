@@ -51,7 +51,7 @@ void AAIC_BossBase::SetStateAsPassive()
 }
 
 void AAIC_BossBase::SetStateAsAttacking(AActor* ATarget, bool useLastKnownAttackTarget)
-{
+{ 
 	AActor* NewAttackTarget;
 	//이전 Target이 있으면
 	if (useLastKnownAttackTarget && AttackTarget) {
@@ -117,6 +117,7 @@ bool AAIC_BossBase::CanSenseActor(AActor* actor, EBossSenseType sensetype)
 
 	//자극 받은 sense가 sight인지 damage 인지 확인
 	for (FAIStimulus Sti : tempInfo.LastSensedStimuli) {
+
 		UClass* SenseClass = UAIPerceptionSystem::GetSenseClassForStimulus(GetWorld(), Sti);
 
 		if (SaveWhatSense && SenseClass == SaveWhatSense) {
@@ -125,5 +126,23 @@ bool AAIC_BossBase::CanSenseActor(AActor* actor, EBossSenseType sensetype)
 	}
 
 	return false;
+}
+
+void AAIC_BossBase::HandleSensedSight(AActor* actor)
+{
+	KnownSeenActors.AddUnique(actor);
+	EBossState BState = GetCurrentState();
+
+	switch (BState) {
+	case EBossState::Passive:
+		SetStateAsAttacking(actor, false);
+		break;
+	case EBossState::Attack:
+		break;
+	case EBossState::Frozen:
+		break;
+	case EBossState::Death:
+		break;
+	}
 }
 

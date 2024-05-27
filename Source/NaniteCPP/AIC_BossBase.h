@@ -40,6 +40,13 @@ class NANITECPP_API AAIC_BossBase : public AAIController
 	UFUNCTION()
 	bool CanSenseActor(AActor* actor, EBossSenseType sensetype);
 
+	UFUNCTION()
+	void HandleSensedSight(AActor* actor);
+
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> KnownSeenActors;
+
+
 public:
 	AAIC_BossBase();
 
