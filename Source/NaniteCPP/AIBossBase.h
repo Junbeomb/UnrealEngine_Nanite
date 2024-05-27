@@ -32,8 +32,7 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UFUNCTION()
 	void HitResponse();
 
-	UPROPERTY(EditAnywhere)
-	class UBehaviorTree* BehaviorTree;
+
 
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstanceDynamic*> DMIList;
@@ -65,6 +64,9 @@ class NANITECPP_API AAIBossBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AAIBossBase();
+
+	UPROPERTY(EditAnywhere)
+	class UBehaviorTree* BehaviorTree;
 
 protected:
 	// Called when the game starts or when spawned

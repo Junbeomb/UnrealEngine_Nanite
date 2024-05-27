@@ -7,6 +7,8 @@
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Blending/Comp_BlendMesh.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AAIBossBase::AAIBossBase()
@@ -86,6 +88,7 @@ void AAIBossBase::DissolveTimelineUpdate(float Value)
 
 void AAIBossBase::HitResponse()
 {
+	GetCharacterMovement()->StopMovementImmediately();
 }
 
 // Called to bind functionality to input
