@@ -131,9 +131,9 @@ bool AAIC_BossBase::CanSenseActor(AActor* actor, EBossSenseType sensetype)
 void AAIC_BossBase::HandleSensedSight(AActor* actor)
 {
 	KnownSeenActors.AddUnique(actor);
-	EBossState BState = GetCurrentState();
+	EBossState tempState = GetCurrentState();
 
-	switch (BState) {
+	switch (tempState) {
 	case EBossState::Passive:
 		SetStateAsAttacking(actor, false);
 		break;
