@@ -1,5 +1,7 @@
 
 #include "Comp_AIBossAttackSystem.h"
+#include "BossAttackStructData.h"
+#include "GameFramework/Character.h"
 
 UComp_AIBossAttackSystem::UComp_AIBossAttackSystem()
 {
@@ -13,13 +15,17 @@ UComp_AIBossAttackSystem::UComp_AIBossAttackSystem()
 void UComp_AIBossAttackSystem::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 	
 }
 
-void UComp_AIBossAttackSystem::BossPrimaryAttack(float Radius, float Length)
+void UComp_AIBossAttackSystem::BossPrimaryAttack(FBOSSATTACKDATA AttackInfo, float Radius, float Length)
 {
+	ACharacter* TempCharacter = Cast<ACharacter>(GetOwner());
+	if (TempCharacter) {
+		TempCharacter->GetMesh()->PlayAnimation(AttackInfo.Montage, false);
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *AttackInfo.Montage->GetName());
+	}
 
 }
 

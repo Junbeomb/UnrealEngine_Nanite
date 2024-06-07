@@ -17,7 +17,7 @@ public:
 	UComp_AIBossAttackSystem();
 
 	UFUNCTION()
-	void BossPrimaryAttack(float Radius, float Length);
+	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo, float Radius, float Length);
 	UFUNCTION()
 	void BossThrowBall();
 	UFUNCTION()

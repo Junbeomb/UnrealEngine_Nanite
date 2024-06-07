@@ -3,13 +3,15 @@
 
 #include "AIBossBase.h"
 #include "Comp_AIDamageSystem.h"
+#include "Comp_AIBossAttackSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "Blending/Comp_BlendMesh.h"
+#include "../Blending/Comp_BlendMesh.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIC_BossBase.h"
+#include "BossAttackStructData.h"
 
 // Sets default values
 AAIBossBase::AAIBossBase()
@@ -23,6 +25,7 @@ AAIBossBase::AAIBossBase()
 	SkeletalMesh = ACharacter::GetMesh();
 	SkeletalMesh->SetupAttachment(RootComponent);
 
+	Comp_Attack = CreateDefaultSubobject<UComp_AIBossAttackSystem>(TEXT("Comp_Attack"));
 	Comp_Damage = CreateDefaultSubobject<UComp_AIDamageSystem>(TEXT("Comp_Damage"));
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 
@@ -38,10 +41,14 @@ AAIBossBase::AAIBossBase()
 
 }
 
+
+
 // Called when the game starts or when spawned
 void AAIBossBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AttackCombo1(nullptr);
 
 	if (!BehaviorTree) {
 		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
@@ -102,5 +109,18 @@ void AAIBossBase::HitResponse()
 void AAIBossBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+
+void AAIBossBase::AttackCombo1(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.DamageAmount = 11;
+	TempAData.Montage = Combo1Montage;
+
+	Comp_Attack->BossPrimaryAttack(TempAData, 20, 30);
+
+
 }
 

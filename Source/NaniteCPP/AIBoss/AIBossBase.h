@@ -19,6 +19,8 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	USkeletalMeshComponent* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere)
+	class UComp_AIBossAttackSystem* Comp_Attack;
+	UPROPERTY(EditAnywhere)
 	class UComp_AIDamageSystem* Comp_Damage;
 	UPROPERTY(EditAnywhere)
 	class UComp_BlendMesh* Comp_Blend;
@@ -61,12 +63,20 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	//=====================DissolveTimeline=========================
 	//=====================DissolveTimeline=========================
 
+
+
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* Combo1Montage;
+
 public:
 	// Sets default values for this character's properties
 	AAIBossBase();
 
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* BehaviorTree;
+
+	UFUNCTION()
+	void AttackCombo1(AActor* ATarget);
 
 protected:
 	// Called when the game starts or when spawned
