@@ -68,6 +68,9 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* Combo1Montage;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* ThrowBallMontage;
+
 public:
 	// Sets default values for this character's properties
 	AAIBossBase();
@@ -77,6 +80,9 @@ public:
 
 	UFUNCTION()
 	void AttackCombo1(AActor* ATarget);
+
+	UFUNCTION()
+	void ThrowBall(AActor* ATarget);
 
 protected:
 	// Called when the game starts or when spawned

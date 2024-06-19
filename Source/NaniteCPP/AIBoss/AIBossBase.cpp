@@ -49,6 +49,7 @@ void AAIBossBase::BeginPlay()
 	Super::BeginPlay();
 
 	AttackCombo1(nullptr);
+	ThrowBall(nullptr);
 
 	if (!BehaviorTree) {
 		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
@@ -120,8 +121,19 @@ void AAIBossBase::AttackCombo1(AActor* ATarget)
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
 	TempAData.Montage = Combo1Montage;
-	UE_LOG(LogTemp, Warning, TEXT("%f"), TempAData.length);
+	UE_LOG(LogTemp, Warning, TEXT("AttackCombo1() in AIBossBase.cpp"));
 	Comp_Attack->BossPrimaryAttack(TempAData);
+}
 
+void AAIBossBase::ThrowBall(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.DamageAmount = 20;
+	TempAData.radius = 30.f;
+	TempAData.length = 50.f;
+	TempAData.Montage = ThrowBallMontage;
+	UE_LOG(LogTemp, Warning, TEXT("ThrowBall() in AIBossBase.cpp"));
+	Comp_Attack->BossThrowBall(TempAData);
 }
 

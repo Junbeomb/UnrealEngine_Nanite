@@ -13,23 +13,29 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 {
 	GENERATED_BODY()
 
+	ACharacter* TempCharacter;
+
 public:	
 	// Sets default values for this component's properties
 	UComp_AIBossAttackSystem();
-
-	UFUNCTION()
-	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo);
 
 	UPROPERTY(EditAnywhere)
 	FBOSSATTACKDATA currentInfo;
 
 	UFUNCTION()
+	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo);
+	UFUNCTION()
 	void OnNotifyBossPrimary(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
-	void BossThrowBall();
+	void BossThrowBall(FBOSSATTACKDATA AttackInfo);
 	UFUNCTION()
-	void BossJumpAttack();
+	void OnNotifyBossThrowBall(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	UFUNCTION()
+	void BossJumpAttack(FBOSSATTACKDATA AttackInfo);
+	UFUNCTION()
+	void OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 
 	UFUNCTION()
