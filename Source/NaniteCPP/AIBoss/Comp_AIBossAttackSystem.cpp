@@ -2,6 +2,7 @@
 #include "Comp_AIBossAttackSystem.h"
 #include "BossAttackStructData.h"
 #include "GameFramework/Character.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
 
@@ -25,19 +26,22 @@ void UComp_AIBossAttackSystem::BeginPlay()
 //=========================BossSkill==================================
 //=========================BossSkill==================================
 //=========================BossSkill==================================
-void UComp_AIBossAttackSystem::BossPrimaryAttack(FBOSSATTACKDATA AttackInfo, float Radius, float Length)
+void UComp_AIBossAttackSystem::BossPrimaryAttack(FBOSSATTACKDATA AttackInfo)
 {
+	currentInfo = AttackInfo;
+
 	ACharacter* TempCharacter = Cast<ACharacter>(GetOwner());
 	if (TempCharacter) {
 		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *AnimInstance->GetName());
+
 		if (AnimInstance && AttackInfo.Montage) {
-			//UE_LOG(LogTemp, Warning, TEXT("%s"), *AnimInstance->GetName());
 			AnimInstance->Montage_Play(AttackInfo.Montage);
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBeginReceived);
-			//UE_LOG(LogTemp, Warning, TEXT("%s"), *AttackInfo.Montage->GetName());
+			//notify 가 시작되었을 때
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossPrimary);
 		}
 	}
-
 }
 
 void UComp_AIBossAttackSystem::BossThrowBall()
@@ -48,9 +52,18 @@ void UComp_AIBossAttackSystem::BossJumpAttack()
 {
 }
 
-void UComp_AIBossAttackSystem::OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+
+void UComp_AIBossAttackSystem::OnNotifyBossPrimary(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *NotifyName.ToString());
+
+	if (NotifyName == "Slash") {
+		UE_LOG(LogTemp, Warning, TEXT("Slash"));
+		SphereTraceDamage(currentInfo);
+	}
+	if (NotifyName == "AOESlash") {
+		UE_LOG(LogTemp, Warning, TEXT("AOESlash"));
+	}
+
 }
 
 //=========================BossSkill==================================
@@ -61,9 +74,31 @@ void UComp_AIBossAttackSystem::OnNotifyBeginReceived(FName NotifyName, const FBr
 //=========================ApplyDamage==================================
 //=========================ApplyDamage==================================
 //=========================ApplyDamage==================================
-void UComp_AIBossAttackSystem::SphereTraceDamage()
+void UComp_AIBossAttackSystem::SphereTraceDamage(FBOSSATTACKDATA cInfo)
 {
+	FHitResult OutHit;
+	TArray<AActor*> IgnoredActors;
+	bool bHit = UKismetSystemLibrary::SphereTraceSingle(
+		this,
+		GetOwner()->GetActorLocation(),
+		GetOwner()->GetActorForwardVector() * cInfo.length,
+		cInfo.radius,
+		UEngineTypes::ConvertToTraceType(ECC_Visibility),
+		false,
+		IgnoredActors,
+		EDrawDebugTrace::Persistent,
+		OutHit,
+		true
+	);
 
+	if (bHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *OutHit.GetActor()->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Hit"));
+	}
 
 }
 //=========================ApplyDamage==================================

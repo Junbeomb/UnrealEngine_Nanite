@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Animation/AnimMontage.h"
 #include "BossAttackStructData.generated.h"
 /**
  * 
@@ -22,7 +21,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	AActor* AttackTarget;
 	UPROPERTY(EditAnywhere)
+	class UAnimMontage* Montage;
+
+	UPROPERTY(EditAnywhere)
 	float DamageAmount;
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* Montage;
+	float radius;
+	UPROPERTY(EditAnywhere)
+	float length;
+
+
+	
 };

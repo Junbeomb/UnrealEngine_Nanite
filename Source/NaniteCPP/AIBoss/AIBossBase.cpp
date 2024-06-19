@@ -117,9 +117,11 @@ void AAIBossBase::AttackCombo1(AActor* ATarget)
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
 	TempAData.DamageAmount = 11;
+	TempAData.radius = 30.f;
+	TempAData.length = 50.f;
 	TempAData.Montage = Combo1Montage;
-
-	Comp_Attack->BossPrimaryAttack(TempAData, 20, 30);
+	UE_LOG(LogTemp, Warning, TEXT("%f"), TempAData.length);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 
 }
 

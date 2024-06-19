@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BossAttackStructData.h"
 #include "Comp_AIBossAttackSystem.generated.h"
 
 
@@ -17,17 +18,22 @@ public:
 	UComp_AIBossAttackSystem();
 
 	UFUNCTION()
-	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo, float Radius, float Length);
+	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo);
+
+	UPROPERTY(EditAnywhere)
+	FBOSSATTACKDATA currentInfo;
+
+	UFUNCTION()
+	void OnNotifyBossPrimary(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
 	UFUNCTION()
 	void BossThrowBall();
 	UFUNCTION()
 	void BossJumpAttack();
 
-	UFUNCTION()
-	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
-	void SphereTraceDamage();
+	void SphereTraceDamage(FBOSSATTACKDATA cInfo);
 	
 protected:
 	// Called when the game starts
