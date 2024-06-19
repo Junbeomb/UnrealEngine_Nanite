@@ -7,7 +7,7 @@
 #include "Comp_AIBossAttackSystem.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,6 +23,12 @@ public:
 	UFUNCTION()
 	void BossJumpAttack();
 
+	UFUNCTION()
+	void OnNotifyBeginReceived(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	UFUNCTION()
+	void SphereTraceDamage();
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

@@ -121,6 +121,5 @@ void AAIBossBase::AttackCombo1(AActor* ATarget)
 
 	Comp_Attack->BossPrimaryAttack(TempAData, 20, 30);
 
-
 }
 
