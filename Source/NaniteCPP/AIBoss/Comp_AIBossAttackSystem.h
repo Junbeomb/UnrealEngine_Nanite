@@ -15,6 +15,10 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 
 	ACharacter* TempCharacter;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> BossThrowBallActor;
+
+
 public:	
 	// Sets default values for this component's properties
 	UComp_AIBossAttackSystem();

@@ -5,6 +5,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "BossHomingBall.h"
+#include "Kismet/GameplayStatics.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -77,8 +79,29 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 {
 	if (NotifyName == "Throw") {
 		UE_LOG(LogTemp, Warning, TEXT("Throw"));
-		SphereTraceDamage(currentInfo);
+		if (BossThrowBallActor) {
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			GetWorld()->SpawnActor<ABossHomingBall>(BossThrowBallActor, GetOwner()->GetActorLocation(), {0,0,0}, ActorSpawnParams);
+			
+			//spawn하면서 인자를 전달하는 방법
+			//ABossHomingBall* SpawnedBall = GetWorld()->SpawnActorDeferred<ABossHomingBall>(BossThrowBallActor, 
+			//	FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation()), 
+			//	nullptr, 
+			//	nullptr, 
+			//	ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+
+			//if (SpawnedBall) {
+			//	SpawnedBall->Target = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn(); // 예: 특정 속성에 값을 설정
+			//	if (SpawnedBall->Target) {
+			//		UE_LOG(LogTemp,Warning,TEXT("%s"),*SpawnedBall->Target->GetActorLocation().ToString())
+			//		UGameplayStatics::FinishSpawningActor(SpawnedBall, FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation()));
+			//	}
+			//}
+
+		}
 	}
+
 }
 
 void UComp_AIBossAttackSystem::BossJumpAttack(FBOSSATTACKDATA AttackInfo)
