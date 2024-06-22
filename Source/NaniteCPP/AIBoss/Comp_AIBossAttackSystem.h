@@ -18,6 +18,8 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> BossThrowBallActor;
 
+	UPROPERTY(EditAnywhere)
+	TArray<class ABossHomingBall*> HomingBalls;
 
 public:	
 	// Sets default values for this component's properties

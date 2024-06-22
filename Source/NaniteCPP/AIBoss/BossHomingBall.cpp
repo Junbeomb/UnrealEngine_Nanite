@@ -7,6 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "../BeginnerCharacter/NaniteCPPCharacter.h"
 // Sets default values
 ABossHomingBall::ABossHomingBall()
 {
@@ -23,11 +24,27 @@ ABossHomingBall::ABossHomingBall()
 	Niagara->SetupAttachment(SphereComp);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
-	ProjectileMovement->InitialSpeed = 500.f;
-	ProjectileMovement->MaxSpeed = 500.f;
+	ProjectileMovement->InitialSpeed = 0.f;
+	ProjectileMovement->MaxSpeed = 0.f;
 	ProjectileMovement->bIsHomingProjectile = true;
-	ProjectileMovement->HomingAccelerationMagnitude = 5000.f;
+	ProjectileMovement->HomingAccelerationMagnitude = 0.1f;
+	ProjectileMovement->ProjectileGravityScale = 0.f;
+
+	//SphereComp ¶û ºÎµúÈ÷¸é
+	SphereComp->OnComponentHit.AddDynamic(this, &ABossHomingBall::OnComponentHit);
+
 }
+
+void ABossHomingBall::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnComponentHit!!"));
+	ANaniteCPPCharacter* tempCharac = Cast<ANaniteCPPCharacter>(OtherActor);
+	tempCharac->DecreaseHP();
+	Destroy();
+	//D_Hit.Broadcast();
+}
+
+
 
 // Called when the game starts or when spawned
 void ABossHomingBall::BeginPlay()
@@ -37,5 +54,6 @@ void ABossHomingBall::BeginPlay()
 	if(Target)
 		ProjectileMovement->HomingTargetComponent = Target->GetRootComponent();
 	
+	//D_Hit.Broadcast();
 }
 

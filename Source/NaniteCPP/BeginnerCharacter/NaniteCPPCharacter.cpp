@@ -181,6 +181,11 @@ void ANaniteCPPCharacter::WatchMap()
 	}
 }
 
+void ANaniteCPPCharacter::DecreaseHP()
+{
+	UE_LOG(LogTemp,Warning,TEXT("DecreaseHP!!"));
+}
+
 void ANaniteCPPCharacter::SetHasRifle(bool bNewHasRifle)
 {
 	bHasRifle = bNewHasRifle;

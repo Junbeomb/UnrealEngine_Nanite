@@ -76,6 +76,9 @@ public:
 	/** Called for WatchMap input */
 	void WatchMap();
 
+	UFUNCTION()
+	void DecreaseHP();
+
 
 protected:
 	virtual void BeginPlay();

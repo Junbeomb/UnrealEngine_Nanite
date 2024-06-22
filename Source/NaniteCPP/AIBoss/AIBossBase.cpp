@@ -48,7 +48,7 @@ void AAIBossBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AttackCombo1(nullptr);
+	//AttackCombo1(nullptr);
 	ThrowBall(nullptr);
 
 	if (!BehaviorTree) {
