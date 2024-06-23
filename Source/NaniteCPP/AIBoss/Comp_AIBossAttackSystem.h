@@ -43,6 +43,8 @@ public:
 	UFUNCTION()
 	void OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void LaunchCharacFunc();
 
 	UFUNCTION()
 	void SphereTraceDamage(FBOSSATTACKDATA cInfo);

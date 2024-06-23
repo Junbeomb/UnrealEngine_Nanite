@@ -12,6 +12,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIC_BossBase.h"
 #include "BossAttackStructData.h"
+#include "Kismet/GameplayStatics.h"
+
+
 
 // Sets default values
 AAIBossBase::AAIBossBase()
@@ -48,23 +51,25 @@ void AAIBossBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//AttackCombo1(nullptr);
-	ThrowBall(nullptr);
+	//ACharacter* c = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	////AttackCombo1(nullptr);
+	////ThrowBall(nullptr);
+	//JumpAttack(Cast<AActor>(c));
 
-	if (!BehaviorTree) {
-		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
-		return;
-	}
+	//if (!BehaviorTree) {
+	//	UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
+	//	return;
+	//}
 
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), GetController()->GetName());
+	////UE_LOG(LogTemp, Warning, TEXT("%s"), GetController()->GetName());
 
-	for (int i = 0; i < SkeletalMesh->GetNumMaterials(); i++) {
-		 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
-		 DMIList.Add(TempDMI);
-	}
+	//for (int i = 0; i < SkeletalMesh->GetNumMaterials(); i++) {
+	//	 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
+	//	 DMIList.Add(TempDMI);
+	//}
 
-	Comp_Damage->D_OnDeath.BindUObject(this, &AAIBossBase::Die);
-	Comp_Damage->D_OnDamageResponse.BindUObject(this, &AAIBossBase::HitResponse);
+	//Comp_Damage->D_OnDeath.BindUObject(this, &AAIBossBase::Die);
+	//Comp_Damage->D_OnDamageResponse.BindUObject(this, &AAIBossBase::HitResponse);
 
 }
 
@@ -135,5 +140,17 @@ void AAIBossBase::ThrowBall(AActor* ATarget)
 	TempAData.Montage = ThrowBallMontage;
 	UE_LOG(LogTemp, Warning, TEXT("ThrowBall() in AIBossBase.cpp"));
 	Comp_Attack->BossThrowBall(TempAData);
+}
+
+void AAIBossBase::JumpAttack(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.DamageAmount = 20;
+	TempAData.radius = 30.f;
+	TempAData.length = 50.f;
+	TempAData.Montage = JumpAttackMontage;
+	UE_LOG(LogTemp, Warning, TEXT("JumpAttack() in AIBossBase.cpp"));
+	Comp_Attack->BossJumpAttack(TempAData);
 }
 

@@ -18,8 +18,8 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* SkeletalMesh;
 
-	UPROPERTY(EditAnywhere)
-	class UComp_AIBossAttackSystem* Comp_Attack;
+
+
 	UPROPERTY(EditAnywhere)
 	class UComp_AIDamageSystem* Comp_Damage;
 	UPROPERTY(EditAnywhere)
@@ -71,9 +71,15 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* ThrowBallMontage;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* JumpAttackMontage;
+
 public:
 	// Sets default values for this character's properties
 	AAIBossBase();
+
+	UPROPERTY(EditAnywhere)
+	class UComp_AIBossAttackSystem* Comp_Attack;
 
 	UPROPERTY(EditAnywhere)
 	class UBehaviorTree* BehaviorTree;
@@ -83,6 +89,9 @@ public:
 
 	UFUNCTION()
 	void ThrowBall(AActor* ATarget);
+
+	UFUNCTION()
+	void JumpAttack(AActor* ATarget);
 
 protected:
 	// Called when the game starts or when spawned

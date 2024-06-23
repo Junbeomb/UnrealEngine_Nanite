@@ -91,7 +91,6 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 
 			//ANaniteCPPCharacter* hero = Cast<ANaniteCPPCharacter>(play)
 			//tempHB->D_Hit.AddUObject(this,&UComp_AIBossAttackSystem::)
-		
 			//spawn하면서 인자를 전달하는 방법
 			//ABossHomingBall* SpawnedBall = GetWorld()->SpawnActorDeferred<ABossHomingBall>(BossThrowBallActor, 
 			//	FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation()), 
@@ -121,12 +120,45 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 void UComp_AIBossAttackSystem::BossJumpAttack(FBOSSATTACKDATA AttackInfo)
 {
 	currentInfo = AttackInfo;
+	if (TempCharacter) {
+		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
+
+		if (AnimInstance && currentInfo.Montage) {
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *currentInfo.Montage->GetName());
+			AnimInstance->Montage_Play(currentInfo.Montage);
+			//notify 가 시작되었을 때
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossJumpAttack);
+		}
+	}
 }
 
 void UComp_AIBossAttackSystem::OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
+	if (NotifyName == "Jump") {
+		UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
+		LaunchCharacFunc();
+		/*FVector OutLaunchVelocity;
+		
+		bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+			this,
+			OutLaunchVelocity,
+			GetOwner()->GetActorLocation(),
+			currentInfo.AttackTarget->GetActorLocation(),
+			0.f,
+			0.5f
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"),*OutLaunchVelocity.ToString());
+		TempCharacter->LaunchCharacter(OutLaunchVelocity,true,true);*/
+
+	}
+	if (NotifyName == "GroundSmash") {
+		//SphereTraceDamage(currentInfo);
+		UE_LOG(LogTemp, Warning, TEXT("GroundSmash"));
+	}
 }
+
 
 //=========================BossSkill==================================
 //=========================BossSkill==================================
