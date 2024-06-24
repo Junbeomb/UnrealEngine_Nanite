@@ -32,25 +32,16 @@ public:
 	UFUNCTION()
 	void BossPrimaryAttack(FBOSSATTACKDATA AttackInfo);
 	UFUNCTION()
-	void OnNotifyBossPrimary(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+	void OnNotifyBossCombo1(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
-	UFUNCTION()
-	void BossThrowBall(FBOSSATTACKDATA AttackInfo);
 	UFUNCTION()
 	void OnNotifyBossThrowBall(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
-	void BossJumpAttack(FBOSSATTACKDATA AttackInfo);
-	UFUNCTION()
 	void OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
-	void BossMeteorAttack(FBOSSATTACKDATA AttackInfo);
-	UFUNCTION()
 	void OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void LaunchCharacFunc();
 
 	UFUNCTION()
 	void SphereTraceDamage(FBOSSATTACKDATA cInfo);

@@ -56,8 +56,8 @@ void ABOssTest::BeginPlay()
 	Super::BeginPlay();
 
 	ACharacter* c = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	//AttackCombo1(nullptr);
-	//ThrowBall(nullptr);
+	//AttackCombo1(Cast<AActor>(c));
+	//ThrowBall(Cast<AActor>(c));
 	//JumpAttack(Cast<AActor>(c));
 	MeteorAttack(Cast<AActor>(c));
 
@@ -125,6 +125,7 @@ void ABOssTest::AttackCombo1(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Combo1;
 	TempAData.DamageAmount = 11;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
@@ -137,35 +138,38 @@ void ABOssTest::ThrowBall(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::ThrowBall;
 	TempAData.DamageAmount = 20;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
 	TempAData.Montage = ThrowBallMontage;
 	UE_LOG(LogTemp, Warning, TEXT("ThrowBall() in AIBossBase.cpp"));
-	Comp_Attack->BossThrowBall(TempAData);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
 void ABOssTest::JumpAttack(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Jump;
 	TempAData.DamageAmount = 20;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
 	TempAData.Montage = JumpAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("JumpAttack() in AIBossBase.cpp"));
-	Comp_Attack->BossJumpAttack(TempAData);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
 void ABOssTest::MeteorAttack(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Meteor;
 	TempAData.DamageAmount = 20;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
 	TempAData.Montage = MeteorAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("MeteorAttack() in AIBossBase.cpp"));
-	Comp_Attack->BossMeteorAttack(TempAData);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 

@@ -63,8 +63,6 @@ class NANITECPP_API ABOssTest : public ACharacter
 	//=====================DissolveTimeline=========================
 	//=====================DissolveTimeline=========================
 
-
-
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* Combo1Montage;
 

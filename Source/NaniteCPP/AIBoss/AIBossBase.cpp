@@ -141,7 +141,7 @@ void AAIBossBase::ThrowBall(AActor* ATarget)
 	TempAData.length = 50.f;
 	TempAData.Montage = ThrowBallMontage;
 	UE_LOG(LogTemp, Warning, TEXT("ThrowBall() in AIBossBase.cpp"));
-	Comp_Attack->BossThrowBall(TempAData);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
 void AAIBossBase::JumpAttack(AActor* ATarget)
@@ -153,6 +153,6 @@ void AAIBossBase::JumpAttack(AActor* ATarget)
 	TempAData.length = 50.f;
 	TempAData.Montage = JumpAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("JumpAttack() in AIBossBase.cpp"));
-	Comp_Attack->BossJumpAttack(TempAData);
+	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 

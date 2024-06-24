@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "E_BossState.h"
 #include "BossAttackStructData.generated.h"
 /**
  * 
@@ -23,6 +24,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* Montage;
 
+	UPROPERTY(EditAnywhere)
+	EBossSkill CurrentSkill;
 	UPROPERTY(EditAnywhere)
 	float DamageAmount;
 	UPROPERTY(EditAnywhere)

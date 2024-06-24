@@ -22,7 +22,6 @@ UComp_AIBossAttackSystem::UComp_AIBossAttackSystem()
 	// ...
 }
 
-
 // Called when the game starts
 void UComp_AIBossAttackSystem::BeginPlay()
 {
@@ -44,14 +43,29 @@ void UComp_AIBossAttackSystem::BossPrimaryAttack(FBOSSATTACKDATA AttackInfo)
 
 		if (AnimInstance && currentInfo.Montage) {
 			AnimInstance->Montage_Play(currentInfo.Montage);
+
 			//notify 가 시작되었을 때
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossPrimary);
+			switch (currentInfo.CurrentSkill) {
+			case EBossSkill::Combo1:
+				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossCombo1);
+				break;
+			case EBossSkill::Jump:
+				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossJumpAttack);
+				break;
+			case EBossSkill::ThrowBall:
+				UE_LOG(LogTemp, Warning, TEXT("ThrowBallNotifyBegin"));
+				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossThrowBall);
+				break;
+			case EBossSkill::Meteor:
+				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack);
+				break;
+			}
 		}
 	}
 
 }
 
-void UComp_AIBossAttackSystem::OnNotifyBossPrimary(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+void UComp_AIBossAttackSystem::OnNotifyBossCombo1(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
 	if (NotifyName == "Slash") {
 		UE_LOG(LogTemp, Warning, TEXT("Slash"));
@@ -62,18 +76,30 @@ void UComp_AIBossAttackSystem::OnNotifyBossPrimary(FName NotifyName, const FBran
 	}
 }
 
-void UComp_AIBossAttackSystem::BossThrowBall(FBOSSATTACKDATA AttackInfo)
+void UComp_AIBossAttackSystem::OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
-	currentInfo = AttackInfo;
-	if (TempCharacter) {
-		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
+	if (NotifyName == "Jump") {
+		UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-		if (AnimInstance && currentInfo.Montage) {
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *currentInfo.Montage->GetName());
-			AnimInstance->Montage_Play(currentInfo.Montage);
-			//notify 가 시작되었을 때
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossThrowBall);
-		}
+		//LaunchCharacFunc();
+		FVector OutLaunchVelocity;
+
+		bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+			this,
+			OutLaunchVelocity,
+			GetOwner()->GetActorLocation(),
+			currentInfo.AttackTarget->GetActorLocation(),
+			0.f,
+			0.5f
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *OutLaunchVelocity.ToString());
+		TempCharacter->LaunchCharacter(OutLaunchVelocity, true, true);
+
+	}
+	if (NotifyName == "GroundSmash") {
+		//SphereTraceDamage(currentInfo);
+		UE_LOG(LogTemp, Warning, TEXT("GroundSmash"));
 	}
 }
 
@@ -112,65 +138,6 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 		for (ABossHomingBall* a : HomingBalls) {
 			UProjectileMovementComponent* tempP =  a->ProjectileMovement;
 			tempP->HomingAccelerationMagnitude = 3000.f;
-		}
-	}
-
-
-}
-
-void UComp_AIBossAttackSystem::BossJumpAttack(FBOSSATTACKDATA AttackInfo)
-{
-	currentInfo = AttackInfo;
-	if (TempCharacter) {
-		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
-
-		if (AnimInstance && currentInfo.Montage) {
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *currentInfo.Montage->GetName());
-			AnimInstance->Montage_Play(currentInfo.Montage);
-			//notify 가 시작되었을 때
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossJumpAttack);
-		}
-	}
-}
-
-void UComp_AIBossAttackSystem::OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
-{
-	if (NotifyName == "Jump") {
-		UE_LOG(LogTemp, Warning, TEXT("Jump"));
-
-		//LaunchCharacFunc();
-		FVector OutLaunchVelocity;
-		
-		bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
-			this,
-			OutLaunchVelocity,
-			GetOwner()->GetActorLocation(),
-			currentInfo.AttackTarget->GetActorLocation(),
-			0.f,
-			0.5f
-		);
-
-		UE_LOG(LogTemp, Warning, TEXT("%s"),*OutLaunchVelocity.ToString());
-		TempCharacter->LaunchCharacter(OutLaunchVelocity,true,true);
-
-	}
-	if (NotifyName == "GroundSmash") {
-		//SphereTraceDamage(currentInfo);
-		UE_LOG(LogTemp, Warning, TEXT("GroundSmash"));
-	}
-}
-
-void UComp_AIBossAttackSystem::BossMeteorAttack(FBOSSATTACKDATA AttackInfo)
-{
-	currentInfo = AttackInfo;
-	if (TempCharacter) {
-		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
-
-		if (AnimInstance && currentInfo.Montage) {
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *currentInfo.Montage->GetName());
-			AnimInstance->Montage_Play(currentInfo.Montage);
-			//notify 가 시작되었을 때
-			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack);
 		}
 	}
 }

@@ -28,3 +28,12 @@ enum class EBossSenseType : uint8
 	Sight UMETA(DisplayName = "Sight"),
 	Damage UMETA(DisplayName = "Damage")
 };
+
+UENUM(BlueprintType)
+enum class EBossSkill : uint8
+{
+	Combo1 UMETA(DisplayName = "Combo1"),
+	Jump UMETA(DisplayName = "Jump"),
+	ThrowBall UMETA(DisplayName = "ThrowBall"),
+	Meteor UMETA(DisplayName = "Meteor")
+};
