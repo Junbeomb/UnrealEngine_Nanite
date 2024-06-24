@@ -29,7 +29,8 @@ ABOssTest::ABOssTest()
 	SkeletalMesh->SetupAttachment(RootComponent);
 
 	HammerActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HammerChild"));
-	HammerActor->SetupAttachment(RootComponent);
+	//HammerActor->SetupAttachment(SkeletalMesh);
+	HammerActor->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "HammerSocket");
 
 	Comp_Attack = CreateDefaultSubobject<UComp_AIBossAttackSystem>(TEXT("Comp_Attack"));
 	Comp_Damage = CreateDefaultSubobject<UComp_AIDamageSystem>(TEXT("Comp_Damage"));
@@ -71,10 +72,8 @@ void ABOssTest::BeginPlay()
 		 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
 		 DMIList.Add(TempDMI);
 	}
-
 	Comp_Damage->D_OnDeath.BindUObject(this, &ABOssTest::Die);
 	Comp_Damage->D_OnDamageResponse.BindUObject(this, &ABOssTest::HitResponse);
-
 }
 
 void ABOssTest::Die()
