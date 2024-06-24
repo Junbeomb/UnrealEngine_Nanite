@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "../BeginnerCharacter/NaniteCPPCharacter.h"
+#include "BOssTest.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -137,8 +138,8 @@ void UComp_AIBossAttackSystem::OnNotifyBossJumpAttack(FName NotifyName, const FB
 	if (NotifyName == "Jump") {
 		UE_LOG(LogTemp, Warning, TEXT("Jump"));
 
-		LaunchCharacFunc();
-		/*FVector OutLaunchVelocity;
+		//LaunchCharacFunc();
+		FVector OutLaunchVelocity;
 		
 		bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
 			this,
@@ -150,12 +151,52 @@ void UComp_AIBossAttackSystem::OnNotifyBossJumpAttack(FName NotifyName, const FB
 		);
 
 		UE_LOG(LogTemp, Warning, TEXT("%s"),*OutLaunchVelocity.ToString());
-		TempCharacter->LaunchCharacter(OutLaunchVelocity,true,true);*/
+		TempCharacter->LaunchCharacter(OutLaunchVelocity,true,true);
 
 	}
 	if (NotifyName == "GroundSmash") {
 		//SphereTraceDamage(currentInfo);
 		UE_LOG(LogTemp, Warning, TEXT("GroundSmash"));
+	}
+}
+
+void UComp_AIBossAttackSystem::BossMeteorAttack(FBOSSATTACKDATA AttackInfo)
+{
+	currentInfo = AttackInfo;
+	if (TempCharacter) {
+		UAnimInstance* AnimInstance = TempCharacter->GetMesh()->GetAnimInstance(); //캐릭터에 애니메이션 blueprint가 설정되어 있어야 한다.
+
+		if (AnimInstance && currentInfo.Montage) {
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *currentInfo.Montage->GetName());
+			AnimInstance->Montage_Play(currentInfo.Montage);
+			//notify 가 시작되었을 때
+			AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack);
+		}
+	}
+}
+
+void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+{
+	if (NotifyName == "Charging") {
+		UE_LOG(LogTemp, Warning, TEXT("Charging"));
+
+		ABOssTest* boss = Cast<ABOssTest>(TempCharacter);
+		if (boss->HammerOverlayMaterial) {
+			UStaticMeshComponent* HammerComp = Cast<UStaticMeshComponent>(boss->HammerActor->GetChildActor()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+			HammerComp->SetOverlayMaterial(boss->HammerOverlayMaterial);
+		}
+	}
+	if (NotifyName == "Strike") {
+		UE_LOG(LogTemp, Warning, TEXT("Strike"));
+	}
+	if (NotifyName == "SpawnCenter") {
+		UE_LOG(LogTemp, Warning, TEXT("SpawnCenter"));
+	}
+	if (NotifyName == "AbsortSoul") {
+		UE_LOG(LogTemp, Warning, TEXT("AbsortSoul"));
+	}
+	if (NotifyName == "Bomb") {
+		UE_LOG(LogTemp, Warning, TEXT("Bomb"));
 	}
 }
 

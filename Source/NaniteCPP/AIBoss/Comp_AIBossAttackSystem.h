@@ -21,6 +21,7 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	TArray<class ABossHomingBall*> HomingBalls;
 
+
 public:	
 	// Sets default values for this component's properties
 	UComp_AIBossAttackSystem();
@@ -42,6 +43,11 @@ public:
 	void BossJumpAttack(FBOSSATTACKDATA AttackInfo);
 	UFUNCTION()
 	void OnNotifyBossJumpAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	UFUNCTION()
+	void BossMeteorAttack(FBOSSATTACKDATA AttackInfo);
+	UFUNCTION()
+	void OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void LaunchCharacFunc();

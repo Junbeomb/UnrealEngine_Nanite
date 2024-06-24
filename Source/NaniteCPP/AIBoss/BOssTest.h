@@ -28,13 +28,13 @@ class NANITECPP_API ABOssTest : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class AAIController* AIC_BossBase;
 
+
+
 	UFUNCTION()
 	void Die();
 
 	UFUNCTION()
 	void HitResponse();
-
-
 
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstanceDynamic*> DMIList;
@@ -74,9 +74,18 @@ class NANITECPP_API ABOssTest : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* JumpAttackMontage;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* MeteorAttackMontage;
+
 public:
 	// Sets default values for this character's properties
 	ABOssTest();
+
+	UPROPERTY(EditAnywhere, Category = "ChildActor")
+	UChildActorComponent* HammerActor;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* HammerOverlayMaterial;
 
 	UPROPERTY(EditAnywhere)
 	class UComp_AIBossAttackSystem* Comp_Attack;
@@ -92,6 +101,10 @@ public:
 
 	UFUNCTION()
 	void JumpAttack(AActor* ATarget);
+
+
+	UFUNCTION()
+	void MeteorAttack(AActor* ATarget);
 
 protected:
 	// Called when the game starts or when spawned

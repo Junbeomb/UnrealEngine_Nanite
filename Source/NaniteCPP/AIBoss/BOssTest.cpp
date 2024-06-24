@@ -28,6 +28,9 @@ ABOssTest::ABOssTest()
 	SkeletalMesh = ACharacter::GetMesh();
 	SkeletalMesh->SetupAttachment(RootComponent);
 
+	HammerActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HammerChild"));
+	HammerActor->SetupAttachment(RootComponent);
+
 	Comp_Attack = CreateDefaultSubobject<UComp_AIBossAttackSystem>(TEXT("Comp_Attack"));
 	Comp_Damage = CreateDefaultSubobject<UComp_AIDamageSystem>(TEXT("Comp_Damage"));
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
@@ -51,25 +54,26 @@ void ABOssTest::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ACharacter* c = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	////AttackCombo1(nullptr);
-	////ThrowBall(nullptr);
+	ACharacter* c = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//AttackCombo1(nullptr);
+	//ThrowBall(nullptr);
 	//JumpAttack(Cast<AActor>(c));
+	MeteorAttack(Cast<AActor>(c));
 
-	//if (!BehaviorTree) {
-	//	UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
-	//	return;
-	//}
+	if (!BehaviorTree) {
+		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
+		return;
+	}
 
-	////UE_LOG(LogTemp, Warning, TEXT("%s"), GetController()->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), GetController()->GetName());
 
-	//for (int i = 0; i < SkeletalMesh->GetNumMaterials(); i++) {
-	//	 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
-	//	 DMIList.Add(TempDMI);
-	//}
+	for (int i = 0; i < SkeletalMesh->GetNumMaterials(); i++) {
+		 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
+		 DMIList.Add(TempDMI);
+	}
 
-	//Comp_Damage->D_OnDeath.BindUObject(this, &AAIBossBase::Die);
-	//Comp_Damage->D_OnDamageResponse.BindUObject(this, &AAIBossBase::HitResponse);
+	Comp_Damage->D_OnDeath.BindUObject(this, &ABOssTest::Die);
+	Comp_Damage->D_OnDamageResponse.BindUObject(this, &ABOssTest::HitResponse);
 
 }
 
@@ -152,5 +156,17 @@ void ABOssTest::JumpAttack(AActor* ATarget)
 	TempAData.Montage = JumpAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("JumpAttack() in AIBossBase.cpp"));
 	Comp_Attack->BossJumpAttack(TempAData);
+}
+
+void ABOssTest::MeteorAttack(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.DamageAmount = 20;
+	TempAData.radius = 30.f;
+	TempAData.length = 50.f;
+	TempAData.Montage = MeteorAttackMontage;
+	UE_LOG(LogTemp, Warning, TEXT("MeteorAttack() in AIBossBase.cpp"));
+	Comp_Attack->BossMeteorAttack(TempAData);
 }
 
