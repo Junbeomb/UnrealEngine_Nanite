@@ -76,6 +76,7 @@ class NANITECPP_API ABOssTest : public ACharacter
 	class UAnimMontage* MeteorAttackMontage;
 
 public:
+
 	// Sets default values for this character's properties
 	ABOssTest();
 

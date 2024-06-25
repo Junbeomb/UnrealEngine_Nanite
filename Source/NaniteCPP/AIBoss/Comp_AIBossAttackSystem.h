@@ -21,6 +21,12 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	TArray<class ABossHomingBall*> HomingBalls;
 
+	UPROPERTY(EditAnywhere)
+	class AMeteorChargeCenter* MeteorCenter;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> MeteorCenterBall;
+
 
 public:	
 	// Sets default values for this component's properties
@@ -44,7 +50,9 @@ public:
 	void OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
-	void SphereTraceDamage(FBOSSATTACKDATA cInfo);
+	void SphereTraceDamage(FBOSSATTACKDATA cInfo, FVector startLocation, FVector endLocation);
+	UFUNCTION()
+	void CapsuleTraceDamage(FBOSSATTACKDATA cInfo, FVector startLocation, FVector endLocation);
 	
 protected:
 	// Called when the game starts

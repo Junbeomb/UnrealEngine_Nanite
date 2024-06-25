@@ -166,8 +166,8 @@ void ABOssTest::MeteorAttack(AActor* ATarget)
 	TempAData.AttackTarget = ATarget;
 	TempAData.CurrentSkill = EBossSkill::Meteor;
 	TempAData.DamageAmount = 20;
-	TempAData.radius = 30.f;
-	TempAData.length = 50.f;
+	TempAData.radius = 100.f;
+	TempAData.length = 0.f;
 	TempAData.Montage = MeteorAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("MeteorAttack() in AIBossBase.cpp"));
 	Comp_Attack->BossPrimaryAttack(TempAData);
