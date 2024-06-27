@@ -22,8 +22,8 @@ AMeteorChargeCenter::AMeteorChargeCenter()
 
 void AMeteorChargeCenter::CallDAbsortStart()
 {
+	//UE_LOG(LogTemp, Warning, TEXT("CallDAbsortStart"));
 	D_AbsortStart.Broadcast();
-	UE_LOG(LogTemp, Warning, TEXT("CallDAbsortStart"));
 }
 
 // Called when the game starts or when spawned

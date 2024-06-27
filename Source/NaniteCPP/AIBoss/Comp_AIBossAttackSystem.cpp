@@ -12,6 +12,7 @@
 #include "BossHomingBall.h"
 #include "BOssTest.h"
 #include "MeteorChargeCenter.h"
+#include "MeteorRock.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -109,12 +110,12 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 
 	if (NotifyName == "SpawnBall") {
 		UE_LOG(LogTemp, Warning, TEXT("SpawnBall"));
-		if (BossThrowBallActor) {
+		if (HomingBallChoice) {
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			FVector loc = GetOwner()->GetActorLocation();
 			loc.Z += 200.f;
-			ABossHomingBall* tempHB = GetWorld()->SpawnActor<ABossHomingBall>(BossThrowBallActor, loc, { 0,0,0 }, ActorSpawnParams);
+			ABossHomingBall* tempHB = GetWorld()->SpawnActor<ABossHomingBall>(HomingBallChoice, loc, { 0,0,0 }, ActorSpawnParams);
 			HomingBalls.Add(tempHB);
 
 			//ANaniteCPPCharacter* hero = Cast<ANaniteCPPCharacter>(play)
@@ -163,13 +164,21 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 		float randomY = GetOwner()->GetActorLocation().Y + FMath::RandRange(MinValue, MaxValue);
 
 		SphereTraceDamage(currentInfo,{ randomX ,randomY,0}, { randomX ,randomY,0 });
+
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		MeteorRocks.Add(GetWorld()->SpawnActor<AMeteorRock>(MeteorRockChoice, { randomX ,randomY,0 }, { 0,0,0 }, ActorSpawnParams));
 	}
 	if (NotifyName == "SpawnCenter") {
 		UE_LOG(LogTemp, Warning, TEXT("SpawnCenter"));
-		if (MeteorCenterBall) {
+		if (MeteorCenterChoice) {
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-			MeteorCenter = GetWorld()->SpawnActor<AMeteorChargeCenter>(MeteorCenterBall, GetOwner()->GetActorLocation(), {0,0,0}, ActorSpawnParams);
+			MeteorCenter = GetWorld()->SpawnActor<AMeteorChargeCenter>(MeteorCenterChoice, GetOwner()->GetActorLocation(), {0,0,0}, ActorSpawnParams);
+
+			for (AMeteorRock* a : MeteorRocks) {
+				a->MeteorCenterBind();
+			}
 		}
 	}
 	if (NotifyName == "AbsortSoul") {

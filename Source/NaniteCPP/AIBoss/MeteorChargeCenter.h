@@ -7,6 +7,7 @@
 #include "MeteorChargeCenter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(F_Absort);
+
 UCLASS()
 class NANITECPP_API AMeteorChargeCenter : public AActor
 {

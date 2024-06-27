@@ -16,17 +16,16 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	ACharacter* TempCharacter;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> BossThrowBallActor;
-
-	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABossHomingBall> HomingBallChoice;
 	TArray<class ABossHomingBall*> HomingBalls;
 
 	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AMeteorChargeCenter> MeteorCenterChoice;
 	class AMeteorChargeCenter* MeteorCenter;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> MeteorCenterBall;
-
+	TSubclassOf<class AMeteorRock> MeteorRockChoice;
+	TArray<class AMeteorRock*> MeteorRocks;
 
 public:	
 	// Sets default values for this component's properties
