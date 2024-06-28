@@ -138,8 +138,8 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 	if (NotifyName == "Throw") {
 		UE_LOG(LogTemp, Warning, TEXT("Throw"));
 		for (ABossHomingBall* a : HomingBalls) {
-			UProjectileMovementComponent* tempP =  a->ProjectileMovement;
-			tempP->HomingAccelerationMagnitude = 3000.f;
+			/*UProjectileMovementComponent* tempP =  a->ProjectileMovement;
+			tempP->HomingAccelerationMagnitude = 3000.f;*/
 		}
 	}
 }

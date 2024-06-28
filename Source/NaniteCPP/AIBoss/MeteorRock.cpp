@@ -1,6 +1,7 @@
 #include "MeteorRock.h"
 #include "MeteorChargeCenter.h"
 #include "Kismet/GameplayStatics.h"
+#include "MeteorSoulBall.h"
 
 
 AMeteorRock::AMeteorRock()
@@ -29,6 +30,12 @@ void AMeteorRock::MeteorCenterBind()
 void AMeteorRock::AbsorbedByCenter()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AbsorbedByCenter"));
+
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	GetWorld()->SpawnActor<AMeteorSoulBall>(SoulBallChoice, GetActorLocation(), {0,0,0}, ActorSpawnParams);
+
+	Destroy();
 }
 
 // Called every frame

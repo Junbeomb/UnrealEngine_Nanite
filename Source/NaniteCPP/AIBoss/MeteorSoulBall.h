@@ -3,16 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "HomingBallBase.h"
-#include "BossHomingBall.generated.h"
+#include "MeteorSoulBall.generated.h"
 
 UCLASS()
-class NANITECPP_API ABossHomingBall : public AHomingBallBase
+class NANITECPP_API AMeteorSoulBall : public AHomingBallBase
 {
 	GENERATED_BODY()
-
-protected:
+	
+public:
 	virtual void BeginPlay() override;
-
 };

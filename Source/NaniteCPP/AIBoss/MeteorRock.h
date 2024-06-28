@@ -23,6 +23,9 @@ class NANITECPP_API AMeteorRock : public AActor
 public:	
 	AMeteorRock();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AHomingBallBase> SoulBallChoice;
+
 	UFUNCTION()
 	void MeteorCenterBind();
 
