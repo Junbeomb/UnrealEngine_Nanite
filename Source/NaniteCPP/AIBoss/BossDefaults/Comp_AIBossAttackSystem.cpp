@@ -1,6 +1,5 @@
 
 #include "Comp_AIBossAttackSystem.h"
-#include "BossAttackStructData.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Math/UnrealMathUtility.h"
@@ -8,11 +7,11 @@
 #include "Animation/AnimMontage.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "../BeginnerCharacter/NaniteCPPCharacter.h"
-#include "BossHomingBall.h"
-#include "BOssTest.h"
-#include "MeteorChargeCenter.h"
-#include "MeteorRock.h"
+#include "../../BeginnerCharacter/NaniteCPPCharacter.h"
+#include "../Skills/ThrowBall/BossThrowBall.h"
+#include "BossBase.h"
+#include "../Skills/Meteor/MeteorChargeCenter.h"
+#include "../Skills/Meteor/MeteorRock.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -110,13 +109,13 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 
 	if (NotifyName == "SpawnBall") {
 		UE_LOG(LogTemp, Warning, TEXT("SpawnBall"));
-		if (HomingBallChoice) {
+		if (ThrowBallChoice) {
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			FVector loc = GetOwner()->GetActorLocation();
 			loc.Z += 200.f;
-			ABossHomingBall* tempHB = GetWorld()->SpawnActor<ABossHomingBall>(HomingBallChoice, loc, { 0,0,0 }, ActorSpawnParams);
-			HomingBalls.Add(tempHB);
+			ABossThrowBall* tempHB = GetWorld()->SpawnActor<ABossThrowBall>(ThrowBallChoice, loc, { 0,0,0 }, ActorSpawnParams);
+			ThrowBalls.Add(tempHB);
 
 			//ANaniteCPPCharacter* hero = Cast<ANaniteCPPCharacter>(play)
 			//tempHB->D_Hit.AddUObject(this,&UComp_AIBossAttackSystem::)
@@ -137,7 +136,7 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 	}
 	if (NotifyName == "Throw") {
 		UE_LOG(LogTemp, Warning, TEXT("Throw"));
-		for (ABossHomingBall* a : HomingBalls) {
+		for (ABossThrowBall* a : ThrowBalls) {
 			/*UProjectileMovementComponent* tempP =  a->ProjectileMovement;
 			tempP->HomingAccelerationMagnitude = 3000.f;*/
 		}
@@ -149,7 +148,7 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 	if (NotifyName == "Charging") {
 		UE_LOG(LogTemp, Warning, TEXT("Charging"));
 
-		ABOssTest* boss = Cast<ABOssTest>(TempCharacter);
+		ABossBase* boss = Cast<ABossBase>(TempCharacter);
 		if (boss->HammerOverlayMaterial) {
 			UStaticMeshComponent* HammerComp = Cast<UStaticMeshComponent>(boss->HammerActor->GetChildActor()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 			HammerComp->SetOverlayMaterial(boss->HammerOverlayMaterial);

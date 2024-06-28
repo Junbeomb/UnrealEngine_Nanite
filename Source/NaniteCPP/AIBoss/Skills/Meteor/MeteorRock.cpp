@@ -1,3 +1,4 @@
+
 #include "MeteorRock.h"
 #include "MeteorChargeCenter.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,7 +17,6 @@ AMeteorRock::AMeteorRock()
 void AMeteorRock::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AMeteorRock::MeteorCenterBind()

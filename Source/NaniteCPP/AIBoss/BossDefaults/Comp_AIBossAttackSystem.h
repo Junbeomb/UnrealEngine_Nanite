@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "BossAttackStructData.h"
+#include "../Datas/BossAttackStructData.h"
 #include "Comp_AIBossAttackSystem.generated.h"
 
 
@@ -16,8 +16,8 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	ACharacter* TempCharacter;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ABossHomingBall> HomingBallChoice;
-	TArray<class ABossHomingBall*> HomingBalls;
+	TSubclassOf<class ABossThrowBall> ThrowBallChoice;
+	TArray<class ABossThrowBall*> ThrowBalls;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AMeteorChargeCenter> MeteorCenterChoice;

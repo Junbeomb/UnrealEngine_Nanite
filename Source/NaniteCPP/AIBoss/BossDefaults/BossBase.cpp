@@ -1,25 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AIBossBase.h"
+#include "BossBase.h"
+
 #include "Comp_AIDamageSystem.h"
 #include "Comp_AIBossAttackSystem.h"
 #include "Components/CapsuleComponent.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "../Blending/Comp_BlendMesh.h"
+#include "../../Blending/Comp_BlendMesh.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AIC_BossBase.h"
-#include "BossAttackStructData.h"
+#include "../Datas/BossAttackStructData.h"
 #include "Kismet/GameplayStatics.h"
 
 
 
-// Sets default values
-AAIBossBase::AAIBossBase()
+ABossBase::ABossBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	CapsuleComp = ACharacter::GetCapsuleComponent();
@@ -27,6 +26,10 @@ AAIBossBase::AAIBossBase()
 
 	SkeletalMesh = ACharacter::GetMesh();
 	SkeletalMesh->SetupAttachment(RootComponent);
+
+	HammerActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("HammerChild"));
+	//HammerActor->SetupAttachment(SkeletalMesh);
+	HammerActor->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "HammerSocket");
 
 	Comp_Attack = CreateDefaultSubobject<UComp_AIBossAttackSystem>(TEXT("Comp_Attack"));
 	Comp_Damage = CreateDefaultSubobject<UComp_AIDamageSystem>(TEXT("Comp_Damage"));
@@ -47,14 +50,15 @@ AAIBossBase::AAIBossBase()
 
 
 // Called when the game starts or when spawned
-void AAIBossBase::BeginPlay()
+void ABossBase::BeginPlay()
 {
 	Super::BeginPlay();
 
 	ACharacter* c = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	//AttackCombo1(nullptr);
-	//ThrowBall(nullptr);
-	JumpAttack(Cast<AActor>(c));
+	//AttackCombo1(Cast<AActor>(c));
+	//ThrowBall(Cast<AActor>(c));
+	//JumpAttack(Cast<AActor>(c));
+	MeteorAttack(Cast<AActor>(c));
 
 	if (!BehaviorTree) {
 		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
@@ -67,22 +71,19 @@ void AAIBossBase::BeginPlay()
 		 UMaterialInstanceDynamic* TempDMI = SkeletalMesh->CreateDynamicMaterialInstance(i, SkeletalMesh->GetMaterial(i));
 		 DMIList.Add(TempDMI);
 	}
-
-	Comp_Damage->D_OnDeath.BindUObject(this, &AAIBossBase::Die);
-	Comp_Damage->D_OnDamageResponse.BindUObject(this, &AAIBossBase::HitResponse);
-
+	Comp_Damage->D_OnDeath.BindUObject(this, &ABossBase::Die);
+	Comp_Damage->D_OnDamageResponse.BindUObject(this, &ABossBase::HitResponse);
 }
 
-void AAIBossBase::Die()
+void ABossBase::Die()
 {
-
 	Comp_Blend->StartBlend();
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//AIC_BossBase->StopMovement();
 	GetController()->StopMovement();
 
 	SkeletalMesh->SetSimulatePhysics(true);
-	
+
 	FTimerHandle DestroyTimerHandle;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([&]
@@ -95,35 +96,35 @@ void AAIBossBase::Die()
 	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, TimerDelegate, 3, false);
 }
 
-void AAIBossBase::DissolveTimelineFinish()
+void ABossBase::DissolveTimelineFinish()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AIBossBase Dissolve Timeline Finish"));
 }
 
-void AAIBossBase::DissolveTimelineUpdate(float Value)
+void ABossBase::DissolveTimelineUpdate(float Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("DIE!!!!!!!!!!!!!!!!!!!!!!"));
 	for (UMaterialInstanceDynamic* a : DMIList) {
 		a->SetScalarParameterValue(FName("DissolveAmount"), Value);
 	}
 }
 
-void AAIBossBase::HitResponse()
+void ABossBase::HitResponse()
 {
 	GetCharacterMovement()->StopMovementImmediately();
 }
 
 // Called to bind functionality to input
-void AAIBossBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABossBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 
-void AAIBossBase::AttackCombo1(AActor* ATarget)
+void ABossBase::AttackCombo1(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Combo1;
 	TempAData.DamageAmount = 11;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
@@ -132,10 +133,11 @@ void AAIBossBase::AttackCombo1(AActor* ATarget)
 	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
-void AAIBossBase::ThrowBall(AActor* ATarget)
+void ABossBase::ThrowBall(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::ThrowBall;
 	TempAData.DamageAmount = 20;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
@@ -144,15 +146,29 @@ void AAIBossBase::ThrowBall(AActor* ATarget)
 	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
-void AAIBossBase::JumpAttack(AActor* ATarget)
+void ABossBase::JumpAttack(AActor* ATarget)
 {
 	FBOSSATTACKDATA TempAData;
 	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Jump;
 	TempAData.DamageAmount = 20;
 	TempAData.radius = 30.f;
 	TempAData.length = 50.f;
 	TempAData.Montage = JumpAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("JumpAttack() in AIBossBase.cpp"));
+	Comp_Attack->BossPrimaryAttack(TempAData);
+}
+
+void ABossBase::MeteorAttack(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Meteor;
+	TempAData.DamageAmount = 20;
+	TempAData.radius = 100.f;
+	TempAData.length = 0.f;
+	TempAData.Montage = MeteorAttackMontage;
+	UE_LOG(LogTemp, Warning, TEXT("MeteorAttack() in AIBossBase.cpp"));
 	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 

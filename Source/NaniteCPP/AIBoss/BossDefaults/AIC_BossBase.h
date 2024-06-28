@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 
-#include "E_BossState.h"
+#include "../Datas/E_BossState.h"
 
 #include "AIC_BossBase.generated.h"
 
@@ -18,7 +18,7 @@ class NANITECPP_API AAIC_BossBase : public AAIController
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	class AAIBossBase* BossBase;
+	class ABossBase* BossBase;
 
 	UPROPERTY(EditAnywhere)
 	EBossState BState;

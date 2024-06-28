@@ -1,7 +1,7 @@
 #include "HomingBallBase.h"
 
 
-#include "BOssTest.h"
+#include "BossDefaults/BossBase.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 

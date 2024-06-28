@@ -38,7 +38,6 @@ ANaniteCPPCharacter::ANaniteCPPCharacter()
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(0.0f, 10.f, 0.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
-
 }
 
 

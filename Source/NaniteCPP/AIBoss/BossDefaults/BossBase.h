@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/TimelineComponent.h"
-#include "AIBossBase.generated.h"
+#include "BossBase.generated.h"
 
 UCLASS()
-class NANITECPP_API AAIBossBase : public ACharacter
+class NANITECPP_API ABossBase : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -28,13 +28,13 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class AAIController* AIC_BossBase;
 
+
+
 	UFUNCTION()
 	void Die();
 
 	UFUNCTION()
 	void HitResponse();
-
-
 
 	UPROPERTY(EditAnywhere)
 	TArray<UMaterialInstanceDynamic*> DMIList;
@@ -63,8 +63,6 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	//=====================DissolveTimeline=========================
 	//=====================DissolveTimeline=========================
 
-
-
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* Combo1Montage;
 
@@ -74,9 +72,18 @@ class NANITECPP_API AAIBossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* JumpAttackMontage;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* MeteorAttackMontage;
+
 public:
-	// Sets default values for this character's properties
-	AAIBossBase();
+
+	ABossBase();
+
+	UPROPERTY(EditAnywhere, Category = "ChildActor")
+	UChildActorComponent* HammerActor;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* HammerOverlayMaterial;
 
 	UPROPERTY(EditAnywhere)
 	class UComp_AIBossAttackSystem* Comp_Attack;
@@ -93,11 +100,15 @@ public:
 	UFUNCTION()
 	void JumpAttack(AActor* ATarget);
 
+
+	UFUNCTION()
+	void MeteorAttack(AActor* ATarget);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

@@ -2,7 +2,7 @@
 
 
 #include "AIC_BossBase.h"
-#include "AIBossBase.h"
+#include "BossBase.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -32,7 +32,7 @@ AAIC_BossBase::AAIC_BossBase()
 
 void AAIC_BossBase::OnPossess(APawn* InPawn)
 {
-	BossBase = Cast<AAIBossBase>(InPawn);
+	BossBase = Cast<ABossBase>(InPawn);
 	if (IsValid(BossBase->BehaviorTree) && BlackBoardComp) {
 		RunBehaviorTree(BossBase->BehaviorTree);
 		SetStateAsPassive();
