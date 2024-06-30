@@ -4,6 +4,8 @@
 #include "MeteorSoulBall.h"
 #include "MeteorChargeCenter.h"
 
+
+
 void AMeteorSoulBall::BeginPlay()
 {
 	Super::BeginPlay();
@@ -12,5 +14,12 @@ void AMeteorSoulBall::BeginPlay()
 		TargetActor = UGameplayStatics::GetActorOfClass(GetWorld(),AMeteorChargeCenter::StaticClass());
 	if (TargetActor)
 		ProjectileMovement->HomingTargetComponent = TargetActor->GetRootComponent();
-	//D_Hit.Broadcast();
+	
+	MCenter = Cast<AMeteorChargeCenter>(TargetActor);
+	MCenter->D_Bomb.AddUObject(this, &AMeteorSoulBall::Dissapear);
+}
+
+void AMeteorSoulBall::Dissapear()
+{
+	Destroy();
 }

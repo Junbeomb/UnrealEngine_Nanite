@@ -10,6 +10,10 @@ UCLASS()
 class NANITECPP_API AMeteorSoulBall : public AHomingBallBase
 {
 	GENERATED_BODY()
+
+	class AMeteorChargeCenter* MCenter;
+
+	void Dissapear();
 	
 public:
 	virtual void BeginPlay() override;

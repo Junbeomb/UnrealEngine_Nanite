@@ -60,8 +60,11 @@ void UComp_BlendMesh::StartBlend()
 		return;
 	}
 
+	D_StartBlending.Execute();
+
 	IsBlendStart = true;
 	
+
 	FVector Origin;
 	FVector BoxExtent;
 	GetOwner()->GetActorBounds(false, Origin, BoxExtent, false);

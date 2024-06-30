@@ -3,7 +3,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
 #include "Components/TimelineComponent.h"
+
 #include "Blackhole.generated.h"
 
 UCLASS()
@@ -36,11 +38,11 @@ private:
 	class USphereComponent* PullRange;
 
 	UPROPERTY(EditAnywhere,  Category = "Timeline")
-	class UTimelineComponent* MeshTimeline;
+	UTimelineComponent* MeshTimeline;
 	UPROPERTY(EditAnywhere,  Category = "Timeline")
-	class UTimelineComponent* RangeTimeline;
+	UTimelineComponent* RangeTimeline;
 	UPROPERTY(EditAnywhere, Category = "Timeline")
-	class UTimelineComponent* DFStartRadiusTimeline;
+	UTimelineComponent* DFStartRadiusTimeline;
 
 	//Die ÇÔ¼ö
 	bool DieToggle;

@@ -42,6 +42,7 @@ public:
 
 
 	FD_Blend D_FinishBlending;
+	FD_Blend D_StartBlending;
 	FD_Blend D_JustGo;
 
 	bool IsBlendStart;

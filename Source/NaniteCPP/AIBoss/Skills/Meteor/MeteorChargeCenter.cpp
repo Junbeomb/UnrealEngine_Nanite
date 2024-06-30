@@ -26,6 +26,13 @@ void AMeteorChargeCenter::CallDAbsortStart()
 	D_AbsortStart.Broadcast();
 }
 
+void AMeteorChargeCenter::CallDBombStart()
+{
+	D_Bomb.Broadcast();
+
+	Destroy();
+}
+
 // Called when the game starts or when spawned
 void AMeteorChargeCenter::BeginPlay()
 {

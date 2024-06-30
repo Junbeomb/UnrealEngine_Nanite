@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MeteorChargeCenter.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(F_Absort);
+DECLARE_MULTICAST_DELEGATE(F_MCenter);
 
 UCLASS()
 class NANITECPP_API AMeteorChargeCenter : public AActor
@@ -23,10 +23,14 @@ public:
 	// Sets default values for this actor's properties
 	AMeteorChargeCenter();
 
-	F_Absort D_AbsortStart;
+	F_MCenter D_AbsortStart;
+	F_MCenter D_Bomb;
 
 	UFUNCTION()
 	void CallDAbsortStart();
+
+	UFUNCTION()
+	void CallDBombStart();
 
 protected:
 	// Called when the game starts or when spawned

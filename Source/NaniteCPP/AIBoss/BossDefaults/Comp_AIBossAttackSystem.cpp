@@ -146,7 +146,7 @@ void UComp_AIBossAttackSystem::OnNotifyBossThrowBall(FName NotifyName, const FBr
 void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
 {
 	if (NotifyName == "Charging") {
-		UE_LOG(LogTemp, Warning, TEXT("Charging"));
+		//UE_LOG(LogTemp, Warning, TEXT("Charging"));
 
 		ABossBase* boss = Cast<ABossBase>(TempCharacter);
 		if (boss->HammerOverlayMaterial) {
@@ -155,7 +155,7 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 		}
 	}
 	if (NotifyName == "Strike") {
-		UE_LOG(LogTemp, Warning, TEXT("Strike"));
+		//UE_LOG(LogTemp, Warning, TEXT("Strike"));
 
 		float MinValue = -300.0f;
 		float MaxValue = 300.0f;
@@ -169,11 +169,15 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 		MeteorRocks.Add(GetWorld()->SpawnActor<AMeteorRock>(MeteorRockChoice, { randomX ,randomY,0 }, { 0,0,0 }, ActorSpawnParams));
 	}
 	if (NotifyName == "SpawnCenter") {
-		UE_LOG(LogTemp, Warning, TEXT("SpawnCenter"));
+		//UE_LOG(LogTemp, Warning, TEXT("SpawnCenter"));
 		if (MeteorCenterChoice) {
+
+			FVector SpawnLocation = GetOwner()->GetActorLocation();
+			SpawnLocation.Z += 300.f;
+
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-			MeteorCenter = GetWorld()->SpawnActor<AMeteorChargeCenter>(MeteorCenterChoice, GetOwner()->GetActorLocation(), {0,0,0}, ActorSpawnParams);
+			MeteorCenter = GetWorld()->SpawnActor<AMeteorChargeCenter>(MeteorCenterChoice, SpawnLocation, {0,0,0}, ActorSpawnParams);
 
 			for (AMeteorRock* a : MeteorRocks) {
 				a->MeteorCenterBind();
@@ -181,12 +185,14 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 		}
 	}
 	if (NotifyName == "AbsortSoul") {
-		UE_LOG(LogTemp, Warning, TEXT("AbsortSoul"));
+		//UE_LOG(LogTemp, Warning, TEXT("AbsortSoul"));
 
 		MeteorCenter->CallDAbsortStart();
 	}
 	if (NotifyName == "Bomb") {
-		UE_LOG(LogTemp, Warning, TEXT("Bomb"));
+		//UE_LOG(LogTemp, Warning, TEXT("Bomb"));
+
+		MeteorCenter->CallDBombStart();
 	}
 }
 
@@ -212,7 +218,7 @@ void UComp_AIBossAttackSystem::SphereTraceDamage(FBOSSATTACKDATA cInfo, FVector 
 		UEngineTypes::ConvertToTraceType(ECC_Visibility),
 		false,
 		IgnoredActors,
-		EDrawDebugTrace::Persistent,
+		EDrawDebugTrace::ForOneFrame,
 		OutHit,
 		true
 	);

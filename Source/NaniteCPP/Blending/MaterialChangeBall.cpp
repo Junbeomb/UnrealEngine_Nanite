@@ -38,6 +38,6 @@ void AMaterialChangeBall::Tick(float DeltaTime)
 		PrimaryActorTick.SetTickFunctionEnable(false);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("%f"),CountTick);
+	//UE_LOG(LogTemp, Warning, TEXT("%f"),CountTick);
 }
 
