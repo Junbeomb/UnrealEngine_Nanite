@@ -55,11 +55,13 @@ void UComp_BlendMesh::StartBlend()
 {
 	bool IsLowObject = IsLow();
 	
+
 	if (Player && Player->HighQualityGun != IsLowObject) {
 		D_FinishBlending.Execute();
 		return;
 	}
 
+	//UE_LOG(LogTemp, Warning, TEXT("StartBlend Comp_Blend"));
 	D_StartBlending.Execute();
 
 	IsBlendStart = true;

@@ -12,6 +12,7 @@
 #include "BossBase.h"
 #include "../Skills/Meteor/MeteorChargeCenter.h"
 #include "../Skills/Meteor/MeteorRock.h"
+#include "../FinalChargeCenter.h"
 
 #define AddDynamic( UserObject, FuncName ) __Internal_AddDynamic( UserObject, FuncName, STATIC_FUNCTION_FNAME( TEXT( #FuncName ) ) )
 
@@ -204,6 +205,13 @@ void UComp_AIBossAttackSystem::OnNotifyBossFinalAttack(FName NotifyName, const F
 {
 	if (NotifyName == "Spawn") {
 		UE_LOG(LogTemp, Warning, TEXT("Spawn"));
+
+		FVector SpawnLocation = GetOwner()->GetActorLocation();
+		SpawnLocation.Z += 300.f;
+
+		FActorSpawnParameters ActorSpawnParams;
+		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		FinalCenter = GetWorld()->SpawnActor<AFinalChargeCenter>(FinalCenterChoice, SpawnLocation, { 0,0,0 }, ActorSpawnParams);
 
 	}
 	if (NotifyName == "ChargingEnd") {

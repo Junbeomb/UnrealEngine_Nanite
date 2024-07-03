@@ -27,6 +27,10 @@ class NANITECPP_API UComp_AIBossAttackSystem : public UActorComponent
 	TSubclassOf<class AMeteorRock> MeteorRockChoice;
 	TArray<class AMeteorRock*> MeteorRocks;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AFinalChargeCenter> FinalCenterChoice;
+	class AFinalChargeCenter* FinalCenter;
+
 public:	
 	// Sets default values for this component's properties
 	UComp_AIBossAttackSystem();
