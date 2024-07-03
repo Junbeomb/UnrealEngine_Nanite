@@ -75,6 +75,9 @@ class NANITECPP_API ABossBase : public ACharacter
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* MeteorAttackMontage;
 
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* FinalAttackMontage;
+
 public:
 
 	ABossBase();
@@ -103,6 +106,9 @@ public:
 
 	UFUNCTION()
 	void MeteorAttack(AActor* ATarget);
+
+	UFUNCTION()
+	void FinalAttack(AActor* ATarget);
 
 protected:
 	// Called when the game starts or when spawned

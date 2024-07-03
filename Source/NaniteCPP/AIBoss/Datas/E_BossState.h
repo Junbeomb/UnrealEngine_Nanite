@@ -35,5 +35,7 @@ enum class EBossSkill : uint8
 	Combo1 UMETA(DisplayName = "Combo1"),
 	Jump UMETA(DisplayName = "Jump"),
 	ThrowBall UMETA(DisplayName = "ThrowBall"),
-	Meteor UMETA(DisplayName = "Meteor")
+	Meteor UMETA(DisplayName = "Meteor"),
+	Final UMETA(DisplayName = "Final")
+
 };

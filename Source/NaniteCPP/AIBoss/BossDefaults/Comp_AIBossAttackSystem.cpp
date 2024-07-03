@@ -62,6 +62,10 @@ void UComp_AIBossAttackSystem::BossPrimaryAttack(FBOSSATTACKDATA AttackInfo)
 				UE_LOG(LogTemp, Warning, TEXT("MeteorAttackNotifyBegin"));
 				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack);
 				break;
+			case EBossSkill::Final:
+				UE_LOG(LogTemp, Warning, TEXT("FinalAttackNotifyBegin"));
+				AnimInstance->OnPlayMontageNotifyBegin.AddDynamic(this, &UComp_AIBossAttackSystem::OnNotifyBossFinalAttack);
+				break;
 			}
 		}
 	}
@@ -193,6 +197,17 @@ void UComp_AIBossAttackSystem::OnNotifyBossMeteorAttack(FName NotifyName, const 
 		//UE_LOG(LogTemp, Warning, TEXT("Bomb"));
 
 		MeteorCenter->CallDBombStart();
+	}
+}
+
+void UComp_AIBossAttackSystem::OnNotifyBossFinalAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload)
+{
+	if (NotifyName == "Spawn") {
+		UE_LOG(LogTemp, Warning, TEXT("Spawn"));
+
+	}
+	if (NotifyName == "ChargingEnd") {
+		UE_LOG(LogTemp, Warning, TEXT("ChargingEnd"));
 	}
 }
 

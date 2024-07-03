@@ -49,6 +49,9 @@ public:
 	void OnNotifyBossMeteorAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
 
 	UFUNCTION()
+	void OnNotifyBossFinalAttack(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointNotifyPayload);
+
+	UFUNCTION()
 	void SphereTraceDamage(FBOSSATTACKDATA cInfo, FVector startLocation, FVector endLocation);
 	UFUNCTION()
 	void CapsuleTraceDamage(FBOSSATTACKDATA cInfo, FVector startLocation, FVector endLocation);

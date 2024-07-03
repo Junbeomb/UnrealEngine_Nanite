@@ -58,7 +58,8 @@ void ABossBase::BeginPlay()
 	//AttackCombo1(Cast<AActor>(c));
 	//ThrowBall(Cast<AActor>(c));
 	//JumpAttack(Cast<AActor>(c));
-	MeteorAttack(Cast<AActor>(c));
+	//MeteorAttack(Cast<AActor>(c));
+	FinalAttack(Cast<AActor>(c));
 
 	if (!BehaviorTree) {
 		UE_LOG(LogTemp, Warning, TEXT("BT Empty"));
@@ -169,6 +170,19 @@ void ABossBase::MeteorAttack(AActor* ATarget)
 	TempAData.length = 0.f;
 	TempAData.Montage = MeteorAttackMontage;
 	UE_LOG(LogTemp, Warning, TEXT("MeteorAttack() in AIBossBase.cpp"));
+	Comp_Attack->BossPrimaryAttack(TempAData);
+}
+
+void ABossBase::FinalAttack(AActor* ATarget)
+{
+	FBOSSATTACKDATA TempAData;
+	TempAData.AttackTarget = ATarget;
+	TempAData.CurrentSkill = EBossSkill::Final;
+	TempAData.DamageAmount = 100;
+	TempAData.radius = 8000.f;
+	TempAData.length = 0.f;
+	TempAData.Montage = FinalAttackMontage;
+	UE_LOG(LogTemp, Warning, TEXT("FinalAttack() in AIBossBase.cpp"));
 	Comp_Attack->BossPrimaryAttack(TempAData);
 }
 
