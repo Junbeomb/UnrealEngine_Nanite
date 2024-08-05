@@ -4,7 +4,7 @@
 #include "TP_WeaponComponent.h"
 #include "../BeginnerCharacter/NaniteCPPCharacter.h"
 #include "NaniteCPPProjectile.h"
-#include "../BlackholeProjectile.h"
+#include "../Blackhole/BlackholeProjectile.h"
 #include "../Blending/BlendingProjectile.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "../BlackholeProjectile.h"
+#include "../Blackhole/BlackholeProjectile.h"
 #include "../Blending/BlendingProjectile.h"
 #include "TP_WeaponComponent.generated.h"
 

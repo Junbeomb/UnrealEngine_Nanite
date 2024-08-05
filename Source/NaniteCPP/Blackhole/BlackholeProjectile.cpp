@@ -4,9 +4,9 @@
 #include "BlackholeProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "BeginnerCharacter/NaniteCPPCharacter.h"
+#include "../BeginnerCharacter/NaniteCPPCharacter.h"
 
-#include "Blackhole/Blackhole.h"
+#include "Blackhole.h"
 
 // Sets default values
 ABlackholeProjectile::ABlackholeProjectile()
@@ -40,7 +40,6 @@ ABlackholeProjectile::ABlackholeProjectile()
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-
 }
 
 void ABlackholeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -54,6 +53,7 @@ void ABlackholeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 
 		//그냥 Blackhole.h 를 불러주게 되면 FoliageInfluencer 가 null인 블랙홀이 소환된다.(ChildActorClass가 설정된 BP_Blackhole을 불러주어야 한다.)
 		if (BPBlackhole) {
+		UE_LOG(LogTemp, Warning, TEXT("Hit!!!"));
 			GetWorld()->SpawnActor<ABlackhole>(BPBlackhole, GetActorLocation(), {0,0,0}, ActorSpawnParams);
 		}
 		Destroy();
