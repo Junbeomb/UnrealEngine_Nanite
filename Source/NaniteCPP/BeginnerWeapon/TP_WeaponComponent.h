@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "../BasicProjectile.h"
+#include "../BlackholeProjectile.h"
 #include "../Blending/BlendingProjectile.h"
 #include "TP_WeaponComponent.generated.h"
 
@@ -21,7 +21,7 @@ public:
 	TSubclassOf<ABlendingProjectile> BlendingProjectileClass;
 	/** Projectile class to spawn */
 	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<ABasicProjectile> BlackholeProjectileClass;
+	TSubclassOf<ABlackholeProjectile> BlackholeProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gameplay")

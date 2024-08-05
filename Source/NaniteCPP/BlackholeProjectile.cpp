@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasicProjectile.h"
+#include "BlackholeProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "BeginnerCharacter/NaniteCPPCharacter.h"
@@ -9,7 +9,7 @@
 #include "Blackhole/Blackhole.h"
 
 // Sets default values
-ABasicProjectile::ABasicProjectile()
+ABlackholeProjectile::ABlackholeProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -18,7 +18,7 @@ ABasicProjectile::ABasicProjectile()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(25.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComp->OnComponentHit.AddDynamic(this, &ABasicProjectile::OnHit);		// set up a notification for when this component hits something blocking
+	CollisionComp->OnComponentHit.AddDynamic(this, &ABlackholeProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -27,7 +27,7 @@ ABasicProjectile::ABasicProjectile()
 	// Set as root component
 	RootComponent = CollisionComp;
 
-	BasicProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BasicProjectileMesh"));
+	BasicProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlackholeProjectileMesh"));
 	BasicProjectileMesh->SetupAttachment(RootComponent);
 
 	//메쉬 설정
@@ -43,7 +43,7 @@ ABasicProjectile::ABasicProjectile()
 
 }
 
-void ABasicProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABlackholeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
 
@@ -61,13 +61,13 @@ void ABasicProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 }
 
 // Called when the game starts or when spawned
-void ABasicProjectile::BeginPlay()
+void ABlackholeProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void ABasicProjectile::Tick(float DeltaTime)
+void ABlackholeProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "BasicProjectile.generated.h"
+#include "BlackholeProjectile.generated.h"
 
 class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class NANITECPP_API ABasicProjectile : public AActor
+class NANITECPP_API ABlackholeProjectile : public AActor
 {
 	GENERATED_BODY()
 
@@ -27,7 +27,7 @@ class NANITECPP_API ABasicProjectile : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	ABasicProjectile();
+	ABlackholeProjectile();
 
 	/** called when projectile hits something */
 	UFUNCTION()

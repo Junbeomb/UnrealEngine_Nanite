@@ -4,7 +4,7 @@
 #include "TP_WeaponComponent.h"
 #include "../BeginnerCharacter/NaniteCPPCharacter.h"
 #include "NaniteCPPProjectile.h"
-#include "../BasicProjectile.h"
+#include "../BlackholeProjectile.h"
 #include "../Blending/BlendingProjectile.h"
 #include "GameFramework/PlayerController.h"
 #include "Camera/PlayerCameraManager.h"
@@ -65,7 +65,7 @@ void UTP_WeaponComponent::SpawnBlackhole()
 	if (BlackholeProjectileClass != nullptr)
 	{
 		CalculateProjectile();
-		World->SpawnActor<ABasicProjectile>(BlackholeProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
+		World->SpawnActor<ABlackholeProjectile>(BlackholeProjectileClass, GetSocketLocation(TEXT("Muzzle")), TargetRotation, ActorSpawnParams);
 	}
 }
 
