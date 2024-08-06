@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,8 +11,8 @@ class NANITECPP_API ABaseProjectile : public AActor
 
 public:
 
-	UPROPERTY()
-	USphereComponent* CollisionComp;
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* CollisionComp;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BasicProjectileMesh;
@@ -22,17 +20,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovement;
 
-	//순수 가상 함수
 	UFUNCTION()
-	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) = 0;
+	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 public:	
 	ABaseProjectile();
 
 protected:
 	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 
 };

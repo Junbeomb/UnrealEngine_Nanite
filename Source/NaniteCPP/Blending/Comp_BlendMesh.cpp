@@ -62,7 +62,7 @@ void UComp_BlendMesh::StartBlend()
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("StartBlend Comp_Blend"));
-	D_StartBlending.Execute();
+//	D_StartBlending.Execute();
 
 	IsBlendStart = true;
 	

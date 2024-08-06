@@ -3,11 +3,12 @@
 
 #include "BaseProjectile.h"
 
+
+
 // Sets default values
 ABaseProjectile::ABaseProjectile()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 }
 
@@ -18,10 +19,8 @@ void ABaseProjectile::BeginPlay()
 	
 }
 
-// Called every frame
-void ABaseProjectile::Tick(float DeltaTime)
+void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::Tick(DeltaTime);
 
 }
 

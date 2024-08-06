@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "BlendingProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -14,15 +11,15 @@ ABlendingProjectile::ABlendingProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	HitSphere = CreateDefaultSubobject<USphereComponent>(TEXT("HitSphere"));
-	RootComponent = HitSphere;
+	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("HitSphere"));
+	RootComponent = CollisionComp;
+	CollisionComp->OnComponentHit.AddDynamic(this, &ABlendingProjectile::OnHit);
 
-	BlendingBaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlendingBaseMesh"));
-	BlendingBaseMesh->SetupAttachment(RootComponent);
+	BasicProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlendingBaseMesh"));
+	BasicProjectileMesh->SetupAttachment(RootComponent);
 
 	FoliageChildActor = CreateDefaultSubobject<UChildActorComponent>(TEXT("FoliageChildActor"));
 	FoliageChildActor->SetupAttachment(RootComponent);
-
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -35,7 +32,7 @@ ABlendingProjectile::ABlendingProjectile()
 
 }
 
-void ABlendingProjectile::HitProjectile(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ABlendingProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Destroy hit"));
 
@@ -51,20 +48,3 @@ void ABlendingProjectile::HitProjectile(UPrimitiveComponent* HitComponent, AActo
 	Destroy();
 	return;
 }
-
-
-// Called when the game starts or when spawned
-void ABlendingProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	HitSphere->OnComponentHit.AddDynamic(this, &ABlendingProjectile::HitProjectile);
-}
-
-// Called every frame
-void ABlendingProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
