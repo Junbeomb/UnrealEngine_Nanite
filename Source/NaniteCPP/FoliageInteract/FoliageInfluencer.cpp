@@ -129,8 +129,8 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 								//High,Low 인지확인====================================================
 								AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
 								if (PlantBase != nullptr) {
-									USkeletalMeshComponent* SK = PlantBase->MeshComponent;
-									SpawnAndConvert(SK);
+									//USkeletalMeshComponent* SK = PlantBase->MeshComponent;
+									//SpawnAndConvert(SK);
 
 									//블랜드 컴포넌트 유무 검사 및 함수 실행
 									CheckBlend(PlantBase, Hit.Location);
@@ -138,8 +138,8 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 								else {
 									AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
 									if (RockBase != nullptr) {
-										UStaticMeshComponent* SM = RockBase->MeshComponent;
-										SpawnAndConvert(SM);
+										//USkeletalMeshComponent* SM = RockBase->MeshComponent;
+										//SpawnAndConvert(SM);
 										//블랜드 컴포넌트 유무 검사 및 함수 실행
 										CheckBlend(RockBase, Hit.Location);
 									}

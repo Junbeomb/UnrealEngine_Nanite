@@ -20,6 +20,11 @@ AFoliageBase::AFoliageBase()
 
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 
+	//BlendWeight 한번만 실행시키는 함수
+	DoOnce = false;
+	//Influencers가 하나라도 들어와야 블루프린트가 만들어지므로 기본값은 true
+	IsInfluencersInRange = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -114,6 +119,7 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 
 			if (Comp_Blend->IsLow()) {
 				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
+				RightS = "L_" + RightS;
 				FString value = *InstancedMesh->GetStaticMesh()->GetName();
 
 				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
@@ -123,7 +129,7 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 				++count;
 			}
 			else {
-				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_L_"), &LeftS, &RightS);
+				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
 				RightS = "H_" + RightS;
 				FString value = *InstancedMesh->GetStaticMesh()->GetName();
 
