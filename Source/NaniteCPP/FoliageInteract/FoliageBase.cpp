@@ -120,25 +120,19 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 			if (Comp_Blend->IsLow()) {
 				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
 				RightS = "L_" + RightS;
-				FString value = *InstancedMesh->GetStaticMesh()->GetName();
-
-				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				if (isContain) {
-					classIndex = count;
-				}
-				++count;
 			}
 			else {
 				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
 				RightS = "H_" + RightS;
-				FString value = *InstancedMesh->GetStaticMesh()->GetName();
-
-				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				if (isContain) {
-					classIndex = count;
-				}
-				++count;
 			}
+
+			FString value = *InstancedMesh->GetStaticMesh()->GetName();
+
+			bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+			if (isContain) {
+				classIndex = count;
+			}
+			++count;
 
 		}
 

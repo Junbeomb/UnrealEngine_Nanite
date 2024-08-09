@@ -18,6 +18,13 @@ AFoliagePlantBase::AFoliagePlantBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+
+	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetupAttachment(RootComponent);
+
+	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
+
 	OverlappingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("OverlappingSphere"));
 	OverlappingSphere->SetupAttachment(MeshComponent);
 	OverlappingSphere->SetSphereRadius(32.f);
@@ -45,14 +52,13 @@ AFoliagePlantBase::AFoliagePlantBase()
 	SlowTimeline = CreateDefaultSubobject< UTimelineComponent>(TEXT("SlowTimeline"));
 	//callback함수bind
 	floatTimelineCallback.BindUFunction(this, FName("BlendWeightTimelineUpdate"));
-	floatTimelineFinishedCallback.BindUFunction(this, FName("BlendWeightTimelineFinish"));
+	floatTimelineFinishedCallback.BindUFunction(this, FName("NoInfluencersInRangeFunc"));
 
 }
 
 
 void AFoliagePlantBase::ReturnToFoliage() 
 {
-	Super::ReturnToFoliage();
 
 	//sphere를 쓸 건지 capsule을 쓸건지
 	if (overlapIsSphere) {
@@ -65,12 +71,55 @@ void AFoliagePlantBase::ReturnToFoliage()
 	if (!soundOn) {
 		SoundEffect->DestroyComponent();
 	}
+
+	//월드 내의 모든 FoliageInfluencer를 array 에 담기
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AFoliageInfluencer::StaticClass(), AllFoliageInfluencers);
+	FoliageInfluencersLen = AllFoliageInfluencers.Num();
+
+	//월드 내의 Foliage를 가져와서 첫번째꺼를 WorldFoliage에 담기
+	TArray<AActor*> Temp;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AInstancedFoliageActor::StaticClass(), Temp);
+	if (Temp.Num() > 0)
+		WorldFoliage = Cast<AInstancedFoliageActor>(Temp[0]);
+
+	//옆에 FoliageInfluencer 있는지 확인하기
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AFoliagePlantBase::checkToFoliageInfluencer, 0.05, false);
 }
 
 void AFoliagePlantBase::checkToFoliageInfluencer() {
 
-	Super::checkToFoliageInfluencer();
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), FoliageInfluencersLen);
+	//자신의 거리 밖에 있는 FoliageInfluencer 빼주기
+	for (AActor* a : AllFoliageInfluencers) {
+		AFoliageInfluencer* FI = Cast<AFoliageInfluencer>(a);
+		float distance = GetDistanceTo(FI);
+		float radius = FI->PhysicsRadius + 100;
 
+		if (distance > radius) {
+			--FoliageInfluencersLen;
+		}
+	}
+
+	//만약에 하나라도 거리 안에 있다
+	if (FoliageInfluencersLen > 0) {
+		FoliageInfluencersLen = AllFoliageInfluencers.Num();
+
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AFoliagePlantBase::checkToFoliageInfluencer, 0.1, false); //Influencers 가 모두 주변에 없을때까지 반복
+		IsInfluencersInRange = true;
+
+	}
+	else { //하나도 거리안에 Influencers 가 없다.
+		IsInfluencersInRange = false;
+	}
+
+	if (!IsInfluencersInRange) { // 주위에 Influencers가 없으면
+		if (!DoOnce) { //한번만 실행
+			DoOnce = true;
+			NoInfluencersInRangeTL();
+		}
+	}
 	if (IsInfluencersInRange) { //주위에 Influencers가 하나라도 있으면.
 		FastTimeline->Stop();
 		SlowTimeline->Stop();
@@ -80,7 +129,7 @@ void AFoliagePlantBase::checkToFoliageInfluencer() {
 }
 
 //주위에 InfluencersInRange가 아무것도 없을때 실행하는 함수.
-void AFoliagePlantBase::NoInfluencersInRangeFunc()
+void AFoliagePlantBase::NoInfluencersInRangeTL()
 {
 	if (!IsSlowFoliageReturn) {
 		FastTimeline->AddInterpFloat(FastCurve, floatTimelineCallback, FName("FastBlend"));
@@ -112,13 +161,19 @@ void AFoliagePlantBase::OverlapSphereOrCapsule(class UPrimitiveComponent* Overla
 	}
 }
 
+void AFoliagePlantBase::BeginPlay()
+{
+	Super::BeginPlay();
+	Comp_Blend->D_FinishBlending.BindUObject(this, &AFoliagePlantBase::ReturnToFoliage);
+	Comp_Blend->D_JustGo.BindUObject(this, &AFoliagePlantBase::ReturnToFoliage);
+}
+
 //Timeline이 끝나면
-void AFoliagePlantBase::BlendWeightTimelineFinish()
+void AFoliagePlantBase::NoInfluencersInRangeFunc()
 {
 
 	//크기만큼 대기하다가 BP로 변환시키기
 	//블프 완성되면 ㄱㄱ
-
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComponent->SetSimulatePhysics(false);
 
@@ -145,28 +200,19 @@ void AFoliagePlantBase::BlendWeightTimelineFinish()
 			if (Comp_Blend->IsLow()) {
 				MeshComponent->GetSkeletalMeshAsset()->GetName().Split(TEXT("SK_"), &LeftS, &RightS);
 				RightS = "L_" + RightS;
-
-				FString value = *InstancedMesh->GetStaticMesh()->GetName();
-
-				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				if (isContain) {
-					classIndex = count;
-				}
-				++count;
 			}
 			else {
 				MeshComponent->GetSkeletalMeshAsset()->GetName().Split(TEXT("SK_"), &LeftS, &RightS);
 				RightS = "H_" + RightS;
-
-				FString value = *InstancedMesh->GetStaticMesh()->GetName();
-
-				bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				if (isContain) {
-					classIndex = count;
-				}
-				++count;
 			}
 
+			FString value = *InstancedMesh->GetStaticMesh()->GetName();
+
+			bool isContain = value.Contains(*RightS, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+			if (isContain) {
+				classIndex = count;
+			}
+			++count;
 		}
 
 		Cast<UInstancedStaticMeshComponent>(Temp[classIndex])->AddInstance(MeshComponent->GetComponentTransform(), true);
