@@ -6,19 +6,28 @@
 #include "GameFramework/Actor.h"
 
 #include "Components/TimelineComponent.h"
+#include "FoliageBase.h"
 
 #include "FoliagePlantBase.generated.h"
 
 
 UCLASS()
-class NANITECPP_API AFoliagePlantBase : public AActor
+class NANITECPP_API AFoliagePlantBase : public AFoliageBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* MeshComponent;
-	
+protected:
+
+	void SetCollisionSimulate() override;
+	void GetMeshName(FString& LeftS, FString& RightS) override;
+	void AddFoliageInstance(UActorComponent*) override;
+	void GoCustomFunc() override;
+	void TurnOffAnim() override;
+	void DestroyCompFunc() override;
+
 public:	
 	AFoliagePlantBase();
 
@@ -26,12 +35,8 @@ public:
 	void NoInfluencersInRangeTL();
 
 
-	UPROPERTY(EditAnywhere, category="collision")
-	class USphereComponent* OverlappingSphere;
 	UPROPERTY(EditAnywhere, category = "collision")
 	class UCapsuleComponent* OverlappingCapsule;
-	UPROPERTY(EditAnywhere,category="collision")
-	bool overlapIsSphere;
 
 	//시작시 사운드
 	UPROPERTY(EditAnywhere, category = "Sound")
@@ -84,35 +89,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* H_Niagara;
 
-protected:
-	virtual void BeginPlay() override;
-
-	//월드에 있는 FoliageInfluencers 정보들
-	UPROPERTY(EditAnywhere, category = "Physics")
-	TArray<AActor*> AllFoliageInfluencers;
-	UPROPERTY(EditAnywhere, category = "Physics")
-	int FoliageInfluencersLen;
-	UPROPERTY(EditAnywhere, category = "Physics")
-	bool IsInfluencersInRange;
-	UFUNCTION()
-	void NoInfluencersInRangeFunc();
-
-	//월드에있는 Foliage 가져오기
-	class AInstancedFoliageActor* WorldFoliage;
-
-	class UComp_BlendMesh* Comp_Blend;
 
 
-	UFUNCTION()
-	void ReturnToFoliage();
-
-	//FoliageInfluencer가 주위에 있는지 확인
-	UFUNCTION()
-	void checkToFoliageInfluencer();
-
-	UPROPERTY()
-	bool DoOnce;
-
-	UPROPERTY(EditAnywhere)
-	bool FinishDoOnce;
 };

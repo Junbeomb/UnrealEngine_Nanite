@@ -10,21 +10,15 @@
 // Sets default values
 AFoliageBase::AFoliageBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(RootComponent);
-
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
 
-	//BlendWeight 한번만 실행시키는 함수
+
 	DoOnce = false;
 	//Influencers가 하나라도 들어와야 블루프린트가 만들어지므로 기본값은 true
 	IsInfluencersInRange = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -50,6 +44,8 @@ void AFoliageBase::ReturnToFoliage()
 	//옆에 FoliageInfluencer 있는지 확인하기
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AFoliageBase::checkToFoliageInfluencer, 0.05, false);
+
+	DestroyCompFunc();
 }
 
 void AFoliageBase::checkToFoliageInfluencer()
@@ -82,10 +78,11 @@ void AFoliageBase::checkToFoliageInfluencer()
 	if (!IsInfluencersInRange) { // 주위에 Influencers가 없으면
 		if (!DoOnce) { //한번만 실행
 			DoOnce = true;
-			NoInfluencersInRangeFunc();
+			GoCustomFunc();
 		}
 	}
 	if (IsInfluencersInRange) { //주위에 Influencers가 하나라도 있으면.
+		TurnOffAnim();
 		DoOnce = false;
 	}
 
@@ -94,8 +91,7 @@ void AFoliageBase::checkToFoliageInfluencer()
 
 void AFoliageBase::NoInfluencersInRangeFunc()
 {
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	MeshComponent->SetSimulatePhysics(false);
+	SetCollisionSimulate();
 
 	if (!FinishDoOnce) {
 		FinishDoOnce = true;
@@ -105,7 +101,6 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 		//따라서 OpenWorld처럼 Landscape여러장을 겹쳐놓은 맵에서 가져올때에는 InstancedFoliageActor[0] 번째에 모든 종류의 메쉬가 있어야한다.
 		TArray<UActorComponent*> Temp;
 		WorldFoliage->GetComponents(UInstancedStaticMeshComponent::StaticClass(), Temp);
-
 
 		int count = 0;
 		int classIndex = 0;
@@ -117,12 +112,11 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 			FString LeftS;
 			FString RightS;
 
+			GetMeshName(LeftS, RightS);
 			if (Comp_Blend->IsLow()) {
-				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
 				RightS = "L_" + RightS;
 			}
 			else {
-				MeshComponent->GetStaticMesh()->GetName().Split(TEXT("SM_"), &LeftS, &RightS);
 				RightS = "H_" + RightS;
 			}
 
@@ -133,10 +127,11 @@ void AFoliageBase::NoInfluencersInRangeFunc()
 				classIndex = count;
 			}
 			++count;
-
 		}
 
-		Cast<UInstancedStaticMeshComponent>(Temp[classIndex])->AddInstance(MeshComponent->GetComponentTransform(), true);
+		AddFoliageInstance(Temp[classIndex]);
+		
+	
 		Destroy();
 	}
 }

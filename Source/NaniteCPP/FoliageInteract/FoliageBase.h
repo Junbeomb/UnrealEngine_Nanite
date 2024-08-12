@@ -15,10 +15,19 @@ public:
 	AFoliageBase();
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* MeshComponent;
+	UStaticMeshComponent* StMeshComponent;
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* SkMeshComponent;
 
 protected:
-	virtual void BeginPlay() override;
+	void BeginPlay() override;
+
+	virtual void SetCollisionSimulate() {};
+	virtual void GetMeshName(FString& LeftS, FString& RightS) {};
+	virtual void AddFoliageInstance(UActorComponent*) {};
+	virtual void GoCustomFunc() {};
+	virtual void TurnOffAnim() {};
+	virtual void DestroyCompFunc() {};
 
 	//월드에 있는 FoliageInfluencers 정보들
 	UPROPERTY(EditAnywhere, category = "Physics")
