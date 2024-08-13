@@ -23,9 +23,9 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 	AFoliageInfluencer();
 
 	UPROPERTY(EditAnywhere, Category="Foliage")
-	TArray<TSubclassOf<AActor>> FoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
+	TArray<TSubclassOf<class AFoliageBase>> FoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
 	UPROPERTY(EditAnywhere, Category = "Foliage")
-	TArray<TSubclassOf<AActor>> BlackholeFoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
+	TArray<TSubclassOf<class ABlackholeActorBase>> BlackholeFoliageBlueprints; //TSubclassOf : 월드내에 배치되어있는 actor 이외에도 다 가져올 수 있음.
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* FoliageTransMesh;

@@ -3,13 +3,19 @@
 
 #include "FoliageInfluencer.h"
 #include "Kismet/GameplayStatics.h"
-#include "FoliagePlantBase.h"
-#include "FoliageRockBase.h"
+
 #include "../Blending/Comp_BlendMesh.h"
 #include "../Blending/MaterialChangeBall.h"
+
 #include "../Blackhole/BlackholeLightBase.h"
 #include "../Blackhole/BlackholeHeavyBase.h"
+#include "../Blackhole/BlackholeActorBase.h"
+
 #include <string.h>
+
+#include "FoliagePlantBase.h"
+#include "FoliageRockBase.h"
+#include "FoliageBase.h"
 
 #include "Components/InstancedStaticMeshComponent.h"
 //#include "Containers/UnrealString.h"
@@ -58,81 +64,47 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 	for (FHitResult& Hit : OutResults) {
 		if (!Hit.bBlockingHit) continue;
+		
+		//부딪힌 Instance의 이름 저장
+		InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
+		if (!InstancedMeshComp) continue;
+		InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
+		value = *InstancedMeshComp->GetStaticMesh()->GetName();
 
-		if (IsBlackholeInfluencer) { //블랙홀
+		//블랙홀
+		if (IsBlackholeInfluencer) {
 			if (BlackholeFoliageBlueprints.Num() <= 0) continue;
 
-			InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
-			if (!InstancedMeshComp) continue;
-			InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
-			value = *InstancedMeshComp->GetStaticMesh()->GetName();
-
 			//리스트에서 이름 검색
-			for (const TSubclassOf<AActor> FoliageBP : BlackholeFoliageBlueprints) {
+			for (const TSubclassOf<ABlackholeActorBase>& FoliageBP : BlackholeFoliageBlueprints) {
 				bool isContain = value.Contains(*FoliageBP->GetName().RightChop(6).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				//배열에 해당 SM->BP 가 있으면
 				if (!isContain) continue;
 
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-				AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+				ABlackholeActorBase* SpawnBP = GetWorld()->SpawnActor<ABlackholeActorBase>(FoliageBP, InstanceTransform, ActorSpawnParams);
 
-				//High,Low 인지확인====================================================
-				ABlackholeLightBase* PlantBase = Cast<ABlackholeLightBase>(SpawnBP);
-				if (PlantBase != nullptr) {
-					UStaticMeshComponent* SM = PlantBase->BaseStaticMesh;
-					SpawnAndConvert(SM);
-				}
-				else {
-					ABlackholeHeavyBase* RockBase = Cast<ABlackholeHeavyBase>(SpawnBP);
-					if (RockBase != nullptr) {
-						UStaticMeshComponent* SM = RockBase->BaseStaticMesh;
-						SpawnAndConvert(SM);
-					}
-				}
-				//High,Low 인지확인===================================================
-
-				InstancedMeshComp->RemoveInstance(Hit.Item);
+				if (SpawnBP == nullptr) continue;
+				//High,Low 확인후 변환====================================================
+				SpawnAndConvert(SpawnBP->BaseStaticMesh);
 			}
 		}
-		else { //일반 BP 리스트에서 찾기
+		else { //일반 BP 리스트
 			if (FoliageBlueprints.Num() <= 0) continue;
 
-			InstancedMeshComp = Cast<UInstancedStaticMeshComponent>(Hit.GetComponent());
-			if (!InstancedMeshComp) continue;
-			InstancedMeshComp->GetInstanceTransform(Hit.Item, InstanceTransform, true);
-			value = *InstancedMeshComp->GetStaticMesh()->GetName();
-			//리스트에서 이름 검색
-
-
-			for (const TSubclassOf<AActor> FoliageBP : FoliageBlueprints) {
+			for (const TSubclassOf<AFoliageBase>& FoliageBP : FoliageBlueprints) {
 				bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-				//배열에 해당 SM->BP 가 있으면
 				if (!isContain) continue;
 
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-				AActor* SpawnBP = GetWorld()->SpawnActor<AActor>(FoliageBP, InstanceTransform, ActorSpawnParams);
+				AFoliageBase* SpawnBP = GetWorld()->SpawnActor<AFoliageBase>(FoliageBP, InstanceTransform, ActorSpawnParams);
 
-				//High,Low 인지확인====================================================
-				AFoliagePlantBase* PlantBase = Cast<AFoliagePlantBase>(SpawnBP);
-				if (PlantBase != nullptr) {
-					//USkeletalMeshComponent* SK = PlantBase->MeshComponent;
-					//SpawnAndConvert(SK);
-					//블랜드 컴포넌트 유무 검사 및 함수 실행
-					CheckBlend(PlantBase, Hit.Location);
-				}
-				else {
-					AFoliageRockBase* RockBase = Cast<AFoliageRockBase>(SpawnBP);
-					if (RockBase != nullptr) {
-						//USkeletalMeshComponent* SM = RockBase->MeshComponent;
-						//SpawnAndConvert(SM);
-						//블랜드 컴포넌트 유무 검사 및 함수 실행
-						CheckBlend(RockBase, Hit.Location);
-					}
-				}
-				//High,Low 인지확인===================================================
-				InstancedMeshComp->RemoveInstance(Hit.Item);
+				if (SpawnBP == nullptr) continue;
+				//Blend 시작
+				CheckBlend(SpawnBP, Hit.Location);
 			}
 		}
+
+		InstancedMeshComp->RemoveInstance(Hit.Item);
 	}
 }
 
@@ -191,8 +163,8 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 		CheckActor->GetActorBounds(false, Origin, BoxExtent, false);
 		FTransform TempTransform = { {0,0,0}, ImpactPoint ,BoxExtent / 100};
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
 		GetWorld()->SpawnActor<AMaterialChangeBall>(MaterialChangeBall, TempTransform, ActorSpawnParams);
+
 		UBM->StartBlend();
 
 		break;
