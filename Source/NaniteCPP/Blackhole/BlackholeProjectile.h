@@ -21,8 +21,10 @@ class NANITECPP_API ABlackholeProjectile : public ABaseProjectile
 	class ANaniteCPPCharacter* Character;
 
 public:	
-	// Sets default values for this actor's properties
 	ABlackholeProjectile();
+
+protected:
+	void BeginPlay() override;
 
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
 

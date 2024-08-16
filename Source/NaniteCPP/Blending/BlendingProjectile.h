@@ -19,14 +19,16 @@ class NANITECPP_API ABlendingProjectile : public ABaseProjectile
 	UPROPERTY(EditAnywhere, Category = Blending)
 	UChildActorComponent* FoliageChildActor;
 
-
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override ;
-
 	UPROPERTY(EditAnywhere, Category = Blending)
 	TSubclassOf<class AMaterialChangeBall> ChangeBall;
 
 	FActorSpawnParameters ActorSpawnParams;
-	
+
 public:	
 	ABlendingProjectile();
+
+protected:
+	void BeginPlay() override;
+
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override ;
 };
