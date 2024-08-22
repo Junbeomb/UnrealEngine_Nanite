@@ -25,11 +25,6 @@ class NANITECPP_API UBlackholeCompBase : public UActorComponent
 
 	void SetPullStartDistance() { PullStartDistanceToBlackhole = DirectBH().Length(); };
 
-	void SetInitialMaxScale() {
-		UStaticMeshComponent* Temp = Cast<UStaticMeshComponent>(GetOwner()->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		InitialMaxScale = Temp->GetRelativeScale3D();
-	}
-
 	void SetInitialNSSpawnRate();
 
 	UPROPERTY()

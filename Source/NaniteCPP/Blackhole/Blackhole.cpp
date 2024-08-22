@@ -159,10 +159,10 @@ void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, cla
 {
 
 	UBlackholeCompBase* BHComp = Cast<UBlackholeCompBase>(OtherActor->GetComponentByClass(UBlackholeCompBase::StaticClass()));
-	if (BHComp) {
-		if (!BHComp->GetIsPull()) { //해당 물체를 당기고 있지 않을때만
-			BHComp->SetPullOn(this, GetActorLocation());
-		}
+	if (!BHComp) return;
+
+	if (!BHComp->GetIsPull()) { //해당 물체를 당기고 있지 않을때만
+		BHComp->SetPullOn(this, GetActorLocation());
 	}
 
 }
