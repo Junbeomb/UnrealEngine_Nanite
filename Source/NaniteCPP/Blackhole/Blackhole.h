@@ -25,6 +25,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	float blackholeLife;
+	float TL_PullFoliageRadius;
+	float TL_WindRadius;
+	float TL_WindStrength;
+	float TL_DFRadius;
+	float TL_PullStrength;
+	float TL_VortexAmount;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BlackholeBaseMesh;

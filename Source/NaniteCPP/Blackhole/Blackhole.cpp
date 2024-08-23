@@ -10,6 +10,12 @@
 ABlackhole::ABlackhole()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	blackholeLife = 14.f;
+	TL_PullFoliageRadius = 450.f;
+	TL_TurnOfDFRadius = 700.f;
+	TL_DFRadius = 200.f;
+	TL_PullStrength = 250.f;
+	TL_VortexAmount = 1700.f;
 
 	DieToggle = false;
 

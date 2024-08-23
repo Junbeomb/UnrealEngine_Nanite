@@ -6,8 +6,8 @@ UBlackholeCompBase::UBlackholeCompBase()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	PullStrength = 150.f;
-	LinearDampingAmount = 0.8f;
+	PullStrength = 120.f;
+	LinearDampingAmount = 6.f;
 	SmallScale = 0.1f;
 
 	InitialNSVortexForceAmount = 1000;
@@ -50,10 +50,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		a->SetScalarParameterValue(TEXT("DFMaskStartDistance"), DFStartDistance);
 		a->SetScalarParameterValue(TEXT("DFMaskFalloff"), DFStartDistance / 3);
 	}
-	//WillDie
-	if (IsDistanceToBH(DFStartDistance)) {
-		IsWillDie = true;
-	}
+
 
 	if (IsShrink && NiagaraComp) {
 		SMC->SetWorldLocation(PullTargetLocation);
@@ -167,7 +164,6 @@ void UBlackholeCompBase::SetInitialNSSpawnRate()
 //블랙홀과의 거리,방향
 FVector UBlackholeCompBase::DirectBH() 
 {
-	if (!SMC) return;
 	return PullTargetLocation - (SMC->GetComponentLocation());
 }
 

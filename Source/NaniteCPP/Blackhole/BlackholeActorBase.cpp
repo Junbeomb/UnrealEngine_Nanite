@@ -10,6 +10,8 @@ ABlackholeActorBase::ABlackholeActorBase()
 	BaseStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BlackholeBaseMesh"));
 	RootComponent = BaseStaticMesh;
 
+	BaseStaticMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
+
 	Niagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
 	Niagara->SetupAttachment(BaseStaticMesh);
 

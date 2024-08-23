@@ -47,11 +47,8 @@ class NANITECPP_API UBlackholeCompBase : public UActorComponent
 	float DistanceNormalized;
 
 	//생성자에서 값 직접 생성
-	UPROPERTY(EditAnywhere)
-	float PullStrength;
-	UPROPERTY(EditAnywhere)
-	float LinearDampingAmount;
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY()
 	float SmallScale;
 
 	FVector InitialMaxScale;
@@ -60,10 +57,6 @@ class NANITECPP_API UBlackholeCompBase : public UActorComponent
 	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
-
-	//곧 Destroy됨
-	UPROPERTY()
-	bool IsWillDie;
 	//줄어들고 있는지
 	UPROPERTY()
 	bool IsShrink;
@@ -90,10 +83,8 @@ class NANITECPP_API UBlackholeCompBase : public UActorComponent
 	float DFStartDistance;
 
 public:	
-	// Sets default values for this component's properties
 	UBlackholeCompBase();
 
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//처음 빨려들어갈시 변수들 초기화하는 함수
@@ -104,9 +95,15 @@ public:
 
 	void SetDFOff(bool IsOn);
 
+	UPROPERTY()
+	float PullStrength;
+	UPROPERTY()
+	float LinearDampingAmount;
+
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
+
+
 
 		
 };
