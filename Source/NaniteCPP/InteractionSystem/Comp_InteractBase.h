@@ -17,30 +17,24 @@ class NANITECPP_API UComp_InteractBase : public UActorComponent
 	UPROPERTY(EditAnywhere)
 	UMaterialInstance* OverlayMaterialInstance;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY()
 	UMaterialInstanceDynamic* DMIOverlay;
 
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	UStaticMeshComponent* OwnerStatic;
 
-	UPROPERTY(EditAnywhere)
-	bool cantToggle = false;
+	bool cantToggle{ false };
 
+protected:
+	virtual void BeginPlay() override;
 
 public:	
-
-	// Sets default values for this component's properties
 	UComp_InteractBase();
 
-	UFUNCTION(Category = "Interact")
 	void TurnOnHover();
-	UFUNCTION(Category = "Interact")
 	void TurnOffHover();
-	UFUNCTION(Category = "Interact")
 	void TurnOnToggleFunction();
 
-	UFUNCTION()
 	void DestroyThisComponentFunc();
 
 
@@ -51,9 +45,7 @@ public:
 	UFUNCTION()
 	void SetCantToggle(bool ct);
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+
 
 		
 };

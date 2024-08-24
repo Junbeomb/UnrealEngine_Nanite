@@ -27,6 +27,7 @@ protected:
 private:
 	float blackholeLife;
 	float TL_PullFoliageRadius;
+	float TL_TurnOfDFRadius;
 	float TL_WindRadius;
 	float TL_WindStrength;
 	float TL_DFRadius;

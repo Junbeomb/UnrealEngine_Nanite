@@ -7,71 +7,45 @@
 #include "PuzzleKeyDoor.h"
 #include "Kismet/GameplayStatics.h"
 
-// Sets default values
 APuzzleKeyPad::APuzzleKeyPad()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
 	KeyPadMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyPadMesh"));
 	RootComponent = KeyPadMesh;
 
 	Comp_Blend = CreateDefaultSubobject<UComp_BlendMesh>(TEXT("Comp_Blend"));
-
-	isGetKey = false;
-
-}
-
-// Called when the game starts or when spawned
-void APuzzleKeyPad::BeginPlay()
-{
-	Super::BeginPlay();
-
 	Comp_Blend->D_FinishBlending.BindUObject(this, &APuzzleKeyPad::OnFinishBlending);
 
-	
+	isGetKey = false;
 }
 
+//blend가 끝나면 상호작용 활성화
 void APuzzleKeyPad::OnFinishBlending()
 {
-	//interact component 추가
 	Comp_Interact = NewObject<UComp_InteractBase>(this, UComp_InteractBase::StaticClass(), NAME_None, RF_Transient);
-	if (Comp_Interact) {
-		//UE_LOG(LogTemp, Warning, TEXT("FinishBlending PuzzleKeyPad"));
-		Comp_Interact->RegisterComponent();
-		if (!isGetKey) {
-			Comp_Interact->SetCantToggle(true);
-		}
-		else {
-			Comp_Interact->SetCantToggle(false);
-		}
+	if (!Comp_Interact) return;
+
+	Comp_Interact->RegisterComponent();
+	if (!isGetKey) {
+		Comp_Interact->SetCantToggle(true);
 	}
 }
 
+//문열기
 void APuzzleKeyPad::PressEStart()
 {
-	UE_LOG(LogTemp, Warning, TEXT("PressEStart PuzzleKeyPad"));
-
 	APuzzleKeyDoor* puzzleDoor = Cast<APuzzleKeyDoor>(UGameplayStatics::GetActorOfClass(GetWorld(), APuzzleKeyDoor::StaticClass()));
 	puzzleDoor->OpenDoor();
 
 	Comp_Interact->DestroyThisComponentFunc();
 }
 
+//키 얻음
 void APuzzleKeyPad::GainKey()
 {
-	UE_LOG(LogTemp, Warning, TEXT("GainKey() PuzzleKeyPad"));
 	isGetKey = true;
 
-	if (IsValid(Comp_Interact)) {
-		Comp_Interact->SetCantToggle(false);
-	}
+	if (!Comp_Interact) return;
+	Comp_Interact->SetCantToggle(false);
 }
 
-// Called every frame
-void APuzzleKeyPad::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
