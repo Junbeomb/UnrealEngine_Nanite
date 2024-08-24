@@ -15,37 +15,26 @@ class NANITECPP_API APuzzleKeyDoor : public AActor
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* DoorMesh;
 
-	
-	UPROPERTY()
 	float saveZRotation;
 
-	UPROPERTY(EditAnywhere, Category = "Timeline")
+private://Timeline
 	UTimelineComponent* DoorTimeline;
-
 	FOnTimelineEvent TimelineFinishedCallback;
-	UFUNCTION()
+	UFUNCTION() //함수 이름으로 Binding 하기 때문에, UFUNCTION() 키워드를 꼭 붙여야 리플렉션 시스템에 등록되어서 런타임 시에 함수를 찾기 가능.
 	void SetDoorTimelineFinish();
 
 	UPROPERTY(EditAnywhere, Category = "Timeline");
 	class UCurveFloat* DoorCurve;
-	//callback함수
 	FOnTimelineFloat TimelineCallback;
-	//Bind함수
-	UFUNCTION()
+	UFUNCTION() 
 	void SetDoorTimelineUpdate(float Value);
-
-public:	
-	// Sets default values for this actor's properties
-	APuzzleKeyDoor();
 
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-
-	UFUNCTION()
+	APuzzleKeyDoor();
 	void OpenDoor();
 
 };
