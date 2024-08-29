@@ -85,7 +85,7 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 
 				if (SpawnBP == nullptr) continue;
 				//High,Low 확인후 변환====================================================
-				SpawnAndConvert(SpawnBP->BaseStaticMesh);
+				SpawnAndConvert(SpawnBP->GetBaseStaticMesh());
 			}
 		}
 		else { //일반 BP 리스트

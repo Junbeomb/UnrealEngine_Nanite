@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -10,21 +8,11 @@ UCLASS()
 class NANITECPP_API ABlackholeActorBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:
-	UPROPERTY(EditAnywhere)
-	class UNiagaraComponent* Niagara;
 
 	UPROPERTY(EditAnywhere)
-	class UBlackholeCompBase* BlackholeComp;
+	class UNiagaraComponent* BlackholeActorNiagara;
 
-	UPROPERTY(EditAnywhere)
 	float RotationStrength;
-
-public:
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* BaseStaticMesh;
-	// Sets default values for this actor's properties
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* L_Niagara;
@@ -32,16 +20,23 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UNiagaraSystem* H_Niagara;
 
-	ABlackholeActorBase();
-
 protected:
-	// Called when the game starts or when spawned
-	void BeginPlay() override;
-
 	void OnConstruction(const FTransform& Transform) override;
 
-public:	
-	// Called every frame
+	class UBlackholeCompBase* BlackholeComp;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* BaseStaticMesh;
+
+public:
+	ABlackholeActorBase();
 	void Tick(float DeltaTime) override;
+
+	void SetRotationStrength(float);
+
+	UStaticMeshComponent* GetBaseStaticMesh();
+
+
+
 
 };

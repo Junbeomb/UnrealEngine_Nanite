@@ -40,75 +40,76 @@ class NANITECPP_API ABlackhole : public AActor
 
 
 	//Timeline
-	UTimelineComponent* MeshTimeline;
-	UTimelineComponent* RangeTimeline;
-	UTimelineComponent* DFStartRadiusTimeline;
+		UTimelineComponent* MeshTimeline;
+		UTimelineComponent* RangeTimeline;
+		UTimelineComponent* DFStartRadiusTimeline;
 
-	//Blackhole Mesh Size 타임 라인 
-		//MeshTimeline 종료시
-	FOnTimelineEvent floatTimelineFinishedCallback;
-	UFUNCTION()
-	void SetScaleTimelineFinish();
+		//Blackhole Mesh Size 타임 라인 
+			//MeshTimeline 종료시
+		FOnTimelineEvent floatTimelineFinishedCallback;
+		UFUNCTION()
+		void SetScaleTimelineFinish();
 
-	UPROPERTY(EditAnywhere, Category = "Timeline");
-	class UCurveFloat* MeshCurve;
-	//callback함수
-	FOnTimelineFloat floatTimelineCallback;
-	//Bind함수
-	UFUNCTION()
-	void SetScaleTimelineUpdate(float Value);
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* MeshCurve;
+		//callback함수
+		FOnTimelineFloat floatTimelineCallback;
+		//Bind함수
+		UFUNCTION()
+		void SetScaleTimelineUpdate(float Value);
 
 
-	//Range 타임라인
-		//Range 종료시
-	FOnTimelineEvent RangeTimelineFinishedCallback;
-	UFUNCTION()
-	void RangeTimelineFinish();
+		//Range 타임라인
+			//Range 종료시
+		FOnTimelineEvent RangeTimelineFinishedCallback;
+		UFUNCTION()
+		void RangeTimelineFinish();
 
-	//Pull
-	UPROPERTY(EditAnywhere, Category = "Timeline");
-	class UCurveFloat* PullRangeCurve;
-	//callback함수
-	FOnTimelineFloat PullRangeTimelineCallback;
-	//Bind함수
-	UFUNCTION()
-	void PullRangeTimelineUpdate(float Value);
+		//Pull
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* PullRangeCurve;
+		//callback함수
+		FOnTimelineFloat PullRangeTimelineCallback;
+		//Bind함수
+		UFUNCTION()
+		void PullRangeTimelineUpdate(float Value);
 
-	//DF
-	UPROPERTY(EditAnywhere, Category = "Timeline");
-	class UCurveFloat* DFRangeCurve;
-	//callback함수
-	FOnTimelineFloat DFRangeTimelineCallback;
-	//Bind함수
-	UFUNCTION()
-	void DFRangeTimelineUpdate(float Value);
+		//DF
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* DFRangeCurve;
+		//callback함수
+		FOnTimelineFloat DFRangeTimelineCallback;
+		//Bind함수
+		UFUNCTION()
+		void DFRangeTimelineUpdate(float Value);
 
-	//Foliage
-	UPROPERTY(EditAnywhere, Category = "Timeline");
-	class UCurveFloat* FoliageRangeCurve;
-	//callback함수
-	FOnTimelineFloat FoliageRangeTimelineCallback;
-	//Bind함수
-	UFUNCTION()
-	void FoliageRangeTimelineUpdate(float Value);
+		//Foliage
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* FoliageRangeCurve;
+		//callback함수
+		FOnTimelineFloat FoliageRangeTimelineCallback;
+		//Bind함수
+		UFUNCTION()
+		void FoliageRangeTimelineUpdate(float Value);
 
-	//DFStartRadius 타임라인
-			//종료시
-	FOnTimelineEvent DFStartRadiusTimelineFinishedCallback;
-	UFUNCTION()
-	void DFStartRadiusTimelineFinish();
+		//DFStartRadius 타임라인
+				//종료시
+		FOnTimelineEvent DFStartRadiusTimelineFinishedCallback;
+		UFUNCTION()
+		void DFStartRadiusTimelineFinish();
 
-	//Pull
-	UPROPERTY(EditAnywhere, Category = "Timeline");
-	class UCurveFloat* DFStartRadiusCurve;
-	//callback함수
-	FOnTimelineFloat DFStartRadiusTimelineCallback;
-	//Bind함수
-	UFUNCTION()
-	void DFStartRadiusTimelineUpdate(float Value);
+		//Pull
+		UPROPERTY(EditAnywhere, Category = "Timeline");
+		class UCurveFloat* DFStartRadiusCurve;
+		//callback함수
+		FOnTimelineFloat DFStartRadiusTimelineCallback;
+		//Bind함수
+		UFUNCTION()
+		void DFStartRadiusTimelineUpdate(float Value);
+	//Timeline
+
 
 	float DFStartRadius;
-
 
 	UFUNCTION()
 	void OverlapPullRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
