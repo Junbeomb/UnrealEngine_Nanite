@@ -17,15 +17,11 @@ class NANITECPP_API ABlackholeProjectile : public ABaseProjectile
 	UPROPERTY(EditAnywhere, Category = "Blackhole")
 	TSubclassOf<AActor> BPBlackhole;
 
-	UPROPERTY()
-	class ANaniteCPPCharacter* Character;
+protected:
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
+	void BeginPlay() override;
 
 public:	
 	ABlackholeProjectile();
-
-protected:
-	void BeginPlay() override;
-
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) override;
 
 };

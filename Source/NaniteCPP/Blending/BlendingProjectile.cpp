@@ -18,12 +18,11 @@ ABlendingProjectile::ABlendingProjectile()
 void ABlendingProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	CollisionComp->OnComponentHit.AddDynamic(this, &ABlendingProjectile::OnHit);
+	GetCollisionComp()->OnComponentHit.AddDynamic(this, &ABlendingProjectile::OnHit);
 }
 
 void ABlendingProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Destroy hit"));
 	UComp_BlendMesh* UBM = Cast<UComp_BlendMesh>(OtherActor->GetComponentByClass(UComp_BlendMesh::StaticClass()));
 
 	if (IsValid(UBM)) {
