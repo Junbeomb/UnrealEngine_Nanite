@@ -22,10 +22,7 @@ void ABlackholeProjectile::OnHit(UPrimitiveComponent* HitComp,
 	FVector NormalImpulse, 
 	const FHitResult& Hit)
 {
-
-			UE_LOG(LogTemp, Warning, TEXT("Black hole Hit!!!"));
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
-	{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)){
 		FActorSpawnParameters ActorSpawnParams;
 		ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 

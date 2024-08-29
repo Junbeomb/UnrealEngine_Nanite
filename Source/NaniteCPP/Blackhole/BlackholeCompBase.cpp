@@ -42,7 +42,7 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	//SetDFStartDistance
 	//매 Tick마다 바뀌므로 계속 갱신
 	if (IsValid(Blackhole)) {
-		DFStartDistance = Blackhole->DFStartRadius;
+		DFStartDistance = Blackhole->GetDFStartRadius();
 	}
 	//SetDFMask
 	for (UMaterialInstanceDynamic* a : DMIList) {

@@ -25,11 +25,14 @@ void ABlendingProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Other
 {
 	UComp_BlendMesh* UBM = Cast<UComp_BlendMesh>(OtherActor->GetComponentByClass(UComp_BlendMesh::StaticClass()));
 
-	if (IsValid(UBM)) {
-		if (!UBM->IsBlendStart && ChangeBall) {
-			GetWorld()->SpawnActor<AMaterialChangeBall>(ChangeBall, GetActorTransform(), ActorSpawnParams);
-			UBM->StartBlend();
-		}
+	if (!IsValid(UBM)) {
+		Destroy();
+		return;
+	}
+
+	if (!UBM->IsBlendStart && ChangeBall) {
+		GetWorld()->SpawnActor<AMaterialChangeBall>(ChangeBall, GetActorTransform(), ActorSpawnParams);
+		UBM->StartBlend();
 	}
 
 	Destroy();

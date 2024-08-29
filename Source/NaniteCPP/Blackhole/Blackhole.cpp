@@ -68,6 +68,11 @@ ABlackhole::ABlackhole()
 		DFStartRadiusTimelineFinishedCallback.BindUFunction(this, FName("DFStartRadiusTimelineFinish"));
 }
 
+float ABlackhole::GetDFStartRadius()
+{
+	return DFStartRadius;
+}
+
 void ABlackhole::BeginPlay()
 {
 	Super::BeginPlay();
