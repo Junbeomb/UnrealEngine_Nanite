@@ -25,6 +25,7 @@ AFoliageBase::AFoliageBase()
 void AFoliageBase::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("FoliageBase"));
 	Comp_Blend->D_FinishBlending.BindUObject(this, &AFoliageBase::ReturnToFoliage);
 	Comp_Blend->D_JustGo.BindUObject(this, &AFoliageBase::ReturnToFoliage);
 }

@@ -34,6 +34,8 @@ class NANITECPP_API AFoliageInfluencer : public AActor
 	TSubclassOf<class AMaterialChangeBall> MaterialChangeBall;
 
 
+
+
 	//부딪힌component, actor들을 찾는 함수
 	bool FindTrace();
 	TArray<FHitResult> OutResults;

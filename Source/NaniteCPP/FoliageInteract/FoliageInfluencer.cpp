@@ -32,6 +32,8 @@ AFoliageInfluencer::AFoliageInfluencer()
 
 	PhysicsRadius = 0.f;
 	IsBlackholeInfluencer = false;
+
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
 
 
@@ -89,16 +91,13 @@ void AFoliageInfluencer::Tick(float DeltaTime)
 			}
 		}
 		else { //일반 BP 리스트
-			if (FoliageBlueprints.Num() <= 0) continue;
-
 			for (const TSubclassOf<AFoliageBase>& FoliageBP : FoliageBlueprints) {
 				bool isContain = value.Contains(*FoliageBP->GetName().RightChop(3).LeftChop(2), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 				if (!isContain) continue;
 
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				AFoliageBase* SpawnBP = GetWorld()->SpawnActor<AFoliageBase>(FoliageBP, InstanceTransform, ActorSpawnParams);
 
-				if (SpawnBP == nullptr) continue;
+				if (!SpawnBP) continue;
 				//Blend 시작
 				CheckBlend(SpawnBP, Hit.Location);
 			}

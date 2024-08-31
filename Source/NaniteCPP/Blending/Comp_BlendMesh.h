@@ -28,7 +28,6 @@ class NANITECPP_API UComp_BlendMesh : public UActorComponent
 
 	float WhichOneIsLongestXYZ;
 	float ExtentSubtractAmountOneSecond;
-
 	bool IsBlendStart;
 
 	UMeshComponent* StaticOrSkeletal();

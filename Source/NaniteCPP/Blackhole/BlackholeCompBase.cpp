@@ -7,7 +7,7 @@ UBlackholeCompBase::UBlackholeCompBase()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	PullStrength = 120.f;
-	LinearDampingAmount = 6.f;
+	LinearDampingAmount = 4.f;
 	SmallScale = 0.1f;
 
 	InitialNSVortexForceAmount = 1000;
@@ -80,15 +80,15 @@ void UBlackholeCompBase::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	else {
 		//블랙홀 과의 거리 0~1 로 만든 값 저장
 		DistanceNormalized = UKismetMathLibrary::MapRangeClamped(PullDirection.Length(), 0, PullStartDistanceToBlackhole, 0, 1);
-		//빨아들이기 (AddForce하면 pivot은 움직이지 않음. 따라서 DirectBH에서 GetOwner()->GetActorLocation() 을 하면 안댐)
+		//블랙홀로 흡수(거리가 가까워질수록 강하게)
 		FVector ForceValue = PullDirection * (DistanceNormalized / 5 + (1 - DistanceNormalized)) * PullStrength * DeltaTime;
 		SMC->AddForce(ForceValue, "None", true);
+
 		SMC->SetLinearDamping(DistanceNormalized * LinearDampingAmount);
 
-		float TempScale = UKismetMathLibrary::MapRangeClamped(DistanceNormalized, 0, 1, SmallScale, InitialMaxScale.X);
-		SMC->SetWorldScale3D({ TempScale,TempScale,TempScale });
+		SMC->SetWorldScale3D(FVector(UKismetMathLibrary::MapRangeClamped(DistanceNormalized, 0, 1, SmallScale, InitialMaxScale.X)));
 
-		//블랙홀가 가까워지면 Shrink On
+		//블랙홀과의 거리가 가까워지면 이후에는 Niagara로 시각적 효과
 		if (IsDistanceToBH(30.f)) {
 			SMC->SetHiddenInGame(true);
 			IsShrink = true;
@@ -152,12 +152,11 @@ void UBlackholeCompBase::SetPullOn(ABlackhole* BH, FVector BHLocation)
 
 void UBlackholeCompBase::SetInitialNSSpawnRate()
 {
-	//물체의 크기에 따라서 파티클 갯수 조절 + 프레임에 따라 다르게 나오도록
+	//"물체의 크기+ 프레임"에 따라서 파티클 갯수 조절
 	FVector Origin;
 	FVector BoxExtent;
 	GetOwner()->GetActorBounds(false, Origin, BoxExtent, false);
-	float TempVolume = BoxExtent.X * BoxExtent.Y * BoxExtent.Z;
-	TempVolume = FMath::Clamp(TempVolume, 0.f, 3.f);
+	float TempVolume = FMath::Min(BoxExtent.X * BoxExtent.Y * BoxExtent.Z,3.f);
 	InitialNSSpawnRate = InitialNSSpawnRate* (1 / GetWorld()->GetDeltaSeconds()) / 120 * TempVolume;
 }
 

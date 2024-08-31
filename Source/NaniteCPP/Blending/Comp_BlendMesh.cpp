@@ -6,7 +6,6 @@
 UComp_BlendMesh::UComp_BlendMesh()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
 	ExtentSubtractAmountOneSecond = 100.f;
 
 	SMC = NULL;
@@ -56,7 +55,6 @@ void UComp_BlendMesh::StartBlend()
 
 	IsBlendStart = true;
 	
-
 	FVector Origin;
 	FVector BoxExtent;
 	GetOwner()->GetActorBounds(false, Origin, BoxExtent, false);
@@ -95,7 +93,6 @@ UMeshComponent* UComp_BlendMesh::StaticOrSkeletal()
 		return TempMesh;
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("Static or Skeletal Both Nothing"));
 	return NULL;
 }
 
@@ -135,15 +132,9 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 	for (UMaterialInstanceDynamic* a : DMIList) {
 		a->SetScalarParameterValue(TEXT("IsChanging?"), 0.0f);
 		a->SetScalarParameterValue(TEXT("Subtract"), 0.0f);
-		if (IsLow()) {
-			a->SetScalarParameterValue(TEXT("IsLow?"), 0.0f);
-		}
-		else {
-			a->SetScalarParameterValue(TEXT("IsLow?"), 1.0f);
-		}
+		a->SetScalarParameterValue(TEXT("IsLow?"), 1- IsLow());
 	}
 	SumSeconds = 0.0f;
-
 	IsHighQuality = !IsHighQuality;
 }
 
