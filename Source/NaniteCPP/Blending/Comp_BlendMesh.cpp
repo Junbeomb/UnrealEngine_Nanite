@@ -1,16 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Comp_BlendMesh.h"
 #include "Kismet/GameplayStatics.h"
 #include "TurnOffDF.h"
 
-// Sets default values for this component's properties
 UComp_BlendMesh::UComp_BlendMesh()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	ExtentSubtractAmountOneSecond = 100.f;
 
@@ -21,7 +16,6 @@ UComp_BlendMesh::UComp_BlendMesh()
 }
 
 
-// Called when the game starts
 void UComp_BlendMesh::BeginPlay()
 {
 	Super::BeginPlay();
@@ -30,25 +24,24 @@ void UComp_BlendMesh::BeginPlay()
 }
 
 
-// Called every frame
 void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (IsTickStart) {
-		SumSeconds += DeltaTime;
+	SumSeconds += DeltaTime;
 
-		if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { //다 바꿨으면
-			IsTickStart = false;
-			FinishBlendSetVariable();
-			D_FinishBlending.Execute();
-		}
-		else { //머티리얼 바꾸기
-			for (UMaterialInstanceDynamic* a : DMIList) {
-				a->SetScalarParameterValue(TEXT("Subtract"), SumSeconds * ExtentSubtractAmountOneSecond);
-			}
-		}
+	//머티리얼 변환 완료
+	if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { 
+		FinishBlendSetVariable();
+		D_FinishBlending.Execute();
+		return;
 	}
+
+	//머티리얼 변환
+	for (UMaterialInstanceDynamic* a : DMIList) {
+		a->SetScalarParameterValue(TEXT("Subtract"), SumSeconds * ExtentSubtractAmountOneSecond);
+	}
+	
 }
 
 void UComp_BlendMesh::StartBlend()
@@ -60,9 +53,6 @@ void UComp_BlendMesh::StartBlend()
 		D_FinishBlending.Execute();
 		return;
 	}
-
-	//UE_LOG(LogTemp, Warning, TEXT("StartBlend Comp_Blend"));
-//	D_StartBlending.Execute();
 
 	IsBlendStart = true;
 	
@@ -118,6 +108,11 @@ bool UComp_BlendMesh::IsLow()
 	return tempCheck > 0.5;
 }
 
+bool UComp_BlendMesh::GetIsBlendStart()
+{
+	return IsBlendStart;
+}
+
 void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMaterial)
 {
 	for (int i = 0; i < NumMaterial; ++i) {
@@ -131,7 +126,7 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 	FTransform TempTransform = { {TempLocation.X,TempLocation.Y,TempLocation.Z}, TempLocation,{0,0,0},{tempScale,tempScale,tempScale} };
 	GetWorld()->SpawnActor<ATurnOffDF>(ATurnOffDF::StaticClass(), TempTransform);
 
-	IsTickStart = true;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -150,7 +145,5 @@ void UComp_BlendMesh::FinishBlendSetVariable()
 	SumSeconds = 0.0f;
 
 	IsHighQuality = !IsHighQuality;
-
-	//IsBlendStart = false;
 }
 

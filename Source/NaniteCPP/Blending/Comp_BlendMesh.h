@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,41 +11,6 @@ class NANITECPP_API UComp_BlendMesh : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	UComp_BlendMesh();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:	
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	UFUNCTION()
-	void StartBlend();
-
-	UFUNCTION()
-	void JustGo();
-
-	UFUNCTION()
-	UMeshComponent* StaticOrSkeletal();
-
-	UFUNCTION()
-	bool IsLow();
-
-	UFUNCTION()
-	void CreateDMIAndDFOff(UPrimitiveComponent* UComp,int NumMaterial);
-
-	FD_Blend D_FinishBlending;
-	FD_Blend D_StartBlending;
-	FD_Blend D_JustGo;
-
-	bool IsBlendStart;
-
-	float ExtentSubtractAmountOneSecond;
-
-private:
-
 	void FinishBlendSetVariable();
 
 	ANaniteCPPCharacter* Player;
@@ -57,8 +20,6 @@ private:
 
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
-	bool IsTickStart;
-
 	bool IsHighQuality;
 
 	bool OwnerIsStatic;
@@ -66,5 +27,32 @@ private:
 	float SumSeconds;
 
 	float WhichOneIsLongestXYZ;
-		
+	float ExtentSubtractAmountOneSecond;
+
+	bool IsBlendStart;
+
+	UMeshComponent* StaticOrSkeletal();
+
+	void CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMaterial);
+
+protected:
+	virtual void BeginPlay() override;
+
+public:	
+	UComp_BlendMesh();
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void StartBlend();
+
+	void JustGo();
+
+	bool IsLow();
+
+	bool GetIsBlendStart();
+
+	FD_Blend D_FinishBlending;
+	FD_Blend D_StartBlending;
+	FD_Blend D_JustGo;
+
 };

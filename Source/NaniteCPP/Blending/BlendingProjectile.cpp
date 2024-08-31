@@ -30,7 +30,7 @@ void ABlendingProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Other
 		return;
 	}
 
-	if (!UBM->IsBlendStart && ChangeBall) {
+	if (!UBM->GetIsBlendStart() && ChangeBall) {
 		GetWorld()->SpawnActor<AMaterialChangeBall>(ChangeBall, GetActorTransform(), ActorSpawnParams);
 		UBM->StartBlend();
 	}

@@ -155,7 +155,7 @@ void AFoliageInfluencer::CheckBlend(AActor* CheckActor, FVector ImpactPoint)
 		UBM->JustGo();
 		break;
 	case EFoliageType::ChangeBlend:
-		if (UBM->IsBlendStart) break;
+		if (UBM->GetIsBlendStart()) break;
 		if (!MaterialChangeBall) break;
 
 		FVector Origin;
