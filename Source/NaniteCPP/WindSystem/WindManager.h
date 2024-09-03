@@ -15,18 +15,13 @@ class NANITECPP_API AWindManager : public AActor
 	UPROPERTY(EditAnywhere)
 	class UNiagaraComponent* Niagara;
 	
-	UPROPERTY(EditAnywhere)
 	float InputGridResolution;
-
-	UPROPERTY(EditAnywhere)
 	float SimulationSizeWS;
 
 
-	UFUNCTION()
 	void SetInitialVariable();
-	UFUNCTION()
 	void SetPlayerPawnLocation();
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	USceneComponent* PlayerComponent;
 
 	UPROPERTY(EditAnywhere)
@@ -36,50 +31,35 @@ class NANITECPP_API AWindManager : public AActor
 	UPROPERTY(EditAnywhere)
 	class UTextureRenderTarget2D* WindRenderTarget;
 
-	UFUNCTION()
 	void ResetTick();
 
-	UPROPERTY(EditAnywhere)
 	FVector PlayerLocation;
 
-	UPROPERTY(EditAnywhere)
 	TArray<FWINDDATA> SWindData;
 
-	UPROPERTY(EditAnywhere)
 	TArray<FVector4> WindStartLocationRadius;
-	UPROPERTY(EditAnywhere)
 	TArray<FVector4> WindStartVelocityStrength;
 
-	UFUNCTION()
 	void WindStructDataToTranslate();
 
 
 
-	UFUNCTION()
 	void CacluatePlayerPosition();
-	UFUNCTION()
 	void CacluateWindPosition();
-	UFUNCTION()
 	void SetGridVariable();
 
-	UPROPERTY()
 	FVector2D windLocation;
-	UPROPERTY()
+
 	FVector2D windOffset;
 public:	
 
 	AWindManager();
 
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION()
 	void ResetVariable();
 
-	UFUNCTION()
 	void AddWindAtWindData(FWINDDATA wsd);
 protected:
 
 	virtual void BeginPlay() override;
-
-
-
 };

@@ -119,7 +119,7 @@ void AInteractStatue::StartMassBlend()
 
 void AInteractStatue::SetMassBlendTimelineFinish()
 {
-	//D_BPFinishBlend.Execute();
+	D_Die.Broadcast();
 	Bomb->DestroyComponent();
 }
 

@@ -1,5 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+/
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,31 +12,41 @@ class NANITECPP_API AWindBomb : public AActor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class AWindManager* windManager;
 
-	UFUNCTION()
 	void StartWind();
 
-	UPROPERTY(EditAnywhere)
 	float Duration;
-	UPROPERTY(EditAnywhere)
 	float Radius;
-	UPROPERTY(EditAnywhere)
 	float Strength;
 
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* StrengthCurve;
 
+
+	//Timeline
+	UTimelineComponent* WindTimeline;
+	FOnTimelineEvent WindTLFinishedCallback;
+	UFUNCTION()
+	void SetScaleTimelineFinish();
+
+	UPROPERTY(EditAnywhere, Category = "Timeline");
+	class UCurveFloat* StatueRadiusCurve;
+	FOnTimelineFloat RadiusTLCallback;
+	UFUNCTION()
+	void SetRadiusTLUpdate(float Value);
+
+	UPROPERTY(EditAnywhere, Category = "Timeline");
+	class UCurveFloat* StatueStrengthCurve;
+	FOnTimelineFloat StrengthTLCallback;
+	UFUNCTION()
+	void SetStrengthTLUpdate(float Value);
+
 public:	
 	AWindBomb();
 
-
 	void BlackholeFunc(ABlackhole& bh);
-
 	void StatueFunc(AInteractStatue& is);
-	
-
-
 
 };

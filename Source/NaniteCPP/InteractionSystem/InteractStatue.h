@@ -15,7 +15,7 @@
 
 #include "InteractStatue.generated.h"
 
-DECLARE_DELEGATE(FD_BPDelegate);
+DECLARE_MULTICAST_DELEGATE(FD_BPDelegate);
 UCLASS()
 class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 {
@@ -29,7 +29,6 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 	UPROPERTY(EditAnywhere)
 	UNiagaraComponent* Bomb;
 
-	UPROPERTY(EditAnywhere)
 	float BombDistance;
 	float BlendRadius;
 
@@ -95,19 +94,21 @@ class NANITECPP_API AInteractStatue : public AActor, public IInterface_Interact
 		void SetShakeSMTimelineUpdate(float Value);
 		FOnTimelineFloat SizeSMTimelineUpdateCallback;
 		UFUNCTION() //UFUNCTION()이 있어야 동작한다.!!!!!!
-			void SetSizeSMTimelineUpdate(float Value);
+		void SetSizeSMTimelineUpdate(float Value);
+
+
+protected:
+	virtual void BeginPlay() override;
 
 public:	
-	// Sets default values for this actor's properties
 	AInteractStatue();
 
-	UPROPERTY(EditAnywhere)
+	FD_BPDelegate D_Die;
+
 	UComp_InteractBase* CompBase;
 
 	virtual void PressEStart() override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 
 };
