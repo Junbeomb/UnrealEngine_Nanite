@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "WindBomb.generated.h"
 
+class ABlackhole;
+class AInteractStatue;
 UCLASS()
 class NANITECPP_API AWindBomb : public AActor
 {
@@ -26,17 +28,16 @@ class NANITECPP_API AWindBomb : public AActor
 
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* StrengthCurve;
+
 public:	
-	// Sets default values for this actor's properties
 	AWindBomb();
 
-	UFUNCTION()
-	void BlackholeFunc();
 
+	void BlackholeFunc(ABlackhole& bh);
+
+	void StatueFunc(AInteractStatue& is);
 	
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 
 };

@@ -7,6 +7,8 @@
 #include "BlackholeCompBase.h"
 #include "../FoliageInteract/FoliageInfluencer.h"
 
+#include "../WindSystem/WindBomb.h"
+
 ABlackhole::ABlackhole()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -86,6 +88,13 @@ void ABlackhole::BeginPlay()
 
 	//Die
 	DieBlackhole();
+
+	//wind
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	AWindBomb* wb = GetWorld()->SpawnActor<AWindBomb>(AWindBomb::StaticClass(), GetActorLocation(), {0,0,0}, ActorSpawnParams);
+	wb->BlackholeFunc(*this);
+
 
 	//BP_BH 로 바뀌는 거라고 알려주기
 	if (FoliageToBPActor->GetChildActor()) {
@@ -168,14 +177,12 @@ void ABlackhole::DFStartRadiusTimelineFinish()
 //PullRange에 actor 가 겹치면
 void ABlackhole::OverlapPullRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	UBlackholeCompBase* BHComp = Cast<UBlackholeCompBase>(OtherActor->GetComponentByClass(UBlackholeCompBase::StaticClass()));
 	if (!BHComp) return;
 
 	if (!BHComp->GetIsPull()) { //해당 물체를 당기고 있지 않을때만
 		BHComp->SetPullOn(this, GetActorLocation());
 	}
-
 }
 
 void ABlackhole::OverlapDFRange(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -195,13 +202,13 @@ void ABlackhole::DieBlackhole()
 	//Delay -> 6초뒤 Mesh줄어드는 Animation실행
 	TimerDelegate.BindLambda([&]
 	{
+			D_SoonDie.Broadcast();
 			DieToggle = true;
 			MeshTimeline->SetPlayRate(10.f);
 			MeshTimeline->Reverse();
 	});
 
 	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, TimerDelegate, 12, false);
-
 }
 
 

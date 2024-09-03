@@ -67,20 +67,19 @@ class NANITECPP_API AWindManager : public AActor
 	UPROPERTY()
 	FVector2D windOffset;
 public:	
-	// Sets default values for this actor's properties
+
 	AWindManager();
 
+	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
 	void ResetVariable();
 
 	UFUNCTION()
 	void AddWindAtWindData(FWINDDATA wsd);
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
 
 };

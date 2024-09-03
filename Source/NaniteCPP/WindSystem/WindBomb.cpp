@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "WindBomb.h"
@@ -6,35 +5,33 @@
 #include "WindManager.h"
 #include "TimerManager.h"
 #include "WindStructData.h"
+#include "../Blackhole/Blackhole.h"
 
 
-
-// Sets default values
 AWindBomb::AWindBomb()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 
 	PrimaryActorTick.bCanEverTick = false;
 
 }
 
 
-
-// Called when the game starts or when spawned
-void AWindBomb::BeginPlay()
+void AWindBomb::BlackholeFunc(ABlackhole& bh)
 {
-	Super::BeginPlay();
+	//바랍 제거
+	bh.D_SoonDie.AddLambda([this]() {
+		Destroy();
+	});
 
-	BlackholeFunc();
-	
-}
-
-void AWindBomb::BlackholeFunc()
-{
 	//windmanager 가져오기
 	windManager = Cast<AWindManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWindManager::StaticClass()));
 	
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&AWindBomb::StartWind, 0.5f, true);
+}
+
+void AWindBomb::StatueFunc(AInteractStatue& is)
+{
 }
 
 void AWindBomb::StartWind()

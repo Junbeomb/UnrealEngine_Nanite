@@ -8,6 +8,8 @@
 
 #include "Blackhole.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FDieEvent);
+
 UCLASS()
 class NANITECPP_API ABlackhole : public AActor
 {
@@ -125,5 +127,7 @@ public:
 	ABlackhole();
 
 	float GetDFStartRadius();
+
+	FDieEvent D_SoonDie;
 
 };

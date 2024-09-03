@@ -12,6 +12,7 @@
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "Math/UnrealMathUtility.h"
+#include "Math/Vector2D.h"
 
 // Sets default values
 AWindManager::AWindManager()
@@ -41,8 +42,6 @@ void AWindManager::ResetVariable()
 	SetActorTickEnabled(true);
 }
 
-
-
 void AWindManager::SetInitialVariable()
 {
 	Niagara->SetNiagaraVariableFloat("TargetFPS", 60.f);
@@ -65,7 +64,6 @@ void AWindManager::SetPlayerPawnLocation()
 }
 
 
-// Called every frame
 void AWindManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -120,15 +118,17 @@ void AWindManager::WindStructDataToTranslate()
 
 void AWindManager::CacluatePlayerPosition()
 {
-	//player 포지션을 niagara에 매 틱마다 넘긴다.
+	//player 포지션을 niagara에 넘긴다.
 	FVector2D vector2d = { PlayerLocation.X,PlayerLocation.Y };
 	vector2d = vector2d / (SimulationSizeWS / InputGridResolution);
 	vector2d = FVector2D(FMath::RoundToInt32(vector2d.X),FMath::RoundToInt32(vector2d.Y));
-	Niagara->SetNiagaraVariableVec2("FollowGridLocation", vector2d * (SimulationSizeWS / InputGridResolution));
+	vector2d = vector2d * (SimulationSizeWS / InputGridResolution);
+	Niagara->SetNiagaraVariableVec2("FollowGridLocation", vector2d);
 }
 
 void AWindManager::CacluateWindPosition()
 {
+	//player 가 이동한 거리만큼 windpixel 값을 반대로 이동.(Render Target Texture내에서 플레이어를 따라오지 않도록)
 	FColor tempColor = FColor(windLocation.X,windLocation.Y,0,0);
 	PCI->SetVectorParameterValue(FName("WindRTLocation"), tempColor);
 
@@ -147,8 +147,6 @@ void AWindManager::SetGridVariable()
 	Niagara->SetNiagaraVariableVec2("InputGridLocation", { PlayerLocation.X,PlayerLocation.Y });
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartLocationAndRadius"), WindStartLocationRadius);
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartVelocityAndStrength"), WindStartVelocityStrength);
-
-	//UE_LOG(LogTemp, Warning, TEXT("WindManager"));
 }
 
 void AWindManager::ResetTick()
@@ -159,7 +157,8 @@ void AWindManager::ResetTick()
 //바람등록
 void AWindManager::AddWindAtWindData(FWINDDATA wsd)
 {
-	SWindData.Add(wsd);
-	//UE_LOG(LogTemp, Warning, TEXT("%d"), SWindData.Num());
+	float distance = FVector2D::DistSquared({ PlayerLocation.X, PlayerLocation.Y}, {wsd.S_WindStartLocRad.X, wsd.S_WindStartLocRad.Y});
+	if(distance < pow(SimulationSizeWS * 0.7,2))
+		SWindData.Add(wsd);
 }
 
