@@ -12,6 +12,7 @@
 
 AWindBomb::AWindBomb()
 {
+
 	PrimaryActorTick.bCanEverTick = false;
 
 	//Timeline

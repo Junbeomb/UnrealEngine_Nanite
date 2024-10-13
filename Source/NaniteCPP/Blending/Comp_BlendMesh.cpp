@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Comp_BlendMesh.h"
 #include "Kismet/GameplayStatics.h"
 #include "TurnOffDF.h"
@@ -18,7 +18,6 @@ UComp_BlendMesh::UComp_BlendMesh()
 void UComp_BlendMesh::BeginPlay()
 {
 	Super::BeginPlay();
-
 	StaticOrSkeletal();
 }
 
@@ -29,14 +28,14 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 	SumSeconds += DeltaTime;
 
-	//¸ÓÆ¼¸®¾ó º¯È¯ ¿Ï·á
+	//ë¨¸í‹°ë¦¬ì–¼ ë³€í™˜ ì™„ë£Œ
 	if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { 
 		FinishBlendSetVariable();
 		D_FinishBlending.Execute();
 		return;
 	}
 
-	//¸ÓÆ¼¸®¾ó º¯È¯
+	//ë¨¸í‹°ë¦¬ì–¼ ë³€í™˜
 	for (UMaterialInstanceDynamic* a : DMIList) {
 		a->SetScalarParameterValue(TEXT("Subtract"), SumSeconds * ExtentSubtractAmountOneSecond);
 	}
@@ -47,7 +46,7 @@ void UComp_BlendMesh::StartBlend()
 {
 	bool IsLowObject = IsLow();
 	
-
+	PrimaryComponentTick.bCanEverTick = true;
 	if (Player && Player->HighQualityGun != IsLowObject) {
 		D_FinishBlending.Execute();
 		return;
@@ -64,6 +63,7 @@ void UComp_BlendMesh::StartBlend()
 	if (OwnerIsStatic) {
 		SMC = Cast<UStaticMeshComponent>(TempMesh);
 		SMC->SetAffectDistanceFieldLighting(false);
+
 		CreateDMIAndDFOff(SMC, SMC->GetNumMaterials());
 	}
 	else {
@@ -124,6 +124,8 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 	GetWorld()->SpawnActor<ATurnOffDF>(ATurnOffDF::StaticClass(), TempTransform);
 
 	PrimaryComponentTick.bCanEverTick = true;
+	UE_LOG(LogTemp, Warning, TEXT("true"));
+
 }
 
 

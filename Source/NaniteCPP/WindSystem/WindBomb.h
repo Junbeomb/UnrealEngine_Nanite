@@ -1,8 +1,10 @@
-/
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/TimelineComponent.h"
+
 #include "WindBomb.generated.h"
 
 class ABlackhole;
@@ -26,7 +28,7 @@ class NANITECPP_API AWindBomb : public AActor
 
 
 	//Timeline
-	UTimelineComponent* WindTimeline;
+	class UTimelineComponent* WindTimeline;
 	FOnTimelineEvent WindTLFinishedCallback;
 	UFUNCTION()
 	void SetScaleTimelineFinish();
