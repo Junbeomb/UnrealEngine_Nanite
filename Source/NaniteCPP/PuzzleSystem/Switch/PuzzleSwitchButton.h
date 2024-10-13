@@ -19,16 +19,16 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* ButtonMesh;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()//NewObject 로 초기화하므로 가비지 컬렉션 대상.
 	class UComp_InteractBase* Comp_Interact;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY() //world에 있는 것을 가리키므로 dangling pointer 방지를 위해 UPROPERTY() 붙여주기
 	class APuzzleSwitchDoor* SwitchDoor;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class APuzzleSwitchBox* SwitchBox;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
 	FLinearColor colorDefault = { 0.05f,0.05f,0.5f,1.f };
@@ -36,7 +36,6 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 	FLinearColor colorRed = { 0.5f,0.05f,0.05f,1.f };
 
 	//timeline=====
-	UPROPERTY(EditAnywhere, Category = "Timeline")
 	class UTimelineComponent* EmissiveTimeline;
 	FOnTimelineEvent EmissiveTimelineFinishedCallback;
 	UFUNCTION()
@@ -44,33 +43,23 @@ class NANITECPP_API APuzzleSwitchButton : public AActor, public IInterface_Inter
 
 	UPROPERTY(EditAnywhere, Category = "Timeline");
 	class UCurveFloat* EmissiveCurve;
-	//callback함수
 	FOnTimelineFloat EmissiveTimelineCallback;
-	//Bind함수
 	UFUNCTION()
 	void EmissiveTimelineUpdate(float Value);
 	//timeline=====
 
-	UFUNCTION()
 	void ResetButton();
-
 	UFUNCTION()
 	void TurnOn();
-
 	UFUNCTION()
 	void WrongFunc();
 
-public:	
-	// Sets default values for this actor's properties
-	APuzzleSwitchButton();
-
-
-	virtual void PressEStart() override;
-
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:	
+	APuzzleSwitchButton();
 
+	virtual void PressEStart() override;
 
 };

@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -28,17 +27,12 @@ class NANITECPP_API APuzzlePlasmaGunTable : public AActor, public IInterface_Int
 	TSubclassOf<AActor> childActorClass;
 
 public:	
-	// Sets default values for this actor's properties
 	APuzzlePlasmaGunTable();
 
-	UFUNCTION()
 	void AddGunPart(int num);
 
 	virtual void PressEStart() override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 
 };

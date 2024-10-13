@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,14 +21,13 @@ class NANITECPP_API APuzzleSwitchDoor : public AActor
 	UPROPERTY(VisibleDefaultsOnly)
 	TArray<int> doorArr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY() //GetActorOfClass()로 월드에 있는 액터로 값을 초기화할때는 댕글링 포인터 방지를 위해 UPROPERTY()를 붙여주기.
 	class APuzzleSwitchBox* SwitchBox;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TArray<UMaterialInstanceDynamic*> DMIList;
 
 	//timeline=====
-	UPROPERTY(EditAnywhere, Category = "Timeline")
 	class UTimelineComponent* EmissiveTimeline;
 	FOnTimelineEvent EmissiveTimelineFinishedCallback;
 	UFUNCTION()
@@ -44,19 +42,15 @@ class NANITECPP_API APuzzleSwitchDoor : public AActor
 	void EmissiveTimelineUpdate(float Value);
 	//timeline=====
 
-	UFUNCTION()
 	void TurnOn();
-
-public:	
-	APuzzleSwitchDoor();
-
-
-	UFUNCTION()
-	void pushElementDoorArr(int num);
-
-	FD_SwitchDoor wrongAnswer;
 
 protected:
 	virtual void BeginPlay() override;
+
+public:	
+	APuzzleSwitchDoor();
+	void pushElementDoorArr(int num);
+
+	FD_SwitchDoor wrongAnswer;
 
 };

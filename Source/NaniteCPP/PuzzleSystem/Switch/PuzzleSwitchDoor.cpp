@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "PuzzleSwitchDoor.h"
 #include "PuzzleSwitchBox.h"
@@ -15,7 +13,6 @@ APuzzleSwitchDoor::APuzzleSwitchDoor()
 
 	//Timeline
 	EmissiveTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("EmissiveTimeline"));
-	//callbackÇÔ¼öbind
 	EmissiveTimelineCallback.BindUFunction(this, FName("EmissiveTimelineUpdate"));
 	EmissiveTimelineFinishedCallback.BindUFunction(this, FName("EmissiveTimelineFinish"));
 }
@@ -63,10 +60,6 @@ void APuzzleSwitchDoor::pushElementDoorArr(int num)
 {
 	doorArr.Add(num);
 
-	//UE_LOG(LogTemp, Warning, TEXT("DoorArr.Num = %d ->(PuzzleSwitchDoor.cpp)"),doorArr.Num());
-	//for (auto a : doorArr) {
-	//	UE_LOG(LogTemp, Warning, TEXT("%d ->(PuzzleSwitchDoor.cpp)"),a);
-	//}
 	if (doorArr.Num() >= 4) {
 		if (doorArr == doorKeyNumArr) {
 			UE_LOG(LogTemp, Warning, TEXT("Answer!!->(PuzzleSwitchDoor.cpp)"));

@@ -40,10 +40,5 @@ void APuzzlePlasmaGunTable::PressEStart()
 	}
 }
 
-// Called when the game starts or when spawned
-void APuzzlePlasmaGunTable::BeginPlay()
-{
-	Super::BeginPlay();
-}
 
 

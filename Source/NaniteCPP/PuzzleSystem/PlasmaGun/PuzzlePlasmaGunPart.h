@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,20 +14,15 @@ class NANITECPP_API APuzzlePlasmaGunPart : public AActor, public IInterface_Inte
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PartMesh;
 
-	UPROPERTY(EditAnywhere)
 	class UComp_InteractBase* Comp_Interact;
 
 	UPROPERTY(EditAnywhere)
 	int PartNum;
 	
 public:	
-	// Sets default values for this actor's properties
 	APuzzlePlasmaGunPart();
 
 	virtual void PressEStart() override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 };

@@ -15,20 +15,19 @@ class NANITECPP_API APuzzleSwitchBox : public AActor
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* BoxMesh;
 
-	UPROPERTY(EditAnywhere)
 	class UComp_BlendMesh* Comp_Blend;
 
 	UFUNCTION()
 	void OnFinishBlending();
+
+protected:
+	virtual void BeginPlay() override;
 	
 public:	
-	// Sets default values for this actor's properties
 	APuzzleSwitchBox();
 
 	FD_SwitchBox SwitchBoxOn;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 
 };

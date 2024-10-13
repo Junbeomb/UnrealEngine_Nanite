@@ -18,9 +18,6 @@ APuzzleSwitchButton::APuzzleSwitchButton()
 	//callbackÇÔ¼öbind
 	EmissiveTimelineCallback.BindUFunction(this, FName("EmissiveTimelineUpdate"));
 	EmissiveTimelineFinishedCallback.BindUFunction(this, FName("EmissiveTimelineFinish"));
-
-
-
 }
 
 

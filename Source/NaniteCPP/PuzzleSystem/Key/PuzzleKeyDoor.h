@@ -17,7 +17,7 @@ class NANITECPP_API APuzzleKeyDoor : public AActor
 
 	float saveZRotation;
 
-private://Timeline
+	//timeline
 	UTimelineComponent* DoorTimeline;
 	FOnTimelineEvent TimelineFinishedCallback;
 	UFUNCTION() //함수 이름으로 Binding 하기 때문에, UFUNCTION() 키워드를 꼭 붙여야 리플렉션 시스템에 등록되어서 런타임 시에 함수를 찾기 가능.
