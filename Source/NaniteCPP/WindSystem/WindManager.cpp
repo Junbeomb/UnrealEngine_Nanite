@@ -44,7 +44,6 @@ void AWindManager::ResetVariable()
 
 void AWindManager::SetInitialVariable()
 {
-	Niagara->SetNiagaraVariableFloat("TargetFPS", 60.f);
 
 	Niagara->SetNiagaraVariableFloat("SimulationSizeWS", SimulationSizeWS);
 	Niagara->SetNiagaraVariableFloat("WindGridResolution", InputGridResolution);
@@ -80,8 +79,7 @@ void AWindManager::Tick(float DeltaTime)
 void AWindManager::WindStructDataToTranslate()
 {
 	TArray<int> DeleteIndexList;
-
-	for (int i = 0; i < SWindData.Num() - 1; i++) {
+	for (int i = 0; i < SWindData.Num(); i++) {
 		float TempDuration = SWindData[i].Duration;
 		float TempStartTime = SWindData[i].StartTime;
 		UCurveFloat* TempCF = SWindData[i].StrengthCurve;
@@ -94,12 +92,12 @@ void AWindManager::WindStructDataToTranslate()
 			WindStartVelocityStrength.Add(TempSVS);
 		}
 		else {
-			float TempTimeRate = UGameplayStatics::GetRealTimeSeconds(GetWorld()) - TempStartTime/TempDuration;
+			float TempTimeRate = (UGameplayStatics::GetRealTimeSeconds(GetWorld()) - TempStartTime)/TempDuration;
 
 			if (TempTimeRate >= 1.0f) { //경과 시간 넘어가면 바람 제거
 				DeleteIndexList.Add(i);
 			}
-
+			//UE_LOG(LogTemp, Warning, TEXT("%f"), TempTimeRate);
 			FVector4 TempVector4;
 			if (TempCF) {
 				TempVector4 = FVector4(1.f, 1.f, 1.f, FMath::Max(TempCF->GetFloatValue(TempTimeRate), 0.0f));
@@ -113,7 +111,7 @@ void AWindManager::WindStructDataToTranslate()
 		SWindData.RemoveAt(a);
 	}
 
-	//UE_LOG(LogTemp, Warning, TEXT("WindManager"));
+	
 }
 
 void AWindManager::CacluatePlayerPosition()
@@ -147,6 +145,7 @@ void AWindManager::SetGridVariable()
 	Niagara->SetNiagaraVariableVec2("InputGridLocation", { PlayerLocation.X,PlayerLocation.Y });
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartLocationAndRadius"), WindStartLocationRadius);
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(Niagara, FName("WindCapsuleStartVelocityAndStrength"), WindStartVelocityStrength);
+
 }
 
 void AWindManager::ResetTick()

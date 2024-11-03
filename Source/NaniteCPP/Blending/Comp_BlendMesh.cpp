@@ -5,7 +5,9 @@
 
 UComp_BlendMesh::UComp_BlendMesh()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
+
+
 	ExtentSubtractAmountOneSecond = 100.f;
 
 	SMC = NULL;
@@ -19,6 +21,7 @@ void UComp_BlendMesh::BeginPlay()
 {
 	Super::BeginPlay();
 	StaticOrSkeletal();
+	PrimaryComponentTick.SetTickFunctionEnable(false);
 }
 
 
@@ -32,6 +35,7 @@ void UComp_BlendMesh::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	if (SumSeconds > (WhichOneIsLongestXYZ / ExtentSubtractAmountOneSecond) + 0.2) { 
 		FinishBlendSetVariable();
 		D_FinishBlending.Execute();
+		PrimaryComponentTick.SetTickFunctionEnable(false);
 		return;
 	}
 
@@ -46,7 +50,6 @@ void UComp_BlendMesh::StartBlend()
 {
 	bool IsLowObject = IsLow();
 	
-	PrimaryComponentTick.bCanEverTick = true;
 	if (Player && Player->HighQualityGun != IsLowObject) {
 		D_FinishBlending.Execute();
 		return;
@@ -63,7 +66,6 @@ void UComp_BlendMesh::StartBlend()
 	if (OwnerIsStatic) {
 		SMC = Cast<UStaticMeshComponent>(TempMesh);
 		SMC->SetAffectDistanceFieldLighting(false);
-
 		CreateDMIAndDFOff(SMC, SMC->GetNumMaterials());
 	}
 	else {
@@ -123,8 +125,8 @@ void UComp_BlendMesh::CreateDMIAndDFOff(UPrimitiveComponent* UComp, int NumMater
 	FTransform TempTransform = { {TempLocation.X,TempLocation.Y,TempLocation.Z}, TempLocation,{0,0,0},{tempScale,tempScale,tempScale} };
 	GetWorld()->SpawnActor<ATurnOffDF>(ATurnOffDF::StaticClass(), TempTransform);
 
-	PrimaryComponentTick.bCanEverTick = true;
-	UE_LOG(LogTemp, Warning, TEXT("true"));
+	PrimaryComponentTick.SetTickFunctionEnable(true);
+	//UE_LOG(LogTemp, Warning, TEXT("true"));
 
 }
 

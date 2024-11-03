@@ -19,7 +19,7 @@ class NANITECPP_API AWindBomb : public AActor
 
 	void StartWind();
 
-	float Duration;
+	float Duration{ 0.2f };
 	float Radius;
 	float Strength;
 

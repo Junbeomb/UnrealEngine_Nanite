@@ -18,9 +18,12 @@ APuzzleKey::APuzzleKey()
 void APuzzleKey::OnFinishBlending()
 {
 	Comp_Interact =Cast<UComp_InteractBase>(AddComponentByClass(UComp_InteractBase::StaticClass(), false, FTransform::Identity, false));
-	if (Comp_Interact) {
-		Comp_Interact->RegisterComponent();
-	}
+	//AddComponentByClass는 NewObject와는 다르게 자동으로 RegisterComponent()를 해줌.
+	
+	//Comp_Interact = NewObject<UComp_InteractBase>(this, UComp_InteractBase::StaticClass(), NAME_None, RF_Transient);
+	//if (Comp_Interact) {
+	//	Comp_Interact->RegisterComponent();
+	//}
 }
 
 void APuzzleKey::PressEStart()

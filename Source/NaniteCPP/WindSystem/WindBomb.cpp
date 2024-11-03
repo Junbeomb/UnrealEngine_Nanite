@@ -33,7 +33,8 @@ void AWindBomb::BlackholeFunc(ABlackhole& bh)
 
 	//windmanager 가져오기
 	windManager = Cast<AWindManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWindManager::StaticClass()));
-	
+	if (!windManager) return;
+
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle,this,&AWindBomb::StartWind, 0.2f, true);
 }
@@ -46,6 +47,7 @@ void AWindBomb::StatueFunc(AInteractStatue& is)
 	});
 	//windmanager 가져오기
 	windManager = Cast<AWindManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AWindManager::StaticClass()));
+	if (!windManager) return;
 
 	//Timeline
 	if (StatueRadiusCurve && StatueStrengthCurve) {
@@ -74,7 +76,6 @@ void AWindBomb::StartWind()
 	tempData.S_WindStartVelStr = FVector4(0, 0, 1, Strength);
 
 	windManager->AddWindAtWindData(tempData);
-
 }
 
 

@@ -16,6 +16,7 @@ class NANITECPP_API APuzzleKey : public AActor, public IInterface_Interact
 	UStaticMeshComponent* KeyStaticMesh;
 	//알아서 메모리 관리
 	 //AddComponentByClass 로 값을 초기화 하므로 UPROPERTY() 안붙여도 됨. PuzzleKeyPad에 사용된 NewOBject는 붙여야됨.
+	UPROPERTY() 
 	class UComp_InteractBase* Comp_Interact;
 	//CreateDefaultSubobject 로 값을 초기화 하므로 UPROPERTY() 안붙여도 됨.
 	class UComp_BlendMesh* Comp_Blend; 

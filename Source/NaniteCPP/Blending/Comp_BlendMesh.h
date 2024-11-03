@@ -13,6 +13,7 @@ class NANITECPP_API UComp_BlendMesh : public UActorComponent
 
 	void FinishBlendSetVariable();
 
+	UPROPERTY()
 	ANaniteCPPCharacter* Player;
 
 	UStaticMeshComponent* SMC;
@@ -24,11 +25,11 @@ class NANITECPP_API UComp_BlendMesh : public UActorComponent
 
 	bool OwnerIsStatic;
 
-	float SumSeconds;
+	float SumSeconds{};
 
 	float WhichOneIsLongestXYZ;
 	float ExtentSubtractAmountOneSecond;
-	bool IsBlendStart;
+	bool IsBlendStart{ false };
 
 	UMeshComponent* StaticOrSkeletal();
 

@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,20 +12,16 @@ class NANITECPP_API AMaterialChangeBall : public AActor
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* StaticMesh;
+
 	FVector InitialScale;
 
 	float CountTick;
 
-public:	
-	// Sets default values for this actor's properties
-	AMaterialChangeBall();
-
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 public:	
-	// Called every frame
+	AMaterialChangeBall();
 	virtual void Tick(float DeltaTime) override;
+
 
 };
